@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>e护通 · 需求演示</title>
+<style>
+  :root {
+    --teal: #14b8a6;
+    --teal-d: #0d9488;
+    --teal-s: #e7f8f5;
+    --price: #ff6a1a;
+    --ink: #1c1c1c;
+    --muted: #8b919a;
+    --line: #f0f1f3;
+    --bg: #eef1f4;
+    --header: #1fbfae;
+    /* 截图基准尺寸：内容按此设计，整体再等比缩放 */
+    --design-w: 471px;
+    --design-h: 1024px;
+    --s: 0.68;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+  body {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+  }
+  .top {
+    flex: none;
+    background: #fff;
+    border-bottom: 1px solid #e6e8eb;
+    padding: 10px 16px;
+  }
+  nav { display: flex; flex-wrap: wrap; gap: 6px; }
+  nav button {
+    border: 1px solid #e3e6ea;
+    background: #fff;
+    color: #344054;
+    border-radius: 999px;
+    padding: 6px 11px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  nav button.active {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
+  }
+  main {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px 14px;
+    overflow: hidden;
+  }
+  .panel {
+    display: none;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    max-width: 100%;
+    --s: 0.68;
+  }
+  .panel.active { display: flex; }
+  .col {
+    flex: none;
+    width: calc(var(--design-w) * var(--s));
+    height: calc(var(--design-h) * var(--s));
+    position: relative;
+  }
+  .phone {
+    width: var(--design-w);
+    height: var(--design-h);
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: scale(var(--s));
+    transform-origin: top left;
+    background: #111;
+    border-radius: 36px;
+    padding: 10px;
+    box-shadow: 0 12px 28px rgba(16, 24, 40, .14);
+  }
+  .screen {
+    height: 100%;
+    background: #fff;
+    border-radius: 28px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    font-size: 15px;
+  }
+  .scroll { flex: 1; overflow: auto; background: #f6f7f9; min-height: 0; }
+  .scroll::-webkit-scrollbar { width: 0; }
+  .status {
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 650;
+    flex: none;
+  }
+  .status .sys { display: flex; gap: 4px; align-items: center; color: inherit; }
+  .green .status, .hd.green, .status.on-green { background: var(--header); color: #fff; }
+  .hd {
+    height: 48px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 12px 0 14px;
+    flex: none;
+  }
+  .hd.white { background: #fff; }
+  .hd .mid { font-weight: 650; font-size: 17px; text-align: center; }
+  .hd .left, .hd .right { display: flex; align-items: center; gap: 8px; }
+  .hd .right { justify-content: flex-end; }
+  .capsule {
+    width: 78px;
+    height: 30px;
+    border: 1px solid rgba(0,0,0,.12);
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    background: rgba(255,255,255,.55);
+    color: #111;
+    font-size: 13px;
+  }
+  .green .capsule, .hd.green .capsule {
+    border-color: rgba(255,255,255,.45);
+    background: rgba(255,255,255,.16);
+    color: #fff;
+  }
+  .capsule i { width: 1px; height: 12px; background: currentColor; opacity: .35; }
+  .dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    border: 1.4px solid currentColor; position: relative;
+  }
+  .dot:after {
+    content: ""; position: absolute; inset: 2.5px; border-radius: 50%;
+    border: 1.2px solid currentColor;
+  }
+  .back { background: none; border: 0; color: inherit; font-size: 20px; cursor: pointer; padding: 0 2px; line-height: 1; }
+
+  .loc {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 0;
+    background: transparent;
+    color: #1c1c1c;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 4px 2px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .loc .pin { color: #12b5a2; flex: none; }
+  .chip {
+    background: #fff;
+    border-radius: 999px;
+    padding: 0 10px 0 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  }
+
+  .search {
+    margin: 8px 14px 10px;
+    background: #fff;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 5px 5px 14px;
+    border: 1px solid #d9f3ef;
+  }
+  .search input {
+    border: 0; outline: 0; flex: 1; font-size: 15px; background: transparent; min-width: 0;
+  }
+  .search .go {
+    background: var(--teal); color: #fff; border: 0; border-radius: 999px;
+    padding: 8px 14px; font-size: 14px; flex: none;
+  }
+  .side {
+    display: grid;
+    grid-template-columns: 108px 1fr;
+    min-height: 100%;
+  }
+  .menu { background: #f5f6f8; }
+  .menu button {
+    display: block; width: 100%; text-align: left; border: 0; background: transparent;
+    padding: 16px 12px; font-size: 13px; color: #667085; cursor: pointer; line-height: 1.4;
+  }
+  .menu button.on { background: #fff; color: var(--teal-d); font-weight: 700; }
+  .list { background: #fff; padding: 8px 12px 16px; }
+
+  .svc {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: start;
+  }
+  .svc > div:last-child { min-width: 0; }
+  .thumb {
+    width: 96px; height: 96px; border-radius: 10px; position: relative; overflow: hidden; flex: none;
+    background: linear-gradient(160deg, #d9f4ef, #f7e7d4 55%, #f3d2c4);
+  }
+  .thumb.sm { width: 72px; height: 72px; }
+  .thumb .cap {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background: rgba(18, 160, 145, .92); color: #fff; font-size: 9px;
+    text-align: center; padding: 3px 2px;
+  }
+  .thumb .dur {
+    position: absolute; left: 4px; top: 4px; background: #f6c945; color: #5c4308;
+    font-size: 10px; border-radius: 4px; padding: 2px 4px;
+  }
+  .svc h3 {
+    margin: 0 0 6px; font-size: 15px; line-height: 1.35;
+    overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+  .meta { color: var(--muted); font-size: 13px; }
+  .meta b { color: var(--price); font-weight: 650; }
+  .prow {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 10px; gap: 12px; min-width: 0;
+  }
+  .money {
+    color: var(--price); font-weight: 750; font-size: 17px;
+    white-space: nowrap; min-width: 0;
+  }
+  .money small { font-size: 13px; font-weight: 650; }
+  .book {
+    border: 0; background: var(--teal); color: #fff; border-radius: 999px;
+    padding: 8px 12px; font-size: 13px; cursor: pointer; flex: none; white-space: nowrap;
+  }
+
+  .banner {
+    height: 180px; margin: 0; flex: none;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0) 40%, rgba(12,140,128,.95) 100%),
+      linear-gradient(120deg, #c9efe8, #f6d7c4 60%, #e7c2b0);
+    position: relative; color: #0f6f64;
+  }
+  .banner .big { position: absolute; left: 16px; top: 28px; font-size: 28px; font-weight: 800; }
+  .banner .sub {
+    position: absolute; left: 16px; top: 72px; background: rgba(255,255,255,.85);
+    border-radius: 8px; padding: 4px 8px; font-size: 13px;
+  }
+  .banner .slogan {
+    position: absolute; left: 16px; bottom: 12px; color: #fff; font-size: 14px; font-weight: 650;
+  }
+  .tags { display: flex; gap: 8px; padding: 12px 14px 0; background: #fff; overflow: auto; }
+  .tags span {
+    flex: none; background: #e8f8f5; color: #0f8f82; border-radius: 4px;
+    font-size: 12px; padding: 4px 8px;
+  }
+  .info { background: #fff; padding: 12px 14px 88px; overflow: visible; position: relative; z-index: 5; }
+  .title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .title-row h2 { margin: 0; font-size: 17px; line-height: 1.35; min-width: 0; flex: 1; }
+  .title-row .loc { flex: none; }
+  .sales { color: var(--muted); font-size: 13px; margin-top: 6px; }
+  .tip-wrap { position: relative; display: inline-flex; vertical-align: middle; margin-left: 6px; z-index: 12; }
+  .bang {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 1.5px solid var(--price); color: var(--price); background: #fff;
+    font-size: 12px; font-weight: 800; line-height: 15px; padding: 0; cursor: pointer;
+  }
+  .bubble {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: 220px;
+    max-width: calc(var(--design-w) - 48px);
+    background: #1f2430;
+    color: #fff;
+    font-size: 14px;
+    line-height: 1.55;
+    padding: 12px 14px;
+    border-radius: 10px;
+    z-index: 40;
+    font-weight: 400;
+    white-space: normal;
+    word-break: break-word;
+    box-shadow: 0 6px 16px rgba(0,0,0,.18);
+  }
+  .bubble:after {
+    content: ""; position: absolute; bottom: 100%; left: 12px;
+    border: 6px solid transparent; border-bottom-color: #1f2430;
+  }
+  .bubble.flip { left: auto; right: 0; }
+  .bubble.flip:after { left: auto; right: 12px; }
+  .info .bubble { left: -8px; }
+  .pay .tip-wrap { position: relative; display: inline-flex; margin-left: 4px; }
+  .pay .bubble {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-30%);
+    right: auto;
+    width: 200px;
+    max-width: 200px;
+    top: auto;
+    bottom: calc(100% + 8px);
+    z-index: 50;
+  }
+  .pay .bubble:after {
+    bottom: auto;
+    top: 100%;
+    left: 28%;
+    right: auto;
+    border-bottom-color: transparent;
+    border-top-color: #1f2430;
+  }
+  .block { background: #fff; margin-top: 8px; padding: 14px; }
+  .block h3 { margin: 0 0 8px; font-size: 15px; }
+  .steps { margin: 0; padding-left: 18px; color: #344054; font-size: 14px; line-height: 1.55; }
+  .flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .flow div {
+    background: #f6fbfa; border-radius: 10px; padding: 10px 6px; text-align: center; font-size: 12px; color: #0f766e;
+  }
+  .note { color: #475467; font-size: 14px; line-height: 1.55; margin: 0 0 8px; }
+  .dock {
+    flex: none; background: #fff; border-top: 1px solid #eee;
+    display: flex; align-items: center; padding: 10px 12px; gap: 8px;
+  }
+  .mini {
+    width: 48px; text-align: center; font-size: 11px; color: #667085; background: none; border: 0; cursor: pointer;
+  }
+  .grow { flex: 1; }
+  .ghost, .solid {
+    height: 40px; border-radius: 999px; padding: 0 16px; font-size: 14px; cursor: pointer; white-space: nowrap;
+  }
+  .ghost { background: #e7f8f4; color: #0f766e; border: 0; }
+  .solid { background: var(--teal); color: #fff; border: 0; font-weight: 650; }
+  .tabbar {
+    flex: none; height: 64px; background: #fff; border-top: 1px solid #eee;
+    display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; padding-bottom: 6px;
+  }
+  .tabbar button { border: 0; background: none; font-size: 11px; color: #98a2b3; cursor: pointer; }
+  .tabbar button.on { color: var(--teal-d); }
+  .tabbar .ai {
+    width: 52px; height: 52px; border-radius: 50%; margin: -18px auto 0;
+    background: radial-gradient(circle at 40% 35%, #7ee0c8, #14b8a6 55%, #0f766e);
+    color: #fff; font-size: 10px; display: grid; place-items: center; line-height: 1.1;
+  }
+  .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px; }
+  .mode {
+    border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; background: #fff;
+    display: flex; justify-content: space-between; align-items: center; font-size: 14px;
+  }
+  .mode.on { border-color: var(--teal); color: var(--teal-d); font-weight: 650; }
+  .check { width: 18px; height: 18px; border-radius: 50%; border: 1px solid #d0d5dd; flex: none; }
+  .mode.on .check { background: var(--teal); border-color: var(--teal); box-shadow: inset 0 0 0 3px #fff; }
+  .cell { background: #fff; margin: 0 12px 8px; border-radius: 12px; padding: 14px; overflow: visible; }
+  .rowline {
+    display: flex; justify-content: space-between; gap: 10px; padding: 10px 0; font-size: 14px;
+    border-bottom: 1px solid #f4f5f6; align-items: center;
+  }
+  .rowline:last-child { border-bottom: 0; }
+  .rowline .k { color: #667085; flex: none; }
+  .rowline .v { text-align: right; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sku {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+  }
+  .sku h3 { margin: 0 0 8px; font-size: 15px; line-height: 1.3; }
+  .sku .foot {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px; min-width: 0;
+  }
+  .sku .foot .money { flex: 1; min-width: 0; }
+  .stepper { display: inline-flex; border: 1px solid #e5e7eb; border-radius: 6px; overflow: hidden; flex: none; }
+  .stepper button, .stepper span { width: 28px; height: 28px; border: 0; background: #fff; font-size: 14px; }
+  .stepper span {
+    display: grid; place-items: center; border-left: 1px solid #eee; border-right: 1px solid #eee;
+  }
+  .opts { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+  .opts button {
+    border: 1px solid #e5e7eb; background: #fff; border-radius: 8px; padding: 7px 10px; font-size: 13px; cursor: pointer;
+  }
+  .opts button.on { border-color: var(--teal); color: var(--teal-d); background: var(--teal-s); }
+  .pay { flex: none; background: #fff; border-top: 1px solid #eee; padding: 14px 14px 16px; overflow: visible; position: relative; z-index: 6; }
+  .agree { font-size: 13px; color: #667085; display: flex; gap: 8px; align-items: center; }
+  .agree .radio {
+    width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #c0c4cc; flex: none;
+  }
+  .pay .sum { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 10px; }
+  .sum b { color: var(--ink); font-size: 15px; white-space: nowrap; font-weight: 650; }
+  .link { color: var(--price); font-size: 13px; background: none; border: 0; }
+  .tip-order { padding: 12px !important; }
+  .tip-order-main {
+    display: grid; grid-template-columns: 22px 72px minmax(0, 1fr);
+    gap: 10px; align-items: start;
+  }
+  .tip-order-main .tick { margin-top: 24px; }
+  .tip-order-info h3 { margin: 0 0 6px; font-size: 15px; line-height: 1.35; }
+  .dur-tag {
+    display: inline-block; background: #f0f1f3; color: #667085;
+    border-radius: 999px; padding: 2px 10px; font-size: 12px; margin-bottom: 8px;
+  }
+  .tip-order-info .foot {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  }
+  .tip-order-sub {
+    margin-top: 12px; padding-top: 10px; border-top: 1px solid #f0f1f3;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    font-size: 13px; color: #344054;
+  }
+  .mod-btn {
+    border: 1px solid var(--teal); color: var(--teal-d); background: #fff;
+    border-radius: 999px; padding: 4px 12px; font-size: 12px; cursor: pointer; flex: none;
+  }
+  /* 截图原图作为整页，气泡叠在合计旁 */
+  .shot-screen { padding: 0 !important; background: #000; }
+  .shot-screen .shot-img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: fill; display: block; pointer-events: none;
+  }
+  .shot-tip {
+    position: absolute;
+    left: 128px;
+    bottom: 72px;
+    z-index: 12;
+  }
+  .shot-tip .bubble {
+    width: 200px;
+    bottom: calc(100% + 8px);
+    top: auto;
+    left: 50%;
+    transform: translateX(-35%);
+  }
+  .shot-tip .bubble:after {
+    bottom: auto;
+    top: 100%;
+    left: 32%;
+    border-bottom-color: transparent;
+    border-top-color: #1f2430;
+  }
+
+  .home-btn {
+    width: 36px; height: 36px; border-radius: 50%; border: 0; background: #fff;
+    display: grid; place-items: center; cursor: pointer;
+    box-shadow: 0 1px 5px rgba(0, 40, 36, .2);
+  }
+  .home-btn svg { width: 20px; height: 20px; }
+  /* 抽屉商详 */
+  .drawer-mask {
+    position: absolute; inset: 0; z-index: 15;
+    background: rgba(0,0,0,.35);
+  }
+  .drawer {
+    position: absolute; left: 0; right: 0; bottom: 0; top: 14%;
+    z-index: 16; background: #fff;
+    border-radius: 18px 18px 0 0;
+    display: flex; flex-direction: column;
+    box-shadow: 0 -8px 24px rgba(0,0,0,.18);
+    overflow: hidden;
+  }
+  .drawer .drawer-hd {
+    flex: none; height: 48px; display: flex; align-items: center; justify-content: center;
+    position: relative; border-bottom: 1px solid #f2f3f5; font-weight: 650; font-size: 16px;
+  }
+  .drawer .drawer-hd .x {
+    position: absolute; right: 14px; color: #98a2b3; border: 0; background: none;
+    font-size: 18px; cursor: pointer;
+  }
+  .drawer .scroll { flex: 1; min-height: 0; overflow: auto; background: #fff; }
+  .drawer .dock { flex: none; }
+  .drawer .totop { bottom: 68px; }
+  .drawer .info { overflow: visible; }
+  .drawer .bubble { width: 260px; }
+  .totop {
+    position: absolute; right: 12px; bottom: 70px; z-index: 20;
+    width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(31, 191, 174, .96); color: #fff;
+    box-shadow: 0 6px 18px rgba(20, 184, 166, .4); cursor: pointer;
+    display: grid; place-items: center;
+  }
+  .totop[hidden] { display: none !important; }
+  .manage { text-align: right; padding: 8px 12px; color: #667085; font-size: 12px; background: #fff; }
+  .cart-item {
+    display: grid;
+    grid-template-columns: 24px 84px minmax(0, 1fr);
+    gap: 10px;
+    padding: 14px;
+    background: #fff;
+    margin-top: 8px;
+    align-items: start;
+  }
+  .cart-item .thumb {
+    width: 84px;
+    height: 84px;
+    max-width: 84px;
+  }
+  .cart-item .info-col { min-width: 0; overflow: hidden; }
+  .cart-item h3 {
+    margin: 0 0 10px; font-size: 15px; line-height: 1.35;
+    overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+  .cart-item .foot {
+    display: flex; justify-content: space-between; align-items: center; gap: 6px;
+  }
+  .tick {
+    width: 16px; height: 16px; border-radius: 50%; background: var(--teal); color: #fff;
+    display: grid; place-items: center; font-size: 10px; margin-top: 22px;
+  }
+  .settle {
+    flex: none; display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+    background: #fff; border-top: 1px solid #eee;
+  }
+  .settle .left {
+    display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1;
+  }
+  .settle .all { font-size: 13px; display: flex; align-items: center; gap: 6px; }
+  .settle .sum-line { font-size: 13px; color: #344054; }
+  .settle .sum-line b { color: var(--price); font-size: 16px; }
+  .settle .tick { margin-top: 0; }
+  .settle .solid { flex: none; }
+  .badge { color: var(--teal-d); font-weight: 700; }
+  .badge.wait { color: var(--price); }
+  .spin { display: inline-block; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .dim { opacity: .45; }
+  /* 订单详情下拉刷新演示侧栏 */
+  .demo-side {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    min-width: 140px;
+    max-width: 160px;
+  }
+  .demo-side .demo-label {
+    font-size: 13px;
+    font-weight: 650;
+    color: #344054;
+    line-height: 1.4;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid #e6e8eb;
+  }
+  .demo-side .demo-step {
+    font-size: 11px;
+    color: #98a2b3;
+    padding: 0 4px;
+  }
+  .demo-side .demo-btn {
+    border: 0;
+    background: var(--teal);
+    color: #fff;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 650;
+    cursor: pointer;
+    line-height: 1.35;
+  }
+  .demo-side .demo-btn:disabled {
+    opacity: .45;
+    cursor: default;
+  }
+  .demo-side .demo-btn.secondary {
+    background: #fff;
+    color: #344054;
+    border: 1px solid #d0d5dd;
+    font-weight: 500;
+  }
+  /* 订单详情：顶栏与状态绿一体，无分割线 */
+  .od-screen { --od-green: #18c1a0; }
+  .od-top {
+    flex: none;
+    background: var(--od-green);
+  }
+  .od-top .status.on-green,
+  .od-top .hd.green {
+    background: transparent;
+  }
+  .od-top .hd.green {
+    border: 0;
+    box-shadow: none;
+  }
+  /* 下拉刷新条：白底 + 绿色字 */
+  .od-pull {
+    flex: none;
+    height: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #fff;
+    color: #18c1a0;
+    font-size: 13px;
+    transition: height .18s ease;
+  }
+  .od-pull.show { height: 40px; }
+  .od-body {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    background: #f6f7f9;
+    -webkit-overflow-scrolling: touch;
+  }
+  .od-body::-webkit-scrollbar { width: 0; }
+  .od-shot-wrap {
+    overflow: hidden;
+    position: relative;
+    background: #18c1a0;
+    line-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+  .od-shot-wrap .shot-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+    vertical-align: top;
+    margin: 0;
+  }
+  .od-body.dim .shot-img { opacity: .7; }
+  .demo-side .demo-btn.danger {
+    background: #fff;
+    color: #e11d48;
+    border: 1px solid #fda4af;
+    font-weight: 650;
+  }
+  .toast {
+    position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+    background: #1f2430; color: #fff; border-radius: 999px; padding: 8px 14px;
+    font-size: 12px; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 80;
+  }
+  .toast.show { opacity: 1; }
+  /* 手机内 toast（刷新失败，屏幕中央） */
+  .phone-toast {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: rgba(31, 36, 48, .92); color: #fff; border-radius: 12px;
+    padding: 12px 18px; font-size: 14px; white-space: nowrap; text-align: center;
+    opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 30;
+  }
+  .phone-toast.show { opacity: 1; }
+  .hint { font-size: 11px; color: #98a2b3; text-align: center; padding: 8px; }
+
+  /* 地址 / 城市选择层 */
+  .overlay {
+    position: absolute; inset: 0; z-index: 40; background: #f6f7f9;
+    display: flex; flex-direction: column;
+  }
+  .overlay[hidden] { display: none; }
+  .addr-row {
+    display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #fff;
+  }
+  .addr-row .city-btn {
+    border: 0; background: transparent; font-size: 13px; font-weight: 650;
+    display: inline-flex; align-items: center; gap: 2px; cursor: pointer; flex: none;
+  }
+  .addr-row .search { margin: 0; flex: 1; }
+  .sec-label { padding: 10px 12px 6px; font-size: 12px; color: #98a2b3; }
+  .addr-card {
+    margin: 0 10px 8px; background: #fff; border-radius: 10px; padding: 12px;
+    display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center;
+  }
+  .addr-card p { margin: 0; font-size: 13px; line-height: 1.45; }
+  .addr-card .sub { margin-top: 4px; color: #98a2b3; font-size: 12px; }
+  .relocate {
+    border: 0; background: transparent; color: var(--teal-d); font-size: 11px;
+    display: grid; place-items: center; gap: 2px; cursor: pointer;
+  }
+  .add-addr {
+    margin: auto 12px 12px; height: 40px; border: 0; border-radius: 999px;
+    background: var(--teal); color: #fff; font-size: 14px; font-weight: 650; cursor: pointer;
+  }
+  .cur-city {
+    margin: 8px 10px; background: #fff; border-radius: 8px; padding: 12px;
+    font-size: 13px; display: flex; gap: 10px;
+  }
+  .hot-title { padding: 4px 12px 8px; font-size: 13px; font-weight: 650; }
+  .hot-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    padding: 0 12px 12px;
+  }
+  .hot-grid button {
+    border: 0; background: #f3f4f6; border-radius: 6px; padding: 10px 0;
+    font-size: 12px; cursor: pointer;
+  }
+  .letter { padding: 6px 12px; font-size: 12px; color: #98a2b3; background: #f6f7f9; }
+  .city-list button {
+    display: block; width: 100%; text-align: left; border: 0; border-bottom: 1px solid #f0f1f3;
+    background: #fff; padding: 12px; font-size: 13px; cursor: pointer;
+  }
+  .alpha {
+    position: absolute; right: 4px; top: 120px; bottom: 20px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    font-size: 9px; color: #667085; text-align: center; pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <nav id="nav">
+    <button type="button" data-tab="loc" class="active">定位转换</button>
+    <button type="button" data-tab="tip">气泡提示</button>
+    <button type="button" data-tab="book">搜索卡片【立即预约】</button>
+    <button type="button" data-tab="top">一键回顶</button>
+    <button type="button" data-tab="home">返回主页icon</button>
+    <button type="button" data-tab="refresh">订单详情下拉刷新</button>
+  </nav>
+</header>
+<main>
+  <!-- 1 定位转换 -->
+  <section class="panel active" id="loc">
+    <div class="col"><div class="phone"><div class="screen" id="cat-screen">
+      <div class="status on-green"><span>9:41</span><span class="sys">5G ▮▮</span></div>
+      <div class="hd green">
+        <div class="left">
+          <div class="chip">
+            <button type="button" class="loc js-open-addr" data-target="cat">
+              <svg class="pin" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+              <span class="loc-name">上海市</span>
+              <svg width="10" height="10" viewBox="0 0 12 12"><path d="M2 4l4 4 4-4" fill="none" stroke="#111" stroke-width="1.6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="mid">分类</div>
+        <div class="right"><div class="capsule"><span>···</span><i></i><span class="dot"></span></div></div>
+      </div>
+      <div class="search"><span style="color:#98a2b3">⌕</span><input value="居家护理" readonly /><button class="go" type="button">搜索</button></div>
+      <div class="scroll"><div class="side">
+        <div class="menu">
+          <button type="button" class="on">居家特护（护士）</button>
+          <button type="button">住院特护（护士）</button>
+          <button type="button">居家看护</button>
+          <button type="button">住院陪护</button>
+        </div>
+        <div class="list">
+          <article class="svc">
+            <div class="thumb"><span class="cap">找护士 找护工 就上e护通</span></div>
+            <div>
+              <h3>护士居家日间8小时特护</h3>
+              <div class="meta"><b>5.0分</b> · 销量 260</div>
+              <div class="prow"><div class="money">¥595.00<small>起</small></div><button class="book" type="button">立即预约</button></div>
+            </div>
+          </article>
+        </div>
+      </div></div>
+      <div class="tabbar">
+        <button type="button">首页</button><button type="button" class="on">分类</button>
+        <button type="button" class="ai">e护通<br>智</button>
+        <button type="button">购物车</button><button type="button">我的</button>
+      </div>
+      <div class="overlay" id="addr-cat" hidden></div>
+      <div class="overlay" id="city-cat" hidden></div>
+    </div></div></div>
+
+    <!-- 第二张：分类页上弹出抽屉商详 + 定位 -->
+    <div class="col"><div class="phone"><div class="screen" id="drawer-loc-screen">
+      <div class="status on-green"><span>16:54</span><span class="sys">5G ▮▮</span></div>
+      <div class="hd green">
+        <div class="left">
+          <div class="chip">
+            <button type="button" class="loc js-open-addr" data-target="drawer">
+              <svg class="pin" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+              <span class="loc-name">上海市</span>
+              <svg width="10" height="10" viewBox="0 0 12 12"><path d="M2 4l4 4 4-4" fill="none" stroke="#111" stroke-width="1.6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="mid">分类</div>
+        <div class="right"><div class="capsule"><span>···</span><i></i><span class="dot"></span></div></div>
+      </div>
+      <div class="search"><span style="color:#98a2b3">⌕</span><input value="居家护理" readonly /><button class="go" type="button">搜索</button></div>
+      <div class="scroll"><div class="side">
+        <div class="menu">
+          <button type="button" class="on">居家特护（护士）</button>
+          <button type="button">住院特护（护士）</button>
+          <button type="button">居家看护</button>
+        </div>
+        <div class="list">
+          <article class="svc">
+            <div class="thumb"><span class="cap">找护士 找护工 就上e护通</span></div>
+            <div>
+              <h3>护士居家日间8小时特护</h3>
+              <div class="meta"><b>5.0分</b> · 销量 260</div>
+              <div class="prow"><div class="money">¥595.00<small>起</small></div><button class="book" type="button">立即预约</button></div>
+            </div>
+          </article>
+        </div>
+      </div></div>
+      <div class="tabbar">
+        <button type="button">首页</button><button type="button" class="on">分类</button>
+        <button type="button" class="ai">e护通<br>智</button>
+        <button type="button">购物车</button><button type="button">我的</button>
+      </div>
+      <div class="drawer-mask"></div>
+      <div class="drawer">
+        <div class="drawer-hd">服务详情<button class="x" type="button">✕</button></div>
+        <div class="scroll">
+          <div class="banner"><div class="big">日间特护</div><div class="sub">推荐时长：8 小时</div><div class="slogan">找护士 找护工 就上e护通</div></div>
+          <div class="tags"><span>三包保障</span><span>过程留痕</span><span>持证上岗</span><span>极速维权</span></div>
+          <div class="info">
+            <div class="title-row">
+              <h2>护士居家日间8小时特护</h2>
+              <button type="button" class="loc js-open-addr" data-target="drawer">
+                <svg class="pin" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+                <span class="loc-name">上海市</span>
+                <svg width="10" height="10" viewBox="0 0 12 12"><path d="M2 4l4 4 4-4" fill="none" stroke="#111" stroke-width="1.6"/></svg>
+              </button>
+            </div>
+            <div class="money" style="margin-top:8px;font-size:22px">¥595.00<small>起</small><span class="tip-wrap"><button class="bang" type="button" aria-expanded="false">!</button><span class="bubble" hidden>最终支付价格会因服务地点不同有所差异</span></span></div>
+            <div class="sales">销量 260</div>
+          </div>
+          <div class="block"><h3>服务评价 (0)</h3><p class="note" style="margin:0">暂无评价</p></div>
+        </div>
+        <div class="dock">
+          <button class="mini" type="button">客服</button>
+          <button class="mini" type="button">购物车</button>
+          <button class="mini" type="button">分享有礼</button>
+          <span class="grow"></span>
+          <button class="ghost" type="button">加入购物车</button>
+          <button class="solid" type="button">去下单</button>
+        </div>
+      </div>
+      <div class="overlay" id="addr-drawer" hidden></div>
+      <div class="overlay" id="city-drawer" hidden></div>
+    </div></div></div>
+
+    <!-- 第三张：整页商详（图一）+ 定位转换 -->
+    <div class="col"><div class="phone" id="detail-phone"></div></div>
+  </section>
+
+  <!-- 2 气泡提示：图一（你的截图原图）合计气泡 + 商详价格气泡 + 下单页合计气泡 -->
+  <section class="panel" id="tip">
+    <!-- 图一：直接用截图，合计旁叠气泡 -->
+    <div class="col"><div class="phone"><div class="screen shot-screen">
+      <img class="shot-img" src="assets/tip-tu1.png" alt="图一确认支付页" width="471" height="1024" />
+      <div class="shot-tip tip-wrap">
+        <button class="bang" type="button" aria-expanded="false">!</button>
+        <span class="bubble" hidden>最终支付价格会因服务地点不同有所差异</span>
+      </div>
+    </div></div></div>
+
+    <!-- 商详：价格旁气泡 -->
+    <div class="col"><div class="phone" id="detail-phone-2"></div></div>
+    <!-- 下单页：合计旁气泡 -->
+    <div class="col"><div class="phone"><div class="screen">
+      <div class="status on-green"><span>16:54</span><span class="sys">5G ▮▮</span></div>
+      <div class="hd green">
+        <div class="left"><button class="back" type="button">‹</button></div>
+        <div class="mid"></div>
+        <div class="right"><div class="capsule"><span>···</span><i></i><span class="dot"></span></div></div>
+      </div>
+      <div class="scroll">
+        <div class="modes">
+          <div class="mode on">先买后约 <i class="check"></i></div>
+          <div class="mode">立即预约 <i class="check"></i></div>
+        </div>
+        <div class="cell">
+          <div class="rowline"><span class="k">服务地址</span><span class="v">上海市 普陀区 金沙江路 ›</span></div>
+          <div class="rowline"><span class="k">被护理人</span><span class="v">嘿嘿 28岁 女 ›</span></div>
+        </div>
+        <div class="cell">
+          <div class="sku">
+            <div class="thumb sm"></div>
+            <div>
+              <h3>居家日间12小时看护</h3>
+              <div class="foot">
+                <div class="money">¥335.00</div>
+                <div class="stepper"><button type="button">−</button><span>1</span><button type="button">+</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cell">
+          <div class="rowline"><span class="k">服务时长</span><span class="opts"><button type="button" class="on">12小时</button></span></div>
+          <div class="rowline"><span class="k">性别要求</span><span class="opts"><button class="on" type="button">不限</button><button type="button">男</button><button type="button">女</button></span></div>
+          <div class="rowline"><span class="k">人员等级</span><span class="opts"><button class="on" type="button">五级 +0</button><button type="button">四级 +70</button></span></div>
+        </div>
+      </div>
+      <div class="pay">
+        <label class="agree"><input type="checkbox" checked /> 已阅读并同意《平台服务协议》</label>
+        <div class="sum">
+          <div>
+            <b>合计 <span style="color:var(--price)">¥380.00</span><span class="tip-wrap"><button class="bang" type="button" aria-expanded="false">!</button><span class="bubble" hidden>最终支付价格会因服务地点不同有所差异</span></span></b>
+            <div><button class="link" type="button">查看明细 ▾</button></div>
+          </div>
+          <button class="solid" type="button">立即支付</button>
+        </div>
+      </div>
+    </div></div></div>
+  </section>
+
+  <!-- 3 搜索卡片立即预约：当前清肺结果 + 图一搜索页 -->
+  <section class="panel" id="book">
+    <div class="col"><div class="phone"><div class="screen">
+      <div class="status"><span>10:14</span><span class="sys">5G ▮▮</span></div>
+      <div class="hd white">
+        <div class="left"><button class="back" type="button">‹</button></div>
+        <div class="mid">搜索</div>
+        <div class="right"><div class="capsule"><span>···</span><i></i><span class="dot"></span></div></div>
+      </div>
+      <div class="search">
+        <span style="color:#98a2b3">⌕</span>
+        <input value="清肺" readonly />
+        <button class="go" type="button">搜索</button>
+      </div>
+      <div class="scroll" style="background:#f6f7f9">
+        <div id="search-list" style="padding:8px 10px 12px;background:#fff"></div>
+        <p class="hint">没有更多了</p>
+      </div>
+    </div></div></div>
+
+    <div class="col"><div class="phone"><div class="screen">
+      <div class="status"><span>13:29</span><span class="sys">5G ▮▮</span></div>
+      <div class="hd white">
+        <div class="left"><button class="back" type="button">‹</button></div>
+        <div class="mid">搜索</div>
+        <div class="right"><div class="capsule"><span>···</span><i></i><span class="dot"></span></div></div>
+      </div>
+      <div class="search">
+        <span style="color:#98a2b3">⌕</span>
+        <input value="住院夜间12小时陪护" readonly />
+        <button class="go" type="button">搜索</button>
+      </div>
+      <div class="scroll" style="background:#fff">
+        <div style="display:flex;justify-content:space-between;padding:6px 12px;color:#667085;font-size:12px"><span>历史记录</span><span>🗑</span></div>
+        <div class="opts" style="padding:4px 12px 10px;justify-content:flex-start">
+          <button type="button">清肺</button><button type="button">住院</button><button type="button">清</button>
+        </div>
+        <div style="padding:0 12px 6px;font-weight:700;font-size:13px">大家都在看</div>
+        <div id="search-list-2" style="padding:0 12px 12px"></div>
+      </div>
+    </div></div></div>
+  </section>
+
+  <!-- 4 一键回顶：抽屉商详 + 图三整页商详 -->
+  <section class="panel" id="top">
+    <!-- 抽屉式：背后是分类，商详从下往上弹出 -->
+    <div class="col"><div class="phone"><div class="screen">
+      <div class="status on-green"><span>16:54</span><span class="sys">··· ○</span></div>
+      <div class="hd green"><div></div><div class="mid">分类</div><div class="right"><div class="capsule"><span>···</span><i></i><span class="dot"></span></div></div></div>
+      <div class="search"><span style="color:#98a2b3">⌕</span><input value="居家护理" readonly /><button class="go" type="button">搜索</button></div>
+      <div class="scroll"><div class="side">
+        <div class="menu">
+          <button type="button" class="on">居家特护（护士）</button>
+          <button type="button">住院特护（护士）</button>
+          <button type="button">居家看护</button>
+        </div>
+        <div class="list">
+          <article class="svc">
+            <div class="thumb"><span class="cap">找护士 找护工 就上e护通</span></div>
+            <div>
+              <h3>护士居家夜间10小时特护</h3>
+              <div class="meta"><b>5.0分</b> · 销量 256</div>
+              <div class="prow"><div class="money">¥755.00<small>起</small></div><button class="book" type="button">立即预约</button></div>
+            </div>
+          </article>
+        </div>
+      </div></div>
+      <div class="tabbar">
+        <button type="button">首页</button><button type="button" class="on">分类</button>
+        <button type="button" class="ai">e护通<br>智</button>
+        <button type="button">购物车</button><button type="button">我的</button>
+      </div>
+      <div class="drawer-mask"></div>
+      <div class="drawer">
+        <div class="drawer-hd">服务详情<button class="x" type="button">✕</button></div>
+        <div class="scroll" id="long-scroll">
+          <div class="banner" style="height:140px">
+            <div class="big" style="font-size:20px;top:28px;background:#fff;padding:4px 8px;border-radius:4px;left:12px">夜间特护</div>
+            <div class="sub" style="top:68px;background:#e8f7b0">推荐时长：10 小时</div>
+            <div class="slogan">找护士 找护工 就上e护通</div>
+          </div>
+          <div class="tags"><span>三包保障</span><span>过程留痕</span><span>持证上岗</span><span>极速维权</span></div>
+          <div class="info">
+            <div class="title-row">
+              <h2>护士居家夜间10小时特护</h2>
+              <span class="loc"><svg class="pin" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg><span class="loc-name">上海市</span></span>
+            </div>
+            <div class="money" style="margin-top:6px;font-size:18px">¥755.00<small>起</small></div>
+            <div class="sales">销量 256</div>
+          </div>
+          <div class="block">
+            <h3>服务内容</h3>
+            <ol class="steps">
+              <li>协助夜间如厕，并做好防滑陪同。</li>
+              <li>每 2 小时协助翻身，预防压疮。</li>
+              <li>定时巡视，观察睡眠与呼吸情况。</li>
+              <li>睡前测量并记录生命体征。</li>
+              <li>夜间出现变化时及时通知家属。</li>
+              <li>晨间整理，并与家属当面交接。</li>
+            </ol>
+          </div>
+          <div class="block">
+            <h3>服务流程</h3>
+            <p class="note">1. 选择服务时长与人员要求后提交订单。</p>
+            <p class="note">2. 客服电话确认地址、时间与护理重点。</p>
+            <p class="note">3. 护士按时上门，核对身份并开始交接。</p>
+            <p class="note">4. 服务过程按标准记录护理要点。</p>
+            <p class="note">5. 服务结束后当面交接并确认完成。</p>
+          </div>
+          <div class="block">
+            <h3>预约须知</h3>
+            <p class="note">下单后请保持电话畅通，客服会与您确认上门时间。</p>
+            <p class="note">若服务地址跨区，路程与人员档期可能影响实际上门时间。</p>
+            <p class="note">特殊护理需求请提前在备注里写明。</p>
+            <p class="note">夜间服务建议提前 1 天预约，便于匹配就近护士。</p>
+            <p class="note">如遇临时取消，请至少提前 2 小时联系客服。</p>
+          </div>
+          <div class="block">
+            <h3>温馨提示</h3>
+            <p class="note">请提前准备好患者近期用药清单与过敏史说明。</p>
+            <p class="note">家中过道请尽量保持畅通，便于夜间协助行动。</p>
+            <p class="note">如需协助翻身或移位，请提前告知床型与辅具情况。</p>
+            <p class="note">服务过程中如有不适，可随时联系平台客服协调。</p>
+            <p class="note">下拉本页可继续浏览更多说明，再点右下角回顶按钮体验效果。</p>
+            <p class="note">本段用于演示长内容滚动：护理评估、交接记录、家属沟通要点、夜间巡视频次说明、异常情况上报路径等，都会在完整商详中展示。</p>
+            <p class="note">继续向下：体征记录模板、翻身打卡说明、用药提醒清单、晨间交接话术示例、服务评价引导文案。</p>
+            <p class="note">再继续：平台保障说明、售后处理时效、发票开具方式、常见问题解答与联系方式。</p>
+          </div>
+        </div>
+        <button class="totop" id="to-top" type="button" hidden aria-label="回到顶部">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+        </button>
+        <div class="dock">
+          <button class="mini" type="button">客服</button>
+          <button class="mini" type="button">购物车</button>
+          <button class="mini" type="button">分享有礼</button>
+          <span class="grow"></span>
+          <button class="ghost" type="button">加入购物车</button>
+          <button class="solid" type="button">去下单</button>
+        </div>
+      </div>
+    </div></div></div>
+
+    <!-- 图三：整页商详（非抽屉） -->
+    <div class="col"><div class="phone"><div class="screen">
+      <div class="status"><span>13:29</span><span class="sys">5G ▮▮</span></div>
+      <div class="hd white">
+        <div class="left"><button class="back" type="button">‹</button></div>
+        <div class="mid"></div>
+        <div class="right"><div class="capsule"><span>···</span><i></i><span class="dot"></span></div></div>
+      </div>
+      <div class="scroll" id="long-scroll-2">
+        <div class="banner" style="height:160px">
+          <div class="big" style="font-size:22px;top:36px;background:rgba(255,255,255,.92);padding:4px 10px;border-radius:6px;left:12px;color:#0f766e">日间看护</div>
+          <div class="sub" style="top:78px;background:#e8f7b0">推荐时长：12 小时</div>
+          <div class="slogan">找护士 找护工 就上e护通</div>
+        </div>
+        <div class="tags"><span>三包保障</span><span>过程留痕</span><span>持证上岗</span><span>极速维权</span></div>
+        <div class="info">
+          <div class="title-row">
+            <h2>居家日间12小时看护</h2>
+            <span class="loc"><svg class="pin" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg><span class="loc-name">上海市</span></span>
+          </div>
+          <div class="money" style="margin-top:6px;font-size:18px">¥335.00<small>起</small></div>
+          <div class="sales">销量 271</div>
+        </div>
+        <div class="block">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <h3 style="margin:0">服务评价 (8)</h3>
+            <span style="color:var(--teal-d);font-size:12px">查看全部 ›</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;font-size:12px">
+            <div style="width:28px;height:28px;border-radius:50%;background:#d9f4ef"></div>
+            <div>
+              <div>e**5 · <span style="color:#f5a524">★★★★★</span> 5.0</div>
+              <div style="color:#98a2b3">2026-10-20</div>
+            </div>
+          </div>
+        </div>
+        <div class="block">
+          <div style="display:inline-block;background:#cfd4dc;color:#fff;border-radius:999px;padding:3px 10px;font-size:12px;margin-bottom:8px">服务描述</div>
+          <p class="note">护理人员提供日间生活照料、用药提醒与压疮预防。适合白天家人上班、独居老人需要陪伴与照护的情况。</p>
+        </div>
+        <div class="block">
+          <div style="display:inline-block;background:#cfd4dc;color:#fff;border-radius:999px;padding:3px 10px;font-size:12px;margin-bottom:8px">为您解决什么难题?</div>
+          <ol class="steps">
+            <li>减轻家人白天无法陪护的担忧。</li>
+            <li>降低老人独居跌倒与突发风险。</li>
+            <li>提升老人日间生活舒适度。</li>
+          </ol>
+        </div>
+        <div class="block">
+          <div style="display:inline-block;background:#cfd4dc;color:#fff;border-radius:999px;padding:3px 10px;font-size:12px;margin-bottom:8px">适用人群</div>
+          <ol class="steps">
+            <li>白天独居、需要陪护的老人。</li>
+            <li>生活起居需要协助的人群。</li>
+            <li>家人工作日无法全天陪同照护。</li>
+          </ol>
+        </div>
+        <div class="block">
+          <div style="display:inline-block;background:#cfd4dc;color:#fff;border-radius:999px;padding:3px 10px;font-size:12px;margin-bottom:8px">服务内容</div>
+          <ol class="steps">
+            <li>协助进食、洗漱与日常起居。</li>
+            <li>用药提醒与体征观察。</li>
+            <li>陪伴活动，预防跌倒与压疮。</li>
+            <li>服务结束与家人当面交接。</li>
+          </ol>
+        </div>
+        <div class="block">
+          <h3>服务保障</h3>
+          <p class="note">平台对持证上岗、过程留痕、售后响应做统一标准管理。</p>
+          <p class="note">服务过程中如出现人员变更，将提前与您确认并给出替代方案。</p>
+          <p class="note">支持开具电子发票，可在订单完成后申请。</p>
+        </div>
+        <div class="block">
+          <h3>常见问题</h3>
+          <p class="note">Q：可以指定护士性别吗？A：可在下单页选择性别要求。</p>
+          <p class="note">Q：中途需要延长服务吗？A：可联系客服按档期与价格规则加时。</p>
+          <p class="note">Q：老人不会用手机怎么办？A：可由家属代下单并留紧急联系人。</p>
+          <p class="note">Q：服务地址临时变更？A：请尽早通知，跨区可能影响档期。</p>
+        </div>
+        <div class="block">
+          <h3>更多说明（演示滚动）</h3>
+          <p class="note">日间看护强调陪伴与生活协助，重点包括起居、用餐、移动防护与情绪安抚。</p>
+          <p class="note">请提前告知老人作息习惯、饮食忌口、常用药物与最近就医情况。</p>
+          <p class="note">建议在服务当天预留 15 分钟交接时间，方便护士了解重点事项。</p>
+          <p class="note">本段用于撑开页面高度，便于下拉后点击右下角回顶按钮验证效果。</p>
+          <p class="note">继续浏览：护理记录样例、交接清单、紧急联系流程、平台客服工作时间与响应时效说明。</p>
+          <p class="note">再继续：评价激励说明、复购优惠提示、相关推荐服务与健康科普短文。</p>
+        </div>
+      </div>
+      <button class="totop" id="to-top-2" type="button" hidden aria-label="回到顶部">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+      </button>
+      <div class="dock">
+        <button class="mini" type="button">客服</button>
+        <button class="mini" type="button">购物车</button>
+        <button class="mini" type="button">分享有礼</button>
+        <span class="grow"></span>
+        <button class="ghost" type="button">加入购物车</button>
+        <button class="solid" type="button">去下单</button>
+      </div>
+    </div></div></div>
+  </section>
+
+  <!-- 6 返回主页 icon -->
+  <section class="panel" id="home">
+    <div class="col"><div class="phone"><div class="screen">
+      <div class="status on-green"><span>9:41</span><span class="sys">5G ▮▮</span></div>
+      <div class="hd green">
+        <div class="left">
+          <button class="home-btn" id="go-home" type="button" aria-label="返回首页">
+            <svg viewBox="0 0 24 24"><path fill="#0f766e" d="M12 3.2 3.2 11H6v9h4.6v-5.4h2.8V20H18v-9h2.8L12 3.2z"/></svg>
+          </button>
+        </div>
+        <div class="mid">购物车</div>
+        <div class="right"><div class="capsule"><span>···</span><i></i><span class="dot"></span></div></div>
+      </div>
+      <div class="scroll">
+        <div class="manage">管理</div>
+        <div class="cart-item">
+          <div class="tick">✓</div>
+          <div class="thumb"></div>
+          <div class="info-col">
+            <h3>护士居家夜间10小时特护</h3>
+            <div class="foot">
+              <div class="money">¥755</div>
+              <div class="stepper"><button type="button">−</button><span>1</span><button type="button">+</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="settle">
+        <div class="left">
+          <div class="all"><span class="tick">✓</span> 全选</div>
+          <div class="sum-line">合计: <b>¥755</b></div>
+        </div>
+        <button class="solid" type="button">去结算(1)</button>
+      </div>
+      <div class="tabbar">
+        <button type="button">首页</button><button type="button">分类</button>
+        <button type="button" class="ai">e护通<br>智</button>
+        <button type="button" class="on">购物车</button><button type="button">我的</button>
+      </div>
+    </div></div></div>
+  </section>
+
+  <!-- 7 订单详情下拉刷新：成功 / 失败 各一页 -->
+  <section class="panel" id="refresh">
+    <div class="col"><div class="phone"><div class="screen od-screen" id="od-screen">
+      <div class="od-top">
+        <div class="status on-green"><span>17:00</span><span class="sys">5G ▮▮</span></div>
+        <div class="hd green">
+          <div class="left"><button class="back" type="button">‹</button></div>
+          <div class="mid">订单详情</div>
+          <div class="right"><div class="capsule"><span>···</span><i></i><span class="dot"></span></div></div>
+        </div>
+      </div>
+      <div class="od-pull" id="od-pull"><span id="od-pull-text">下拉刷新</span></div>
+      <div class="od-body" id="od-body">
+        <div class="od-shot-wrap">
+          <img class="shot-img" id="od-shot" src="assets/od-1-pending-body.png" alt="订单详情内容" width="471" height="912" />
+        </div>
+      </div>
+      <div class="phone-toast" id="od-toast"></div>
+    </div></div></div>
+    <div class="demo-side">
+      <div class="demo-step" id="od-step">状态 1 / 5</div>
+      <div class="demo-label" id="od-label">待服务（未有人接单）</div>
+      <button type="button" class="demo-btn" id="od-sim-refresh">模拟下拉刷新</button>
+      <button type="button" class="demo-btn secondary" id="od-sim-reset">重置到第一步</button>
+    </div>
+
+    <div class="col"><div class="phone"><div class="screen od-screen" id="od-fail-screen">
+      <div class="od-top">
+        <div class="status on-green"><span>17:00</span><span class="sys">5G ▮▮</span></div>
+        <div class="hd green">
+          <div class="left"><button class="back" type="button">‹</button></div>
+          <div class="mid">订单详情</div>
+          <div class="right"><div class="capsule"><span>···</span><i></i><span class="dot"></span></div></div>
+        </div>
+      </div>
+      <div class="od-pull" id="od-fail-pull"><span id="od-fail-pull-text">下拉刷新</span></div>
+      <div class="od-body" id="od-fail-body">
+        <div class="od-shot-wrap">
+          <img class="shot-img" id="od-fail-shot" src="assets/od-1-pending-body.png" alt="订单详情内容" width="471" height="912" />
+        </div>
+      </div>
+      <div class="phone-toast" id="od-fail-toast"></div>
+    </div></div></div>
+    <div class="demo-side">
+      <div class="demo-step">刷新失败演示</div>
+      <div class="demo-label" id="od-fail-label">待服务（未有人接单）</div>
+      <button type="button" class="demo-btn danger" id="od-sim-fail">模拟刷新失败</button>
+      <button type="button" class="demo-btn secondary" id="od-fail-reset">重置页面</button>
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+const hotCities = ["上海市", "北京市", "南京市", "深圳市", "广州市", "济南市", "武汉市", "成都市"];
+const cityA = ["阿拉善盟", "鞍山市", "安庆市", "安阳市", "安康市", "安顺市", "阿坝藏族羌族自治州", "阿里地区", "阿勒泰地区", "阿拉尔市"];
+
+function addrHTML(id) {
+  return `
+    <div class="status"><span>9:41</span><span class="sys">··· ○</span></div>
+    <div class="hd white">
+      <div class="left"><button class="back js-close-addr" type="button" data-id="${id}">‹</button></div>
+      <div class="mid">选择服务地址</div>
+      <div class="right"><div class="capsule"><span>···</span><i></i><span class="dot"></span></div></div>
+    </div>
+    <div class="addr-row">
+      <button type="button" class="city-btn js-open-city" data-id="${id}">
+        <span class="city-name">上海市</span>
+        <svg width="9" height="9" viewBox="0 0 12 12"><path d="M2 4l4 4 4-4" fill="none" stroke="#111" stroke-width="1.6"/></svg>
+      </button>
+      <div class="search">
+        <span style="color:#98a2b3">⌕</span>
+        <input placeholder="输入详细地址进行搜索" />
+        <button class="go" type="button">搜索</button>
+      </div>
+    </div>
+    <div class="scroll">
+      <div class="sec-label">当前地址</div>
+      <div class="addr-card">
+        <p>上海市普陀区长征镇梅川路799弄25号芝巷小区梅川路799弄</p>
+        <button class="relocate" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+          重新定位
+        </button>
+      </div>
+      <div class="sec-label">被护理人地址</div>
+      <div class="addr-card">
+        <div>
+          <p>上海市上海市普陀区金沙江路1340弄8号 新曹杨中南大厦哈哈哈</p>
+          <div class="sub">嘿嘿嘿 11111111111</div>
+        </div>
+      </div>
+      <p class="hint">没有更多了</p>
+    </div>
+    <button class="add-addr" type="button">＋ 新增地址</button>`;
+}
+
+function cityHTML(id) {
+  return `
+    <div class="status"><span>9:41</span><span class="sys">··· ○</span></div>
+    <div class="hd white">
+      <div class="left"><button class="back js-close-city" type="button" data-id="${id}">‹</button></div>
+      <div class="mid">选择城市</div>
+      <div class="right"><div class="capsule"><span>···</span><i></i><span class="dot"></span></div></div>
+    </div>
+    <div class="search" style="margin:8px 10px">
+      <span style="color:#98a2b3">⌕</span>
+      <input placeholder="输入城市名进行搜索" />
+      <button class="go" type="button">搜索</button>
+    </div>
+    <div class="scroll" style="position:relative">
+      <div class="cur-city"><span style="color:#98a2b3">当前城市</span><b class="city-name">上海市</b></div>
+      <div class="hot-title">热门城市</div>
+      <div class="hot-grid">
+        ${hotCities.map((c) => `<button type="button" data-pick="${c}">${c}</button>`).join("")}
+      </div>
+      <div class="letter">A</div>
+      <div class="city-list">
+        ${cityA.map((c) => `<button type="button" data-pick="${c}">${c}</button>`).join("")}
+      </div>
+      <div class="alpha">A B C D E F G H J K L M N P Q R S T W X Y Z</div>
+    </div>`;
+}
+
+function detailHTML(opts) {
+  const { id, screenId, withLoc, withTip } = opts;
+  const locBtn = withLoc !== false ? `
+          <button type="button" class="loc js-open-addr" data-target="${id}">
+            <svg class="pin" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+            <span class="loc-name">上海市</span>
+            <svg width="10" height="10" viewBox="0 0 12 12"><path d="M2 4l4 4 4-4" fill="none" stroke="#111" stroke-width="1.6"/></svg>
+          </button>` : "";
+  const tip = withTip !== false
+    ? `<span class="tip-wrap"><button class="bang" type="button" aria-expanded="false">!</button><span class="bubble" hidden>最终支付价格会因服务地点不同有所差异</span></span>`
+    : "";
+  return `<div class="screen" id="${screenId}">
+    <div class="status on-green"><span>16:54</span><span class="sys">5G ▮▮</span></div>
+    <div class="hd green">
+      <div class="left"><button class="back" type="button">‹</button></div>
+      <div class="mid"></div>
+      <div class="right"><div class="capsule"><span>···</span><i></i><span class="dot"></span></div></div>
+    </div>
+    <div class="scroll" style="background:#fff">
+      <div class="banner"><div class="big">日间特护</div><div class="sub">推荐时长：8 小时</div><div class="slogan">找护士 找护工 就上e护通</div></div>
+      <div class="tags"><span>三包保障</span><span>过程留痕</span><span>持证上岗</span><span>极速维权</span></div>
+      <div class="info">
+        <div class="title-row">
+          <h2>护士居家日间8小时特护</h2>
+          ${locBtn}
+        </div>
+        <div class="money" style="margin-top:8px;font-size:22px">¥595.00<small>起</small>${tip}</div>
+        <div class="sales">销量 260</div>
+      </div>
+      <div class="block"><h3>服务评价 (0)</h3><p class="note" style="margin:0">暂无评价</p></div>
+      <div class="block"><h3>服务说明</h3><p class="note">专业护士上门提供日间特护，含基础护理、病情观察与生活协助。</p></div>
+    </div>
+    <div class="dock">
+      <button class="mini" type="button">客服</button>
+      <button class="mini" type="button">购物车</button>
+      <button class="mini" type="button">分享有礼</button>
+      <span class="grow"></span>
+      <button class="ghost" type="button">加入购物车</button>
+      <button class="solid" type="button">去下单</button>
+    </div>
+    ${withLoc !== false ? `<div class="overlay" id="addr-${id}" hidden></div><div class="overlay" id="city-${id}" hidden></div>` : ""}
+  </div>`;
+}
+
+document.getElementById("detail-phone").innerHTML = detailHTML({ id: "detail", screenId: "detail-screen" });
+document.getElementById("detail-phone-2").innerHTML = detailHTML({ id: "detail2", screenId: "detail-screen-2" });
+
+["cat", "drawer", "detail", "detail2"].forEach((id) => {
+  const addr = document.getElementById("addr-" + id);
+  const city = document.getElementById("city-" + id);
+  if (addr) addr.innerHTML = addrHTML(id);
+  if (city) city.innerHTML = cityHTML(id);
+});
+
+function syncCityName(id, name) {
+  document.querySelectorAll(`#addr-${id} .city-name, #city-${id} .city-name`).forEach((el) => { el.textContent = name; });
+  const map = {
+    cat: "#cat-screen .loc-name",
+    drawer: "#drawer-loc-screen .loc-name",
+    detail: "#detail-screen .loc-name",
+    detail2: "#detail-screen-2 .loc-name"
+  };
+  document.querySelectorAll(map[id] || "").forEach((el) => { el.textContent = name; });
+}
+
+document.body.addEventListener("click", (e) => {
+  const openAddr = e.target.closest(".js-open-addr");
+  if (openAddr) {
+    const id = openAddr.dataset.target;
+    document.getElementById("addr-" + id).hidden = false;
+    return;
+  }
+  const closeAddr = e.target.closest(".js-close-addr");
+  if (closeAddr) {
+    document.getElementById("addr-" + closeAddr.dataset.id).hidden = true;
+    return;
+  }
+  const openCity = e.target.closest(".js-open-city");
+  if (openCity) {
+    const id = openCity.dataset.id;
+    document.getElementById("city-" + id).hidden = false;
+    return;
+  }
+  const closeCity = e.target.closest(".js-close-city");
+  if (closeCity) {
+    document.getElementById("city-" + closeCity.dataset.id).hidden = true;
+    return;
+  }
+  const pick = e.target.closest("[data-pick]");
+  if (pick) {
+    const overlay = pick.closest(".overlay");
+    const id = overlay.id.replace("city-", "");
+    syncCityName(id, pick.dataset.pick);
+    overlay.hidden = true;
+    toast("已切换至" + pick.dataset.pick);
+    return;
+  }
+
+  const bang = e.target.closest(".bang");
+  if (bang) {
+    e.stopPropagation();
+    const bubble = bang.parentElement.querySelector(".bubble");
+    const willOpen = bubble.hasAttribute("hidden");
+    document.querySelectorAll(".bubble").forEach((b) => b.setAttribute("hidden", ""));
+    document.querySelectorAll(".bang").forEach((b) => b.setAttribute("aria-expanded", "false"));
+    if (willOpen) { bubble.removeAttribute("hidden"); bang.setAttribute("aria-expanded", "true"); }
+    return;
+  }
+  if (!e.target.closest(".bubble") && !e.target.closest("#nav") && !e.target.closest(".bang")) {
+    document.querySelectorAll(".bubble").forEach((b) => b.setAttribute("hidden", ""));
+    document.querySelectorAll(".bang").forEach((b) => b.setAttribute("aria-expanded", "false"));
+  }
+
+  const book = e.target.closest(".book");
+  if (book) {
+    const title = book.dataset.name || book.closest("article")?.querySelector("h3")?.textContent || "服务";
+    toast("预约「" + title + "」");
+  }
+});
+
+function svcCards(items) {
+  return items.map(([t, s, n, p]) => `
+  <article class="svc">
+    <div class="thumb"><span class="cap">找护士 找护工 就上e护通</span></div>
+    <div>
+      <h3>${t}</h3>
+      <div class="meta"><b>${s}分</b> | 销量 ${n}</div>
+      <div class="prow"><div class="money">¥${p}<small>起</small></div><button class="book" type="button" data-name="${t}">立即预约</button></div>
+    </div>
+  </article>`).join("");
+}
+document.getElementById("search-list").innerHTML = svcCards([
+  ["居家专业清肺排痰", "5.0", "512", "154.00"],
+  ["住院专业清肺排痰", "5.0", "309", "154.00"],
+  ["院内陪检", "5.0", "918", "154.00"],
+  ["居家卧床患者全身洗护", "4.8", "333", "254.00"]
+]);
+document.getElementById("search-list-2").innerHTML = svcCards([
+  ["院内陪检", "5.0", "918", "154.00"],
+  ["院内卧床患者全身洗护", "5.0", "402", "254.00"],
+  ["术后患者居家夜间12小时看护", "4.9", "156", "405.00"],
+  ["居家卧床患者全身洗护", "4.8", "333", "254.00"],
+  ["护士住院夜间10小时特护", "5.0", "88", "755.00"]
+]);
+
+function bindToTop(scrollId, btnId) {
+  const sc = document.getElementById(scrollId);
+  const btn = document.getElementById(btnId);
+  if (!sc || !btn) return () => {};
+  const update = () => { btn.hidden = sc.scrollTop < 80; };
+  sc.addEventListener("scroll", update);
+  btn.addEventListener("click", () => sc.scrollTo({ top: 0, behavior: "smooth" }));
+  return update;
+}
+const updateToTop = bindToTop("long-scroll", "to-top");
+const updateToTop2 = bindToTop("long-scroll-2", "to-top-2");
+document.getElementById("go-home").addEventListener("click", () => toast("返回首页"));
+
+/* 订单详情下拉刷新：左成功推进状态 / 右模拟失败 */
+const odStates = [
+  { name: "待服务（未有人接单）", src: "assets/od-1-pending-body.png" },
+  { name: "待服务（有人接单）", src: "assets/od-2-accepted-body.png" },
+  { name: "待服务（人员已经出发）", src: "assets/od-3-departed-body.png" },
+  { name: "服务中", src: "assets/od-4-inservice-body.png" },
+  { name: "服务完成", src: "assets/od-5-done-body.png" }
+];
+
+function bindOdDemo(cfg) {
+  let index = 0;
+  let refreshing = false;
+  let holding = false;
+  let phoneToastTimer;
+  const { shot, body, pull, pullText, label, step, refreshBtn, resetBtn, mode, phoneToast } = cfg;
+
+  function showPhoneToast(text) {
+    if (!phoneToast) return;
+    phoneToast.textContent = text;
+    phoneToast.classList.add("show");
+    clearTimeout(phoneToastTimer);
+    phoneToastTimer = setTimeout(() => phoneToast.classList.remove("show"), 1600);
+  }
+
+  function render() {
+    const s = odStates[index];
+    shot.src = s.src;
+    if (label) label.textContent = s.name;
+    if (step) step.textContent = "状态 " + (index + 1) + " / " + odStates.length;
+    if (mode === "success" && refreshBtn) {
+      const last = index >= odStates.length - 1;
+      refreshBtn.disabled = last;
+      refreshBtn.textContent = last ? "已到最终状态" : "模拟下拉刷新";
+    }
+  }
+
+  function endPull(msg) {
+    pullText.textContent = msg;
+    body.classList.remove("dim");
+    setTimeout(() => {
+      pull.classList.remove("show");
+      pullText.textContent = "下拉刷新";
+      refreshing = false;
+      if (refreshBtn) refreshBtn.disabled = mode === "success" && index >= odStates.length - 1;
+      if (mode === "success") render();
+    }, 400);
+  }
+
+  /* 长按：显示「松开刷新」；松开：刷新中 → 成功/失败 */
+  function onHoldStart(e) {
+    if (e.type === "mousedown" && e.button !== 0) return;
+    if (refreshing) return;
+    if (mode === "success" && index >= odStates.length - 1) return;
+    e.preventDefault();
+    holding = true;
+    pull.classList.add("show");
+    pullText.textContent = "松开刷新";
+  }
+
+  function onHoldEnd() {
+    if (!holding || refreshing) { holding = false; return; }
+    holding = false;
+    refreshing = true;
+    if (refreshBtn) refreshBtn.disabled = true;
+    pullText.innerHTML = '<span class="spin">↻</span> 刷新中';
+    body.classList.add("dim");
+    setTimeout(() => {
+      if (mode === "fail") {
+        showPhoneToast("刷新失败，请稍后重试");
+        endPull("刷新失败");
+      } else {
+        index += 1;
+        render();
+        endPull("刷新成功");
+      }
+    }, 700);
+  }
+
+  function onHoldCancel() {
+    if (!holding || refreshing) return;
+    holding = false;
+    pull.classList.remove("show");
+    pullText.textContent = "下拉刷新";
+  }
+
+  if (refreshBtn) {
+    refreshBtn.addEventListener("mousedown", onHoldStart);
+    refreshBtn.addEventListener("touchstart", onHoldStart, { passive: false });
+    refreshBtn.addEventListener("mouseup", onHoldEnd);
+    refreshBtn.addEventListener("mouseleave", onHoldCancel);
+    refreshBtn.addEventListener("touchend", (e) => { e.preventDefault(); onHoldEnd(); });
+    refreshBtn.addEventListener("touchcancel", onHoldCancel);
+    refreshBtn.addEventListener("click", (e) => e.preventDefault());
+  }
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      if (refreshing || holding) return;
+      index = 0;
+      render();
+    });
+  }
+
+  render();
+}
+
+bindOdDemo({
+  mode: "success",
+  shot: document.getElementById("od-shot"),
+  body: document.getElementById("od-body"),
+  pull: document.getElementById("od-pull"),
+  pullText: document.getElementById("od-pull-text"),
+  label: document.getElementById("od-label"),
+  step: document.getElementById("od-step"),
+  refreshBtn: document.getElementById("od-sim-refresh"),
+  resetBtn: document.getElementById("od-sim-reset"),
+  phoneToast: document.getElementById("od-toast")
+});
+
+bindOdDemo({
+  mode: "fail",
+  shot: document.getElementById("od-fail-shot"),
+  body: document.getElementById("od-fail-body"),
+  pull: document.getElementById("od-fail-pull"),
+  pullText: document.getElementById("od-fail-pull-text"),
+  label: document.getElementById("od-fail-label"),
+  step: null,
+  refreshBtn: document.getElementById("od-sim-fail"),
+  resetBtn: document.getElementById("od-fail-reset"),
+  phoneToast: document.getElementById("od-fail-toast")
+});
+
+function fitScale() {
+  const panel = document.querySelector(".panel.active");
+  if (!panel) return;
+  const cols = panel.querySelectorAll(".col").length || 1;
+  const main = document.querySelector("main");
+  const aw = main.clientWidth;
+  const ah = main.clientHeight;
+  const gap = 16 * (cols - 1);
+  const sw = (aw - gap) / cols / 471;
+  const sh = ah / 1024;
+  /* 留边距，不占满屏 */
+  const s = Math.max(0.28, Math.min(0.82, sw, sh) * 0.92);
+  panel.style.setProperty("--s", String(s));
+}
+
+document.getElementById("nav").addEventListener("click", (e) => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  document.querySelectorAll("#nav button").forEach((x) => x.classList.toggle("active", x === b));
+  document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("active", p.id === b.dataset.tab));
+  fitScale();
+  if (b.dataset.tab === "top") {
+    setTimeout(() => { updateToTop(); updateToTop2(); }, 50);
+  }
+});
+
+window.addEventListener("resize", fitScale);
+fitScale();
+
+let toastTimer;
+function toast(text) {
+  const el = document.getElementById("toast");
+  el.textContent = text;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 1400);
+}
+</script>
+</body>
+</html>
