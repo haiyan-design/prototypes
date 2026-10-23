@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#143028" />
+    <meta
+      name="description"
+      content="e护通护士上门由成都青羊摩易互联网医院有限公司运营。用户通过微信小程序预约，护士按约定时间上门提供护理服务。"
+    />
+    <title>e护通护士上门</title>
+    <link rel="icon" href="assets/logo.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">跳到主要内容</a>
+
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="#top">
+          <img src="assets/logo.png" alt="" width="48" height="48" />
+          <span class="brand-name">
+            <strong>e护通护士上门</strong>
+          </span>
+          <span class="brand-rule" aria-hidden="true"></span>
+          <span class="brand-slogan">
+            <strong>护士上门</strong>
+            <em>线上预约，按约上门</em>
+          </span>
+        </a>
+        <nav class="nav-links" aria-label="页内导航">
+          <a href="#top">首页</a>
+          <a href="#services">服务项目</a>
+          <a href="#process">预约流程</a>
+          <a href="#download">小程序</a>
+        </nav>
+        <div class="nav-actions">
+          <button class="btn btn-ghost" type="button" data-open="consult">咨询</button>
+        </div>
+        <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="sr-only">打开菜单</span>
+          <i></i><i></i>
+        </button>
+      </div>
+      <div class="mobile-menu wrap" id="mobile-menu" hidden>
+        <a href="#top">首页</a>
+        <a href="#services">服务项目</a>
+        <a href="#process">预约流程</a>
+        <a href="#download">小程序</a>
+        <button type="button" data-open="consult">咨询</button>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="wrap hero-grid">
+          <div class="hero-copy">
+            <h1>护士上门护理服务</h1>
+            <p class="audience">适用于术后居家护理、长期管路维护，以及其他不便前往医疗机构接受护理的情形。</p>
+            <div class="hero-cta">
+              <a class="btn btn-primary" href="#download">进入小程序</a>
+              <button class="btn btn-ghost" type="button" data-open="consult">咨询客服</button>
+            </div>
+          </div>
+          <figure class="device">
+            <div class="phone" aria-label="小程序界面">
+              <div class="screen">
+                <div class="mp-status"><span>14:32</span><span>5G</span></div>
+                <div class="mp-head">
+                  <span>选择城市</span>
+                  <strong>护士服务</strong>
+                  <span class="mp-cap" aria-hidden="true"></span>
+                </div>
+                <div class="mp-body">
+                  <div class="mp-side" id="mp-side" role="tablist" aria-label="服务分类"></div>
+                  <div class="mp-list" id="mp-list"></div>
+                </div>
+                <div class="mp-banner">
+                  <img src="assets/logo.png" alt="" width="22" height="22" />
+                  <span><b>e护通</b><small>护理服务线上预约平台</small></span>
+                  <em>返回首页</em>
+                </div>
+                <div class="mp-tab" aria-hidden="true">
+                  <span class="on">护士服务</span><span>订单</span><span>购物车</span><span>我的</span>
+                </div>
+              </div>
+            </div>
+            <figcaption>微信小程序界面</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="band" id="services">
+        <div class="wrap">
+          <header class="sec">
+            <h2>服务项目</h2>
+            <p>以下为主要服务项目。具体内容及收费标准因地区而异，请以微信小程序为准。</p>
+          </header>
+          <ul class="cards" id="cards"></ul>
+        </div>
+      </section>
+
+      <section class="plain" id="process">
+        <div class="wrap">
+          <header class="sec">
+            <h2>预约流程</h2>
+            <p>自选择服务至上门完成，均在微信小程序中进行。</p>
+          </header>
+          <ol class="flow">
+            <li>
+              <span>步骤 01</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 8h6M9 12h6M9 16h3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <strong>选择服务</strong>
+              <p>按护理类型选择所需项目。</p>
+            </li>
+            <li>
+              <span>步骤 02</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 3v4M16 3v4M4 10h16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <strong>提交预约</strong>
+              <p>填写上门地址与服务时间。</p>
+            </li>
+            <li>
+              <span>步骤 03</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+              <strong>护士上门</strong>
+              <p>护士按约定时间到达并提供护理。</p>
+            </li>
+            <li>
+              <span>步骤 04</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 3v5h5M8 13h8M8 17h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <strong>服务可查</strong>
+              <p>完成后，订单记录可在小程序中查阅。</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="plain" id="download">
+        <div class="wrap entry">
+          <div>
+            <header class="sec left">
+              <h2>微信小程序</h2>
+              <p>选择服务、提交预约、查阅订单，均在小程序中完成。</p>
+            </header>
+            <ol class="open">
+              <li>打开微信，使用顶部搜索。</li>
+              <li>选择「小程序」，搜索「e护通护士上门」。</li>
+              <li>进入后选择服务并提交预约。</li>
+            </ol>
+            <p class="entry-note">也可以直接扫描小程序码进入。</p>
+          </div>
+          <figure class="mp-code">
+            <img src="assets/miniprogram-code.png" alt="e护通护士上门小程序码" width="156" height="156" />
+            <figcaption>微信扫码进入</figcaption>
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap footer-grid">
+        <div>
+          <a class="brand light" href="#top">
+            <img src="assets/logo.png" alt="" width="36" height="36" />
+            <span>e护通护士上门</span>
+          </a>
+          <p>护士上门服务预约平台</p>
+        </div>
+        <div class="footer-contact">
+          <p>成都青羊摩易互联网医院有限公司</p>
+          <p>服务热线：<a href="tel:4008933120">400-893-3120</a></p>
+          <p>服务时间：每日 8:00–20:00</p>
+          <p>客服微信：ehutongzp</p>
+          <p>公司地址：四川省成都市青羊区一环路西二段2号1栋11层1105-1106号</p>
+        </div>
+        <div class="footer-code">
+          <img src="assets/miniprogram-code.png" alt="" width="112" height="112" />
+          <p>微信小程序</p>
+        </div>
+      </div>
+      <div class="wrap copy">© 2026 成都青羊摩易互联网医院有限公司</div>
+    </footer>
+
+    <div class="dock">
+      <button class="btn btn-ghost" type="button" data-open="consult">咨询</button>
+      <a class="btn btn-primary" href="#download">进入小程序</a>
+    </div>
+
+    <dialog id="consult" class="sheet">
+      <form method="dialog">
+        <header>
+          <h2>客服咨询</h2>
+          <button value="close" class="icon-x" aria-label="关闭">×</button>
+        </header>
+        <p>如需了解服务项目或收费标准，请联系客服。</p>
+        <a class="row" href="tel:4008933120"><span>客服热线</span><strong>400-893-3120</strong></a>
+        <div class="row">
+          <span>客服微信</span>
+          <strong>ehutongzp</strong>
+          <button class="text-btn" type="button" id="copy-wechat">复制</button>
+        </div>
+        <p class="hint" id="copy-hint" role="status"></p>
+      </form>
+    </dialog>
+
+    <script src="main.js"></script>
+  </body>
+</html>
