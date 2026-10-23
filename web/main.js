@@ -1,13 +1,13 @@
 const services = [
-  ["清创换药", "上门为伤口、压疮与造口进行换药或护理。", "外科换药、压疮清创换药、肛瘘术后换药与塞药、造口护理"],
-  ["打针采血", "按医嘱上门注射，或采集血液标本。"],
-  ["静脉导管护理", "为留置的中心静脉通路做日常维护。", "PICC 导管维护、CVC 导管维护、输液港维护"],
-  ["尿管护理", "留置、更换或拔除尿管，以及膀胱冲洗。", "留置导尿、拔除尿管及指导、更换尿管、膀胱冲洗、导尿及膀胱冲洗"],
-  ["导管护理", "腹透管与气管切开导管的维护。"],
-  ["术后拆线", "查看伤口情况后，拆除外科缝线。"],
-  ["基础护理", "雾化吸入，以及通便、灌肠护理。"],
-  ["器械调试", "调试家用医疗器械，并指导使用。", "制氧机、血糖仪、雾化器、吸痰器、呼吸机"],
-  ["药物管理", "核对家中药品，并整理服用时间。"]
+  ["外科换药", "伤口评估、无菌消毒、更换敷料、交代居家照护注意要点。"],
+  ["造口护理", "专科护士评估造口情况，清洁造口、更换造口袋、处理并发症，居家护理指导。"],
+  ["上门打针", "核对医嘱，评估病情，无菌注射、观察反应，指导注射后注意事项。"],
+  ["PICC导管维护", "评估导管情况，规范更换敷料、正压接头，无菌冲洗，带管注意事项宣教。"],
+  ["更换尿管", "规范拔管、无菌置管、尿液观察、护理指导、膀胱功能训练指导。"],
+  ["外科伤口拆线", "伤口愈合评估、伤口消毒、无菌拆线、伤口后续管理指导。"],
+  ["留置导尿", "病情评估、无菌留置导尿、尿液观察、导管宣教，及时缓解痛苦。"],
+  ["气管切开护理", "气道评估、专业吸痰、敷料更换、套管清洁消毒，教导排痰与急救常识。"],
+  ["压疮清创", "伤口专科护士评估分期、规范清创、敷料选择与更换、渗液管理、照护指导。"]
 ];
 
 const phoneGroups = [
@@ -45,10 +45,7 @@ showPhone(0);
 
 const cards = document.querySelector("#cards");
 cards.innerHTML = services
-  .map(
-    ([name, desc, items]) =>
-      `<li><h3>${name}</h3><p>${desc}</p>${items ? `<small>${items}</small>` : ""}</li>`
-  )
+  .map(([name, desc]) => `<li><h3>${name}</h3><p>${desc}</p></li>`)
   .join("");
 
 const menuBtn = document.querySelector(".menu-btn");
@@ -74,9 +71,9 @@ document.body.addEventListener("click", (event) => {
 document.querySelector("#copy-wechat").addEventListener("click", async () => {
   const hint = document.querySelector("#copy-hint");
   try {
-    await navigator.clipboard.writeText("eht-care");
+    await navigator.clipboard.writeText("ehutongzp");
     hint.textContent = "已复制";
   } catch {
-    hint.textContent = "请手动记录 eht-care";
+    hint.textContent = "请手动记录 ehutongzp";
   }
 });
