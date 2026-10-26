@@ -89,6 +89,15 @@
 }
 #ehutong-proto .hotel-days.show{display:block}
 #ehutong-proto .hotel-days em{font-style:normal;font-size:16px;margin:0 2px}
+#ehutong-proto .rule-tip{
+  margin:8px 0;padding:8px 10px;border-radius:8px;
+  background:#fff8f0;border:1px solid #f0e0cc;color:#8a5a2b;font-size:11px;line-height:1.45;
+}
+#ehutong-proto .rule-tip .rt{display:inline;font-weight:600;margin-right:4px}
+#ehutong-proto .rule-tip .rule-tip-body{display:inline}
+#ehutong-proto .rule-tip.compact{margin:0 0 12px;font-size:12px;line-height:1.5;padding:10px 12px}
+#ehutong-proto .date-banner + .rule-tip{margin-top:0;margin-bottom:12px}
+#ehutong-proto .screen[data-screen="step1a"] .rule-tip{margin:6px 0 4px;flex-shrink:0}
 #ehutong-proto .scene-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 #ehutong-proto .scene-tab{
   border:1px solid #e5e5e5;background:#fff;border-radius:12px;padding:14px 12px;text-align:center;cursor:pointer;
@@ -126,7 +135,8 @@
 
 /* 方案一：场景/类型加宽加重，日历收矮 */
 #ehutong-proto .screen[data-screen="step1a"] .scroll{
-  overflow:hidden;padding:8px 10px;display:flex;flex-direction:column;gap:8px;
+  overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:8px 10px;display:flex;flex-direction:column;gap:8px;
 }
 #ehutong-proto .screen[data-screen="step1a"] .scene-title{font-size:12px;color:#666;margin:0}
 #ehutong-proto .screen[data-screen="step1a"] .scene-tab{padding:16px 12px}
@@ -172,6 +182,12 @@
 }
 #ehutong-proto .date-banner .sync-row[hidden]{display:none!important}
 #ehutong-proto .date-banner .sync-row .sl{font-size:13px;color:#666}
+#ehutong-proto .date-editor{
+  display:none;margin-top:12px;padding-top:12px;border-top:1px dashed #dce8e5;
+}
+#ehutong-proto .date-editor.open{display:block}
+#ehutong-proto .date-editor .cal-day{height:30px;font-size:12px}
+#ehutong-proto .date-editor .hotel-dates{margin-bottom:8px}
 #ehutong-proto .date-banner.flash{animation:ehFlash .55s ease}
 @keyframes ehFlash{0%,100%{background:#f7faf9}40%{background:color-mix(in srgb,var(--brand) 18%,#fff)}}
 #ehutong-proto .field-row{
@@ -246,22 +262,14 @@
   display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--brand-dark);font-weight:500;
 }
 #ehutong-proto .grid span{font-size:11px}
-#ehutong-proto .entry-strip{
-  width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
-  border:0;cursor:pointer;margin-bottom:10px;padding:12px 14px;border-radius:12px;
-  background:linear-gradient(105deg,#1ab394,#12967c);color:#fff;text-align:left;
-}
-#ehutong-proto .entry-strip .main{font-size:15px;font-weight:500;letter-spacing:.02em}
-#ehutong-proto .entry-strip .go{font-size:18px;opacity:.9}
 #ehutong-proto .float-ball{
   position:absolute;right:12px;bottom:160px;z-index:9;
   width:68px;height:68px;border-radius:50%;border:3px solid #fff;cursor:pointer;
   background:linear-gradient(145deg,#20c5ab,#0d7a72);color:#fff;
   box-shadow:0 8px 22px rgba(26,179,148,.55), 0 0 0 4px rgba(26,179,148,.18);
-  display:none;flex-direction:column;align-items:center;justify-content:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
   font-size:11px;font-weight:500;line-height:1.15;padding:6px;
 }
-#ehutong-proto .float-ball.show{display:flex}
 #ehutong-proto .float-ball .f1{font-size:14px;font-weight:600}
 #ehutong-proto .float-ball .f2{font-size:11px;opacity:.95;margin-top:2px}
 #ehutong-proto .cs-ball{
@@ -269,7 +277,7 @@
   width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:var(--brand-dark);
   box-shadow:0 4px 12px rgba(0,0,0,.12);font-size:11px;display:flex;align-items:center;justify-content:center;
 }
-#ehutong-proto .screen[data-screen="home"].scheme-c .cs-ball{bottom:78px;right:18px;opacity:.85;transform:scale(.92)}
+#ehutong-proto .screen[data-screen="home"] .cs-ball{bottom:78px;right:18px;opacity:.85;transform:scale(.92)}
 #ehutong-proto .mid-banner{background:#eef7f4;border-radius:12px;padding:16px;margin-bottom:10px}
 #ehutong-proto .mid-banner .t{font-size:18px;font-weight:500;margin-bottom:4px}
 #ehutong-proto .mid-banner .s{font-size:12px;color:var(--muted)}
@@ -310,15 +318,11 @@
   <div class="label">原型方案（电脑端切换）</div>
   <button type="button" class="on" data-scheme="a" role="tab" aria-selected="true">
     <span class="t">方案一</span>
-    <span class="d">同屏选场景 / 类型 / 日期</span>
+    <span class="d">同屏选场景/类型/日期 · 悬浮球入口</span>
   </button>
   <button type="button" data-scheme="b" role="tab" aria-selected="false">
     <span class="t">方案二</span>
-    <span class="d">一页问卷答完再确认</span>
-  </button>
-  <button type="button" data-scheme="c" role="tab" aria-selected="false">
-    <span class="t">方案三 · 入口</span>
-    <span class="d">流程同方案一，首页悬浮球入口</span>
+    <span class="d">一页问卷 · 悬浮球入口</span>
   </button>
 </div>
 
@@ -333,10 +337,6 @@
       <div class="banner"><strong>上海拥军优属基金会指定服务商</strong>护理 · 护士到家 · 康复陪护</div>
     </div>
     <div class="scroll" style="padding-top:0">
-      <button type="button" class="entry-strip" id="entry">
-        <span class="main">连陪快约</span>
-        <span class="go">→</span>
-      </button>
       <div class="grid" aria-hidden="true">
         <div><div class="icon">特护</div><span>住院特护</span></div>
         <div><div class="icon">陪护</div><span>住院陪护</span></div>
@@ -402,6 +402,10 @@
           </div>
           <div class="hotel-days day-span"><em class="day-span-n">0</em>天连续陪护</div>
           <div class="hotel-tip pick-tip">请选择开始日期</div>
+          <div class="rule-tip" data-rule-tip>
+            <span class="rt">连陪提醒</span>
+            <span class="rule-tip-body">连选多天时，日单均为同一人，夜单均为同一人；仅日/夜同理。</span>
+          </div>
           <div class="cal-head">
             <button type="button" class="cal-prev">‹</button>
             <div class="m cal-month">2026年10月</div>
@@ -454,6 +458,10 @@
         </div>
         <div class="hotel-days day-span"><em class="day-span-n">0</em>天连续陪护</div>
         <div class="hotel-tip pick-tip">请选择开始日期</div>
+        <div class="rule-tip" data-rule-tip>
+          <span class="rt">连陪提醒</span>
+          <span class="rule-tip-body">连选多天时，日单均为同一人，夜单均为同一人；仅日/夜同理。</span>
+        </div>
         <div class="cal-head">
           <button type="button" class="cal-prev">‹</button>
           <div class="m cal-month">2026年10月</div>
@@ -490,6 +498,28 @@
         <div class="sync-row" id="sync-stepper">
           <span class="sl" id="sync-stepper-lab">服务天数</span>
           <div class="stepper"><button type="button" data-day="-1">−</button><span class="day-count">3</span><button type="button" data-day="1">+</button></div>
+        </div>
+        <div class="date-editor" id="date-editor">
+          <div class="hotel-dates">
+            <button type="button" class="hd" data-pick="start" id="hd-start-c">
+              <div class="l">开始日期</div>
+              <div class="v ph start-label">请选择</div>
+            </button>
+            <div class="arrow">→</div>
+            <button type="button" class="hd" data-pick="end" id="hd-end-c">
+              <div class="l">结束日期</div>
+              <div class="v ph end-label">请选择</div>
+            </button>
+          </div>
+          <div class="hotel-days day-span"><em class="day-span-n">0</em>天连续陪护</div>
+          <div class="hotel-tip pick-tip">请选择开始日期</div>
+          <div class="cal-head">
+            <button type="button" class="cal-prev">‹</button>
+            <div class="m cal-month">2026年10月</div>
+            <button type="button" class="cal-next">›</button>
+          </div>
+          <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+          <div class="cal-grid" id="cal-c"></div>
         </div>
       </div>
       <div class="card">
@@ -609,7 +639,8 @@
     viewMonth: 9,
     day: { gender: "不限", level: "五级护理员", add: 0 },
     night: { gender: "不限", level: "五级护理员", add: 0 },
-    maxDays: 14
+    maxDays: 14,
+    dateEditorOpen: false
   };
   var prices = { hospital: { day: 380, night: 405 }, home: { day: 360, night: 390 } };
   var visitFee = 45;
@@ -634,12 +665,26 @@
   function moneySum(n){ return "合计 ¥"+n.toFixed(2); }
   function dateLabel(){ return fmt(state.start)+"–"+fmt(state.end)+"（连续"+dayCount()+"天）"; }
   function step1Screen(){ return state.scheme === "b" ? "step1b" : "step1a"; }
+  function ruleTipText(){
+    if (state.mode === "day") {
+      return "连选多天时，全部日单由同一人服务。";
+    }
+    if (state.mode === "night") {
+      return "连选多天时，全部夜单由同一人服务。";
+    }
+    if (state.mode === "24h") {
+      return "连选多天时，日单均为同一人，夜单均为另一人，共2人。";
+    }
+    return "连选多天时，日单均为同一人，夜单均为同一人；仅日/夜同理。";
+  }
+  function syncRuleTips(){
+    var body = ruleTipText();
+    $all("[data-rule-tip] .rule-tip-body").forEach(function(el){ el.textContent = body; });
+  }
 
   function syncHomeEntry(){
-    var isC = state.scheme === "c";
-    $("#entry").style.display = isC ? "none" : "flex";
-    $("#entry-float").classList.toggle("show", isC);
-    $("#home-screen").classList.toggle("scheme-c", isC);
+    // 方案一/二均用首页悬浮球入口
+    $("#entry-float").classList.add("show");
   }
 
   function unitPrices(){
@@ -666,13 +711,34 @@
   }
   function closePay(){ $("#pay-sheet").classList.remove("open"); $("#pay-sheet").setAttribute("aria-hidden","true"); }
 
+  function refreshCals(){
+    renderCal("cal-a");
+    renderCal("cal-b");
+    renderCal("cal-c");
+  }
+
+  function setDateEditorOpen(open){
+    state.dateEditorOpen = !!open;
+    var ed = $("#date-editor");
+    var btn = $("#edit-date");
+    if (ed) ed.classList.toggle("open", state.dateEditorOpen);
+    if (btn) btn.textContent = state.dateEditorOpen ? "收起" : "修改日期";
+    if (state.dateEditorOpen) {
+      renderRange();
+      renderCal("cal-c");
+    }
+  }
+
   function go(name){
     state.screen = name;
     $all(".screen").forEach(function(s){ s.classList.toggle("active", s.getAttribute("data-screen")===name); });
     closePay();
     if (name==="step1a") syncSchemeA();
     if (name==="step1b") syncSchemeB();
-    if (name==="step2") renderStep2(false);
+    if (name==="step2") {
+      setDateEditorOpen(false);
+      renderStep2(false);
+    }
   }
 
   function goBack(){
@@ -703,7 +769,8 @@
       c.classList.toggle("on", c.getAttribute("data-mode")===state.mode);
     });
     renderRange();
-    renderCal("cal-a");
+    refreshCals();
+    syncRuleTips();
     $("#next-a").disabled = !canGoStep2();
   }
 
@@ -712,6 +779,7 @@
     state.start = null;
     state.end = null;
     state.picking = "start";
+    setDateEditorOpen(false);
   }
 
   function renderRange(){
@@ -800,10 +868,11 @@
       state.picking = "start";
     }
     renderRange();
-    renderCal("cal-a");
-    renderCal("cal-b");
+    refreshCals();
+    syncRuleTips();
     if (state.screen==="step1a") $("#next-a").disabled = !canGoStep2();
     if (state.screen==="step1b") $("#q-next").disabled = !canGoStep2();
+    if (state.screen==="step2" && hasDateRange()) renderStep2(false);
   }
 
   function syncSchemeB(){
@@ -814,7 +883,8 @@
       o.classList.toggle("on", o.getAttribute("data-mode")===state.mode);
     });
     renderRange();
-    renderCal("cal-b");
+    refreshCals();
+    syncRuleTips();
     $("#q-next").disabled = !canGoStep2();
   }
 
@@ -828,7 +898,7 @@
     if (next<1){ toast("至少选择1天"); return; }
     if (next>state.maxDays){ toast("最多连续"+state.maxDays+"天"); return; }
     state.end=addDays(state.start, next-1); state.picking="start";
-    renderRange(); renderCal("cal-a"); renderCal("cal-b");
+    renderRange(); refreshCals();
     renderStep2(true);
     toast(delta>0 ? ("已延长至 "+fmt(state.end)) : ("已缩短至 "+fmt(state.end)));
   }
@@ -858,6 +928,7 @@
     var showNight = state.mode==="night"||state.mode==="24h";
     $("#prod-day").style.display=showDay?"block":"none";
     $("#prod-night").style.display=showNight?"block":"none";
+    syncRuleTips();
   }
 
   $all(".desk-switch button").forEach(function(btn){
@@ -869,7 +940,6 @@
     clearModeAndDate();
     go(step1Screen());
   }
-  $("#entry").addEventListener("click", startFlow);
   $("#entry-float").addEventListener("click", startFlow);
   $all("[data-back]").forEach(function(b){ b.addEventListener("click", goBack); });
 
@@ -885,6 +955,7 @@
     chip.addEventListener("click", function(){
       state.mode=chip.getAttribute("data-mode");
       $all("#mode-chips-a .chip").forEach(function(c){ c.classList.toggle("on", c===chip); });
+      syncRuleTips();
       $("#next-a").disabled = !canGoStep2();
     });
   });
@@ -901,23 +972,23 @@
         if (hasDateRange()) state.end = null;
       }
       renderRange();
-      renderCal("cal-a");
-      renderCal("cal-b");
+      refreshCals();
       if (state.screen==="step1a") $("#next-a").disabled = !canGoStep2();
       if (state.screen==="step1b") $("#q-next").disabled = !canGoStep2();
+      if (state.screen==="step2" && hasDateRange()) renderStep2(false);
     });
   });
 
   $all(".cal-prev").forEach(function(b){
     b.addEventListener("click", function(){
       state.viewMonth-=1; if(state.viewMonth<0){state.viewMonth=11;state.viewYear-=1;}
-      renderRange(); renderCal("cal-a"); renderCal("cal-b");
+      renderRange(); refreshCals();
     });
   });
   $all(".cal-next").forEach(function(b){
     b.addEventListener("click", function(){
       state.viewMonth+=1; if(state.viewMonth>11){state.viewMonth=0;state.viewYear+=1;}
-      renderRange(); renderCal("cal-a"); renderCal("cal-b");
+      renderRange(); refreshCals();
     });
   });
 
@@ -955,7 +1026,16 @@
     go("step2");
   });
 
-  $("#edit-date").addEventListener("click", function(){ go(step1Screen()); });
+  $("#edit-date").addEventListener("click", function(){
+    if (state.dateEditorOpen) {
+      if (!hasDateRange()) { toast("请先选完开始与结束日期"); return; }
+      setDateEditorOpen(false);
+      renderStep2(false);
+      return;
+    }
+    state.picking = "start";
+    setDateEditorOpen(true);
+  });
   $all("[data-day]").forEach(function(btn){
     btn.addEventListener("click", function(){ setDaysByDelta(Number(btn.getAttribute("data-day"))); });
   });
