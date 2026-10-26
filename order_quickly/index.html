@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>连续陪护快下单原型 · 双方案</title>
+  <style>html,body{margin:0;height:100%;background:#e8eaed;overflow:hidden}</style>
+</head>
+<body>
+<div id="ehutong-proto" aria-label="连续陪护快下单双方案原型">
+<style>
+#ehutong-proto{
+  --brand:#1ab394;--brand-dark:#12967c;--orange:#ff7a45;--bg:#f2f3f5;--card:#fff;
+  --text:#222;--muted:#8c8c8c;--line:#eee;
+  --phone-h:min(780px, calc(100vh - 48px));
+  font-family:"PingFang SC","Helvetica Neue",sans-serif;color:var(--text);
+  position:relative;min-height:100vh;padding:16px;
+}
+#ehutong-proto *{box-sizing:border-box}
+#ehutong-proto .desk-switch{
+  position:fixed;top:16px;left:16px;z-index:50;
+  display:flex;flex-direction:column;gap:8px;width:200px;
+  background:#fff;border:1px solid #d8d8d8;border-radius:12px;padding:12px;
+  box-shadow:0 4px 16px rgba(0,0,0,.06);
+}
+#ehutong-proto .desk-switch .label{font-size:12px;color:#888;margin-bottom:2px}
+#ehutong-proto .desk-switch button{
+  border:1px solid #e5e5e5;background:#fff;border-radius:8px;padding:10px 12px;
+  text-align:left;cursor:pointer;font-size:13px;color:#444;line-height:1.35;
+}
+#ehutong-proto .desk-switch button .t{font-weight:500;display:block}
+#ehutong-proto .desk-switch button .d{font-size:11px;color:#999;margin-top:2px}
+#ehutong-proto .desk-switch button.on{
+  border-color:var(--brand);background:color-mix(in srgb,var(--brand) 10%,#fff);
+  box-shadow:inset 0 0 0 1px var(--brand);color:var(--brand-dark);
+}
+#ehutong-proto .phone-wrap{display:flex;justify-content:center;align-items:flex-start;min-height:calc(100vh - 32px)}
+#ehutong-proto .phone{
+  width:min(390px,100%);height:var(--phone-h);background:var(--bg);border-radius:28px;
+  overflow:hidden;position:relative;border:1px solid #cfd4d3;box-shadow:0 10px 30px rgba(0,0,0,.08);
+  display:flex;flex-direction:column;
+}
+#ehutong-proto .status{
+  height:28px;flex:0 0 28px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;font-weight:500;background:var(--brand);color:#fff;
+}
+#ehutong-proto .screen{display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+#ehutong-proto .screen.active{display:flex}
+#ehutong-proto .nav{
+  height:46px;flex:0 0 46px;background:var(--brand);color:#fff;
+  display:flex;align-items:center;padding:0 8px;position:relative;
+}
+#ehutong-proto .nav .back{border:0;background:transparent;color:#fff;font-size:15px;padding:8px 10px;cursor:pointer;z-index:1}
+#ehutong-proto .nav h1{margin:0;position:absolute;left:0;right:0;text-align:center;font-size:17px;font-weight:500;color:#fff;pointer-events:none}
+#ehutong-proto .scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 12px 16px;overscroll-behavior:contain}
+#ehutong-proto .card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:10px}
+#ehutong-proto .sec{font-size:14px;font-weight:500;margin:0 0 10px}
+#ehutong-proto .chips{display:flex;flex-wrap:wrap;gap:8px}
+#ehutong-proto .chip{
+  border:1px solid #e5e5e5;background:#fff;border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;color:#333;
+}
+#ehutong-proto .chip.on{
+  border-color:var(--brand);color:var(--brand-dark);
+  box-shadow:inset 0 0 0 1px var(--brand);background:color-mix(in srgb,var(--brand) 6%,#fff);
+}
+#ehutong-proto .scene-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#ehutong-proto .scene-tab{
+  border:1px solid #e5e5e5;background:#fff;border-radius:12px;padding:14px 12px;text-align:center;cursor:pointer;
+}
+#ehutong-proto .scene-tab .n{font-size:16px;font-weight:500}
+#ehutong-proto .scene-tab .d{font-size:12px;color:var(--muted);margin-top:4px}
+#ehutong-proto .scene-tab.on{
+  border-color:var(--brand);background:color-mix(in srgb,var(--brand) 8%,#fff);box-shadow:inset 0 0 0 1px var(--brand);
+}
+#ehutong-proto .scene-tab.on .n{color:var(--brand-dark)}
+#ehutong-proto .gate{
+  background:#fff;border-radius:12px;padding:28px 16px;text-align:center;color:var(--muted);font-size:14px;line-height:1.6;
+}
+#ehutong-proto .range-summary{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  background:#f7faf9;border-radius:10px;padding:10px 12px;margin-bottom:10px;
+}
+#ehutong-proto .range-summary .l{font-size:12px;color:#888}
+#ehutong-proto .range-summary .v{font-size:15px;font-weight:500;margin-top:2px}
+#ehutong-proto .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+#ehutong-proto .cal-head button{border:0;background:#f3f3f3;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px}
+#ehutong-proto .cal-head .m{font-size:14px;font-weight:500}
+#ehutong-proto .cal-week{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;color:#999;margin-bottom:4px}
+#ehutong-proto .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+#ehutong-proto .cal-day{
+  border:0;border-radius:8px;background:transparent;font-size:13px;cursor:pointer;color:#333;
+  height:32px;
+}
+#ehutong-proto .cal-day:disabled{color:#ccc;cursor:default}
+#ehutong-proto .cal-day.in{background:color-mix(in srgb,var(--brand) 14%,#fff);color:var(--brand-dark);border-radius:0}
+#ehutong-proto .cal-day.start,#ehutong-proto .cal-day.end{background:var(--brand);color:#fff;border-radius:8px;font-weight:500}
+#ehutong-proto .cal-day.start.in{border-radius:8px 0 0 8px}
+#ehutong-proto .cal-day.end.in{border-radius:0 8px 8px 0}
+#ehutong-proto .cal-day.start.end{border-radius:8px}
+
+/* 方案一：场景/类型加宽加重，日历收矮 */
+#ehutong-proto .screen[data-screen="step1a"] .scroll{
+  overflow:hidden;padding:8px 10px;display:flex;flex-direction:column;gap:8px;
+}
+#ehutong-proto .screen[data-screen="step1a"] .scene-title{font-size:12px;color:#666;margin:0}
+#ehutong-proto .screen[data-screen="step1a"] .scene-tab{padding:16px 12px}
+#ehutong-proto .screen[data-screen="step1a"] .scene-tab .n{font-size:17px}
+#ehutong-proto .screen[data-screen="step1a"] #body-a{
+  flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;
+}
+#ehutong-proto .screen[data-screen="step1a"] .card{margin:0;padding:12px 14px;flex-shrink:0}
+#ehutong-proto .screen[data-screen="step1a"] .card.mode-card .chips{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+#ehutong-proto .screen[data-screen="step1a"] .card.mode-card .chip{text-align:center;padding:12px 4px;font-size:12px;line-height:1.3}
+#ehutong-proto .screen[data-screen="step1a"] .card.cal-card{flex:0 0 auto;padding:10px 12px}
+#ehutong-proto .screen[data-screen="step1a"] .cal-day{height:28px;font-size:12px}
+#ehutong-proto .screen[data-screen="step1a"] .range-summary{margin-bottom:6px;padding:8px 10px}
+#ehutong-proto .screen[data-screen="step1a"] .bottom{padding:8px 12px 12px}
+
+/* 方案二：一页问卷 */
+#ehutong-proto .q-block{margin-bottom:12px}
+#ehutong-proto .q-ask{font-size:15px;font-weight:500;margin:0 0 8px}
+#ehutong-proto .q-opts{display:flex;flex-direction:column;gap:8px}
+#ehutong-proto .q-opts.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#ehutong-proto .q-opts.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+#ehutong-proto .q-opt{
+  border:1px solid #e5e5e5;background:#fff;border-radius:10px;padding:12px 6px;text-align:center;cursor:pointer;
+}
+#ehutong-proto .q-opt .t{font-size:12px;font-weight:500;line-height:1.3}
+#ehutong-proto .q-opt .d{font-size:11px;color:#888;margin-top:3px}
+#ehutong-proto .q-opt.on{
+  border-color:var(--brand);background:color-mix(in srgb,var(--brand) 8%,#fff);box-shadow:inset 0 0 0 1px var(--brand);
+}
+#ehutong-proto .q-opt.on .t{color:var(--brand-dark)}
+#ehutong-proto .screen[data-screen="step1b"] .scroll{overflow-y:auto;padding:10px 12px}
+#ehutong-proto .screen[data-screen="step1b"] .cal-day{height:28px;font-size:12px}
+
+#ehutong-proto .date-banner{
+  background:#f7faf9;border:1px solid color-mix(in srgb,var(--brand) 25%,#e8e8e8);
+  border-radius:10px;padding:12px;margin-bottom:12px;
+}
+#ehutong-proto .date-banner .row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+#ehutong-proto .date-banner .lab{font-size:12px;color:#888;margin-bottom:4px}
+#ehutong-proto .date-banner .val{font-size:16px;font-weight:500}
+#ehutong-proto .date-banner .link{border:0;background:transparent;color:var(--brand-dark);font-size:13px;cursor:pointer;padding:0}
+#ehutong-proto .date-banner.flash{animation:ehFlash .55s ease}
+@keyframes ehFlash{0%,100%{background:#f7faf9}40%{background:color-mix(in srgb,var(--brand) 18%,#fff)}}
+#ehutong-proto .field-row{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;
+}
+#ehutong-proto .field-row:last-child{border-bottom:0;padding-bottom:0}
+#ehutong-proto .field-row:first-child{padding-top:0}
+#ehutong-proto .field-row .k{min-width:72px}
+#ehutong-proto .field-row .v{flex:1;text-align:right;color:#666;line-height:1.4}
+#ehutong-proto .field-row .arrow{color:#bbb;margin-left:4px}
+#ehutong-proto .prod-block + .prod-block{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+#ehutong-proto .prod{display:flex;gap:10px;align-items:flex-start}
+#ehutong-proto .thumb{width:64px;height:64px;border-radius:8px;flex-shrink:0;background:linear-gradient(145deg,#d7efe9,#9fd5cb)}
+#ehutong-proto .prod-main{flex:1;min-width:0}
+#ehutong-proto .prod-name{font-size:14px;font-weight:500;line-height:1.35;margin-bottom:6px}
+#ehutong-proto .tag{display:inline-block;font-size:11px;color:#888;background:#f3f3f3;border-radius:4px;padding:2px 6px;margin-bottom:8px}
+#ehutong-proto .price-row{display:flex;align-items:center;justify-content:space-between}
+#ehutong-proto .price{color:var(--orange);font-size:16px;font-weight:500}
+#ehutong-proto .stepper{display:inline-flex;align-items:center;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden}
+#ehutong-proto .stepper button{width:28px;height:28px;border:0;background:#fafafa;font-size:16px;cursor:pointer;color:#666}
+#ehutong-proto .stepper span{min-width:28px;text-align:center;font-size:14px}
+#ehutong-proto .selected-bar{
+  margin-top:10px;padding:10px 12px;border:1px solid #e8e8e8;border-radius:10px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+#ehutong-proto .selected-bar .txt{font-size:13px;color:#666}
+#ehutong-proto .selected-bar em{font-style:normal;color:var(--brand-dark)}
+#ehutong-proto .mod-btn{
+  border:1px solid var(--brand);color:var(--brand-dark);background:#fff;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer;
+}
+#ehutong-proto .attrs{margin-top:10px;display:none}
+#ehutong-proto .attrs.open{display:block}
+#ehutong-proto .attr-title{font-size:14px;font-weight:500;margin:8px 0}
+#ehutong-proto .level-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#ehutong-proto .level{
+  border:1px solid #e5e5e5;border-radius:8px;padding:10px 8px;text-align:center;font-size:13px;cursor:pointer;background:#fff;line-height:1.35;
+}
+#ehutong-proto .level.on{border-color:var(--brand);color:var(--brand-dark);box-shadow:inset 0 0 0 1px var(--brand)}
+#ehutong-proto .fee-note{font-size:12px;color:var(--muted);margin-top:10px}
+#ehutong-proto .bottom{flex:0 0 auto;background:#fff;border-top:1px solid #eee;padding:10px 12px 14px}
+#ehutong-proto .agree{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--brand-dark);margin-bottom:10px}
+#ehutong-proto .paybar{display:flex;align-items:center;gap:10px}
+#ehutong-proto .paybar .left{flex:1}
+#ehutong-proto .paybar .sum{color:var(--orange);font-size:18px;font-weight:500}
+#ehutong-proto .paybar .detail{font-size:12px;color:#999;margin-top:2px}
+#ehutong-proto .btn-pay{
+  border:0;background:var(--brand);color:#fff;border-radius:999px;min-width:128px;height:42px;font-size:15px;font-weight:500;cursor:pointer;
+}
+#ehutong-proto .btn-next{
+  width:100%;border:0;background:var(--brand);color:#fff;border-radius:999px;height:44px;font-size:16px;font-weight:500;cursor:pointer;
+}
+#ehutong-proto .btn-next:disabled{opacity:.4;cursor:not-allowed}
+#ehutong-proto .btn-ghost{
+  width:100%;border:1px solid #ddd;background:#fff;color:#666;border-radius:999px;height:40px;font-size:14px;cursor:pointer;margin-bottom:8px;
+}
+#ehutong-proto .home-top{flex:0 0 auto;background:linear-gradient(180deg,#dff5f2,#f2f3f5 72%);padding:8px 12px 0}
+#ehutong-proto .search{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+#ehutong-proto .city{font-size:14px;font-weight:500}
+#ehutong-proto .search-box{flex:1;background:#fff;border-radius:20px;padding:8px 12px;font-size:13px;color:var(--muted);border:1px solid #e8e8e8}
+#ehutong-proto .banner{
+  height:90px;border-radius:12px;background:linear-gradient(120deg,#1b4d6e,#2a7a8c);
+  color:#fff;padding:14px;margin-bottom:12px;font-size:13px;line-height:1.4;
+}
+#ehutong-proto .banner strong{display:block;font-size:15px;margin-bottom:4px}
+#ehutong-proto .grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px 6px;
+  background:#fff;border-radius:12px;padding:14px 8px;margin-bottom:10px;text-align:center;
+}
+#ehutong-proto .grid .icon{
+  width:40px;height:40px;margin:0 auto 6px;border-radius:12px;background:#e8f7f5;
+  display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--brand-dark);font-weight:500;
+}
+#ehutong-proto .grid span{font-size:11px}
+#ehutong-proto .entry-strip{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  border:0;cursor:pointer;margin-bottom:10px;padding:12px 14px;border-radius:12px;
+  background:linear-gradient(105deg,#1ab394,#12967c);color:#fff;text-align:left;
+}
+#ehutong-proto .entry-strip .main{font-size:15px;font-weight:500;letter-spacing:.02em}
+#ehutong-proto .entry-strip .go{font-size:18px;opacity:.9}
+#ehutong-proto .float-ball{
+  position:absolute;right:12px;bottom:160px;z-index:9;
+  width:68px;height:68px;border-radius:50%;border:3px solid #fff;cursor:pointer;
+  background:linear-gradient(145deg,#20c5ab,#0d7a72);color:#fff;
+  box-shadow:0 8px 22px rgba(26,179,148,.55), 0 0 0 4px rgba(26,179,148,.18);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  font-size:11px;font-weight:500;line-height:1.15;padding:6px;
+}
+#ehutong-proto .float-ball.show{display:flex}
+#ehutong-proto .float-ball .f1{font-size:14px;font-weight:600}
+#ehutong-proto .float-ball .f2{font-size:11px;opacity:.95;margin-top:2px}
+#ehutong-proto .cs-ball{
+  position:absolute;right:18px;bottom:78px;z-index:7;
+  width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:var(--brand-dark);
+  box-shadow:0 4px 12px rgba(0,0,0,.12);font-size:11px;display:flex;align-items:center;justify-content:center;
+}
+#ehutong-proto .screen[data-screen="home"].scheme-c .cs-ball{bottom:78px;right:18px;opacity:.85;transform:scale(.92)}
+#ehutong-proto .mid-banner{background:#eef7f4;border-radius:12px;padding:16px;margin-bottom:10px}
+#ehutong-proto .mid-banner .t{font-size:18px;font-weight:500;margin-bottom:4px}
+#ehutong-proto .mid-banner .s{font-size:12px;color:var(--muted)}
+#ehutong-proto .tabbar{
+  height:56px;flex:0 0 56px;background:#fff;border-top:1px solid #eee;
+  display:grid;grid-template-columns:repeat(5,1fr);align-items:center;text-align:center;font-size:10px;color:#999;
+}
+#ehutong-proto .tabbar .on{color:var(--brand-dark)}
+#ehutong-proto .toast{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  background:rgba(0,0,0,.78);color:#fff;font-size:13px;padding:10px 16px;border-radius:8px;
+  opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap;z-index:20;
+  max-width:80%;text-align:center;
+}
+#ehutong-proto .toast.show{opacity:1}
+#ehutong-proto .sheet-mask{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:10;display:none;align-items:flex-end}
+#ehutong-proto .sheet-mask.open{display:flex}
+#ehutong-proto .sheet{width:100%;background:#fff;border-radius:16px 16px 0 0;padding:14px 14px 18px;max-height:78%;overflow:auto}
+#ehutong-proto .sheet-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:14px}
+#ehutong-proto .guarantees{display:flex;flex-wrap:wrap;gap:8px 12px}
+#ehutong-proto .guarantees span{font-size:12px;color:var(--brand-dark)}
+#ehutong-proto .sheet-close{border:0;background:transparent;font-size:22px;line-height:1;color:#999;cursor:pointer}
+#ehutong-proto .pay-opt{display:flex;align-items:center;gap:10px;padding:14px 4px;border-bottom:1px solid #f0f0f0;cursor:pointer}
+#ehutong-proto .pay-ico{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#fff}
+#ehutong-proto .pay-ico.wx{background:#09bb07}
+#ehutong-proto .pay-ico.coin{background:#f5a623}
+#ehutong-proto .pay-ico.friend{background:#4a90e2}
+#ehutong-proto .pay-opt .name{flex:1;font-size:15px}
+#ehutong-proto .pay-opt .sub{font-size:12px;color:#999;margin-top:2px}
+#ehutong-proto .radio{width:20px;height:20px;border-radius:50%;border:1px solid #ddd;display:flex;align-items:center;justify-content:center}
+#ehutong-proto .pay-opt.on .radio{border-color:var(--brand);background:var(--brand);color:#fff;font-size:12px}
+#ehutong-proto .sheet-tip{font-size:12px;color:#bbb;margin:12px 0 14px}
+#ehutong-proto .sheet-bar{display:flex;align-items:center;gap:10px}
+@media (prefers-reduced-motion:reduce){#ehutong-proto .toast,#ehutong-proto .date-banner.flash{transition:none;animation:none}}
+</style>
+
+<div class="desk-switch" role="tablist" aria-label="原型方案切换">
+  <div class="label">原型方案（电脑端切换）</div>
+  <button type="button" class="on" data-scheme="a" role="tab" aria-selected="true">
+    <span class="t">方案一</span>
+    <span class="d">同屏选场景 / 类型 / 日期</span>
+  </button>
+  <button type="button" data-scheme="b" role="tab" aria-selected="false">
+    <span class="t">方案二</span>
+    <span class="d">一页问卷答完再确认</span>
+  </button>
+  <button type="button" data-scheme="c" role="tab" aria-selected="false">
+    <span class="t">方案三 · 入口</span>
+    <span class="d">流程同方案一，首页悬浮球入口</span>
+  </button>
+</div>
+
+<div class="phone-wrap">
+<div class="phone">
+  <div class="status"><span>09:21</span><span>87%</span></div>
+
+  <!-- 首页 -->
+  <section class="screen active" data-screen="home" id="home-screen">
+    <div class="home-top">
+      <div class="search"><div class="city">上海市 ▾</div><div class="search-box">连续陪护 · 住院24小时</div></div>
+      <div class="banner"><strong>上海拥军优属基金会指定服务商</strong>护理 · 护士到家 · 康复陪护</div>
+    </div>
+    <div class="scroll" style="padding-top:0">
+      <button type="button" class="entry-strip" id="entry">
+        <span class="main">连陪快约</span>
+        <span class="go">→</span>
+      </button>
+      <div class="grid" aria-hidden="true">
+        <div><div class="icon">特护</div><span>住院特护</span></div>
+        <div><div class="icon">陪护</div><span>住院陪护</span></div>
+        <div><div class="icon">特护</div><span>居家特护</span></div>
+        <div><div class="icon">看护</div><span>居家看护</span></div>
+        <div><div class="icon">包月</div><span>居家包月</span></div>
+        <div><div class="icon">专项</div><span>居家专项</span></div>
+        <div><div class="icon">上门</div><span>护士上门</span></div>
+        <div><div class="icon">复健</div><span>上门复健</span></div>
+      </div>
+      <div class="mid-banner"><div class="t">告别盲目照护</div><div class="s">3分钟评估，获取专家级照护方案</div></div>
+    </div>
+    <button type="button" class="float-ball" id="entry-float" aria-label="连陪快约">
+      <span class="f1">连陪</span>
+      <span class="f2">快约</span>
+    </button>
+    <button type="button" class="cs-ball" aria-hidden="true">客服</button>
+    <div class="tabbar"><div class="on">首页</div><div>分类</div><div>AI</div><div>购物车</div><div>我的</div></div>
+  </section>
+
+  <!-- 方案一 第一页 -->
+  <section class="screen" data-screen="step1a">
+    <div class="nav">
+      <button type="button" class="back" data-back>‹ 返回</button>
+      <h1>选择服务与日期</h1>
+    </div>
+    <div class="scroll">
+      <div class="scene-title">服务场景</div>
+      <div class="scene-tabs" id="scene-tabs-a">
+        <button type="button" class="scene-tab" data-scene="hospital"><div class="n">住院</div><div class="d">院内陪护</div></button>
+        <button type="button" class="scene-tab" data-scene="home"><div class="n">居家</div><div class="d">上门看护</div></button>
+      </div>
+      <div id="body-a">
+        <div class="card mode-card">
+          <div class="sec">服务类型</div>
+          <div class="chips" id="mode-chips-a">
+            <button type="button" class="chip" data-mode="day">仅日间陪护</button>
+            <button type="button" class="chip" data-mode="night">仅夜间陪护</button>
+            <button type="button" class="chip" data-mode="24h">日间+夜间陪护</button>
+          </div>
+        </div>
+        <div class="card cal-card">
+          <div class="sec">服务日期</div>
+          <div class="range-summary">
+            <div><div class="l">已选区间</div><div class="v range-text">请选择</div></div>
+            <div style="text-align:right"><div class="l">连续天数</div><div class="v days-text">—</div></div>
+          </div>
+          <div class="cal-head">
+            <button type="button" class="cal-prev">‹</button>
+            <div class="m cal-month">2026年10月</div>
+            <button type="button" class="cal-next">›</button>
+          </div>
+          <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+          <div class="cal-grid" id="cal-a"></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom" id="bottom-a">
+      <button type="button" class="btn-next" id="next-a" data-to-step2 disabled>下一步</button>
+    </div>
+  </section>
+
+  <!-- 方案二 第一页：一页问卷 -->
+  <section class="screen" data-screen="step1b">
+    <div class="nav">
+      <button type="button" class="back" data-back>‹ 返回</button>
+      <h1>快速问卷</h1>
+    </div>
+    <div class="scroll">
+      <div class="card q-block">
+        <div class="q-ask">1. 服务场景</div>
+        <div class="q-opts row" id="q-scene">
+          <button type="button" class="q-opt" data-scene="hospital"><div class="t">住院</div><div class="d">院内陪护</div></button>
+          <button type="button" class="q-opt" data-scene="home"><div class="t">居家</div><div class="d">上门看护</div></button>
+        </div>
+      </div>
+      <div class="card q-block">
+        <div class="q-ask">2. 服务类型</div>
+        <div class="q-opts row3" id="q-mode">
+          <button type="button" class="q-opt" data-mode="day"><div class="t">仅日间陪护</div></button>
+          <button type="button" class="q-opt" data-mode="night"><div class="t">仅夜间陪护</div></button>
+          <button type="button" class="q-opt" data-mode="24h"><div class="t">日间+夜间陪护</div></button>
+        </div>
+      </div>
+      <div class="card q-block">
+        <div class="q-ask">3. 服务日期</div>
+        <div class="range-summary">
+          <div><div class="l">已选区间</div><div class="v range-text">请选择</div></div>
+          <div style="text-align:right"><div class="l">连续天数</div><div class="v days-text">—</div></div>
+        </div>
+        <div class="cal-head">
+          <button type="button" class="cal-prev">‹</button>
+          <div class="m cal-month">2026年10月</div>
+          <button type="button" class="cal-next">›</button>
+        </div>
+        <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+        <div class="cal-grid" id="cal-b"></div>
+      </div>
+    </div>
+    <div class="bottom">
+      <button type="button" class="btn-next" id="q-next" disabled>下一步</button>
+    </div>
+  </section>
+
+  <!-- 第二页（两方案共用） -->
+  <section class="screen" data-screen="step2">
+    <div class="nav">
+      <button type="button" class="back" data-back>‹ 返回</button>
+      <h1>确认信息</h1>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="field-row"><span class="k">服务地址</span><span class="v">上海市普陀区金沙江路1340弄8号… 嘿嘿嘿 11111111111<span class="arrow">›</span></span></div>
+        <div class="field-row"><span class="k">被护理人</span><span class="v">测试1 55岁 男<span class="arrow">›</span></span></div>
+      </div>
+      <div class="date-banner" id="date-banner">
+        <div class="row">
+          <div>
+            <div class="lab">服务日期（开始日不变，加减只改结束日）</div>
+            <div class="val" id="date-banner-val">10/24–10/26（连续3天）</div>
+          </div>
+          <button type="button" class="link" id="edit-date">修改日期</button>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:13px;color:#666;margin-bottom:10px" id="step2-summary">住院 · 24小时</div>
+        <div class="prod-block" id="prod-day">
+          <div class="prod">
+            <div class="thumb"></div>
+            <div class="prod-main">
+              <div class="prod-name" id="name-day">住院日间12小时陪护</div>
+              <span class="tag">12小时</span>
+              <div class="price-row">
+                <span class="price" id="price-day">¥ 380.00</span>
+                <div class="stepper"><button type="button" data-day="-1">−</button><span class="day-count">3</span><button type="button" data-day="1">+</button></div>
+              </div>
+            </div>
+          </div>
+          <div class="selected-bar">
+            <div class="txt">已选：<em id="sel-day">性别不限/五级护理员</em></div>
+            <button type="button" class="mod-btn" data-toggle="attrs-day">修改 ›</button>
+          </div>
+          <div class="attrs" id="attrs-day">
+            <div class="attr-title">性别要求</div>
+            <div class="chips" data-gender="day">
+              <button type="button" class="chip on" data-g="不限">不限</button>
+              <button type="button" class="chip" data-g="男">男</button>
+              <button type="button" class="chip" data-g="女">女</button>
+            </div>
+            <div class="attr-title">人员等级</div>
+            <div class="level-grid" data-level="day">
+              <button type="button" class="level on" data-level-name="五级护理员" data-add="0">五级护理员<br/>+0.00</button>
+              <button type="button" class="level" data-level-name="四级护理员" data-add="76">四级护理员<br/>+76.00</button>
+              <button type="button" class="level" data-level-name="三级护理员" data-add="114">三级护理员<br/>+114.00</button>
+              <button type="button" class="level" data-level-name="二级护理员" data-add="152">二级护理员<br/>+152.00</button>
+              <button type="button" class="level" data-level-name="一级护理员" data-add="190">一级护理员<br/>+190.00</button>
+            </div>
+            <div class="fee-note">上门费 ¥45.00 × 1</div>
+          </div>
+        </div>
+        <div class="prod-block" id="prod-night">
+          <div class="prod">
+            <div class="thumb"></div>
+            <div class="prod-main">
+              <div class="prod-name" id="name-night">住院夜间12小时陪护</div>
+              <span class="tag">12小时</span>
+              <div class="price-row">
+                <span class="price" id="price-night">¥ 405.00</span>
+                <div class="stepper"><button type="button" data-day="-1">−</button><span class="day-count">3</span><button type="button" data-day="1">+</button></div>
+              </div>
+            </div>
+          </div>
+          <div class="selected-bar">
+            <div class="txt">已选：<em id="sel-night">性别不限/五级护理员</em></div>
+            <button type="button" class="mod-btn" data-toggle="attrs-night">修改 ›</button>
+          </div>
+          <div class="attrs" id="attrs-night">
+            <div class="attr-title">性别要求</div>
+            <div class="chips" data-gender="night">
+              <button type="button" class="chip on" data-g="不限">不限</button>
+              <button type="button" class="chip" data-g="男">男</button>
+              <button type="button" class="chip" data-g="女">女</button>
+            </div>
+            <div class="attr-title">人员等级</div>
+            <div class="level-grid" data-level="night">
+              <button type="button" class="level on" data-level-name="五级护理员" data-add="0">五级护理员<br/>+0.00</button>
+              <button type="button" class="level" data-level-name="四级护理员" data-add="76">四级护理员<br/>+76.00</button>
+              <button type="button" class="level" data-level-name="三级护理员" data-add="114">三级护理员<br/>+114.00</button>
+              <button type="button" class="level" data-level-name="二级护理员" data-add="152">二级护理员<br/>+152.00</button>
+              <button type="button" class="level" data-level-name="一级护理员" data-add="190">一级护理员<br/>+190.00</button>
+            </div>
+            <div class="fee-note">上门费 ¥45.00 × 1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom">
+      <label class="agree"><input type="checkbox" id="agree" checked /> 已阅读并同意《平台服务协议》</label>
+      <div class="paybar">
+        <div class="left"><div class="sum" id="total-text">合计 ¥2400.00</div><div class="detail">查看明细 ▾</div></div>
+        <button type="button" class="btn-pay" id="open-pay">确认支付</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="sheet-mask" id="pay-sheet" aria-hidden="true">
+    <div class="sheet" role="dialog" aria-label="选择支付方式">
+      <div class="sheet-top">
+        <div class="guarantees"><span>✓ 三包保障</span><span>✓ 过程留痕</span><span>✓ 持证上岗</span><span>✓ 极速维权</span></div>
+        <button type="button" class="sheet-close" id="close-pay">×</button>
+      </div>
+      <div class="pay-opt on" data-pay="wx"><div class="pay-ico wx">微</div><div class="name">微信支付</div><div class="radio">✓</div></div>
+      <div class="pay-opt" data-pay="coin"><div class="pay-ico coin">币</div><div><div class="name">金币支付</div><div class="sub">e护通金币：0.00</div></div><div class="radio"></div></div>
+      <div class="pay-opt" data-pay="friend"><div class="pay-ico friend">友</div><div class="name">好友代付</div><div class="radio"></div></div>
+      <div class="sheet-tip">温馨提示：如需发票，请在服务完成后联系客服</div>
+      <div class="sheet-bar">
+        <div style="flex:1"><div id="sheet-total" style="color:var(--orange);font-size:18px;font-weight:500">合计 ¥2400.00</div></div>
+        <button type="button" class="btn-pay" id="pay-now">立即支付</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+</div>
+</div>
+
+<script>
+(function () {
+  var root = document.getElementById("ehutong-proto");
+  if (!root) return;
+
+  var today = new Date(2026, 9, 24);
+  var state = {
+    scheme: "a",
+    screen: "home",
+    scene: null,
+    mode: null,
+    start: null,
+    end: null,
+    picking: "start",
+    viewYear: 2026,
+    viewMonth: 9,
+    day: { gender: "不限", level: "五级护理员", add: 0 },
+    night: { gender: "不限", level: "五级护理员", add: 0 },
+    maxDays: 14
+  };
+  var prices = { hospital: { day: 380, night: 405 }, home: { day: 360, night: 390 } };
+  var visitFee = 45;
+
+  function $(s){ return root.querySelector(s); }
+  function $all(s){ return Array.prototype.slice.call(root.querySelectorAll(s)); }
+  function pad(n){ return n < 10 ? "0"+n : String(n); }
+  function ymd(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+  function fmt(d){ return (d.getMonth()+1)+"/"+pad(d.getDate()); }
+  function sameDay(a,b){ return a && b && ymd(a)===ymd(b); }
+  function daysBetween(a,b){
+    return Math.floor((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/86400000)+1;
+  }
+  function addDays(d,n){ var x=new Date(d.getTime()); x.setDate(x.getDate()+n); return x; }
+  function dayCount(){
+    if (!state.start || !state.end) return 0;
+    return daysBetween(state.start, state.end);
+  }
+  function hasDateRange(){ return !!(state.start && state.end); }
+  function canGoStep2(){ return !!(state.scene && state.mode && hasDateRange()); }
+  function money(n){ return "¥ "+n.toFixed(2); }
+  function moneySum(n){ return "合计 ¥"+n.toFixed(2); }
+  function dateLabel(){ return fmt(state.start)+"–"+fmt(state.end)+"（连续"+dayCount()+"天）"; }
+  function step1Screen(){ return state.scheme === "b" ? "step1b" : "step1a"; }
+
+  function syncHomeEntry(){
+    var isC = state.scheme === "c";
+    $("#entry").style.display = isC ? "none" : "flex";
+    $("#entry-float").classList.toggle("show", isC);
+    $("#home-screen").classList.toggle("scheme-c", isC);
+  }
+
+  function unitPrices(){
+    var p = prices[state.scene || "hospital"];
+    return { day: p.day + state.day.add, night: p.night + state.night.add };
+  }
+  function calc(){
+    var u = unitPrices(), n = dayCount(), day=0, night=0;
+    if (state.mode==="day"||state.mode==="24h") day = u.day * n;
+    if (state.mode==="night"||state.mode==="24h") night = u.night * n;
+    return { day:day, night:night, total:day+night+visitFee, u:u, n:n };
+  }
+  function skuNames(){
+    var prefix = state.scene === "home" ? "居家" : "住院";
+    return {
+      day: prefix + (state.scene==="home"?"日间12小时看护":"日间12小时陪护"),
+      night: prefix + (state.scene==="home"?"夜间12小时看护":"夜间12小时陪护")
+    };
+  }
+
+  function toast(msg){
+    var t=$("#toast"); t.textContent=msg; t.classList.add("show");
+    clearTimeout(toast._t); toast._t=setTimeout(function(){ t.classList.remove("show"); },1600);
+  }
+  function closePay(){ $("#pay-sheet").classList.remove("open"); $("#pay-sheet").setAttribute("aria-hidden","true"); }
+
+  function go(name){
+    state.screen = name;
+    $all(".screen").forEach(function(s){ s.classList.toggle("active", s.getAttribute("data-screen")===name); });
+    closePay();
+    if (name==="step1a") syncSchemeA();
+    if (name==="step1b") syncSchemeB();
+    if (name==="step2") renderStep2(false);
+  }
+
+  function goBack(){
+    if (state.screen==="step2") go(step1Screen());
+    else if (state.screen==="step1a" || state.screen==="step1b") go("home");
+    else go("home");
+  }
+
+  function setScheme(sch){
+    state.scheme = sch;
+    $all(".desk-switch button").forEach(function(b){
+      var on = b.getAttribute("data-scheme")===sch;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    state.scene = null;
+    clearModeAndDate();
+    closePay();
+    syncHomeEntry();
+    go("home");
+  }
+
+  function syncSchemeA(){
+    $all("#scene-tabs-a .scene-tab").forEach(function(t){
+      t.classList.toggle("on", t.getAttribute("data-scene")===state.scene);
+    });
+    $all("#mode-chips-a .chip").forEach(function(c){
+      c.classList.toggle("on", c.getAttribute("data-mode")===state.mode);
+    });
+    renderRange();
+    renderCal("cal-a");
+    $("#next-a").disabled = !canGoStep2();
+  }
+
+  function clearModeAndDate(){
+    state.mode = null;
+    state.start = null;
+    state.end = null;
+    state.picking = "start";
+  }
+
+  function renderRange(){
+    $all(".range-text").forEach(function(el){
+      el.textContent = hasDateRange() ? (fmt(state.start)+"–"+fmt(state.end)) : "请选择";
+    });
+    $all(".days-text").forEach(function(el){
+      el.textContent = hasDateRange() ? (dayCount()+"天") : "—";
+    });
+    $all(".cal-month").forEach(function(el){ el.textContent = state.viewYear+"年"+(state.viewMonth+1)+"月"; });
+  }
+
+  function renderCal(gridId){
+    var grid = $("#"+gridId);
+    if (!grid) return;
+    grid.innerHTML = "";
+    var first = new Date(state.viewYear, state.viewMonth, 1);
+    var startWeek = first.getDay();
+    var daysInMonth = new Date(state.viewYear, state.viewMonth+1, 0).getDate();
+    var i;
+    for (i=0;i<startWeek;i++) grid.appendChild(document.createElement("div"));
+    for (i=1;i<=daysInMonth;i++){
+      var d = new Date(state.viewYear, state.viewMonth, i);
+      var btn = document.createElement("button");
+      btn.type="button"; btn.className="cal-day"; btn.textContent=String(i);
+      btn.setAttribute("data-ymd", ymd(d));
+      if (d < today) btn.disabled = true;
+      else {
+        if (hasDateRange()) {
+          var t=d.getTime(), s=state.start.getTime(), e=state.end.getTime();
+          if (t>s && t<e) btn.classList.add("in");
+          if (sameDay(d,state.start)) btn.classList.add("start","in");
+          if (sameDay(d,state.end)) btn.classList.add("end","in");
+        } else if (state.start && sameDay(d, state.start)) {
+          btn.classList.add("start","end","in");
+        }
+        btn.addEventListener("click", onPickDay);
+      }
+      grid.appendChild(btn);
+    }
+  }
+
+  function onPickDay(ev){
+    var parts = ev.currentTarget.getAttribute("data-ymd").split("-");
+    var d = new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
+    if (state.picking==="start" || !state.start){
+      state.start=d; state.end=d; state.picking="end";
+    } else {
+      if (d<state.start){ state.end=state.start; state.start=d; }
+      else state.end=d;
+      if (dayCount()>state.maxDays){ state.end=addDays(state.start, state.maxDays-1); toast("最多连续"+state.maxDays+"天"); }
+      state.picking="start";
+    }
+    renderRange();
+    renderCal("cal-a");
+    renderCal("cal-b");
+    if (state.screen==="step1a") $("#next-a").disabled = !canGoStep2();
+    if (state.screen==="step1b") $("#q-next").disabled = !canGoStep2();
+  }
+
+  function syncSchemeB(){
+    $all("#q-scene .q-opt").forEach(function(o){
+      o.classList.toggle("on", o.getAttribute("data-scene")===state.scene);
+    });
+    $all("#q-mode .q-opt").forEach(function(o){
+      o.classList.toggle("on", o.getAttribute("data-mode")===state.mode);
+    });
+    renderRange();
+    renderCal("cal-b");
+    $("#q-next").disabled = !canGoStep2();
+  }
+
+  function flashDateBanner(){
+    var el=$("#date-banner"); el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+  }
+
+  function setDaysByDelta(delta){
+    if (!hasDateRange()){ toast("请先选择服务日期"); return; }
+    var next=dayCount()+delta;
+    if (next<1){ toast("至少选择1天"); return; }
+    if (next>state.maxDays){ toast("最多连续"+state.maxDays+"天"); return; }
+    state.end=addDays(state.start, next-1); state.picking="start";
+    renderRange(); renderCal("cal-a"); renderCal("cal-b");
+    renderStep2(true);
+    toast(delta>0 ? ("已延长至 "+fmt(state.end)) : ("已缩短至 "+fmt(state.end)));
+  }
+
+  function renderStep2(fromStepper){
+    var names=skuNames(), c=calc();
+    var sceneLabel=state.scene==="home"?"居家":"住院";
+    var modeLabel=state.mode==="24h"?"日间+夜间陪护":(state.mode==="day"?"仅日间陪护":"仅夜间陪护");
+    $("#step2-summary").textContent=sceneLabel+" · "+modeLabel;
+    $("#date-banner-val").textContent=dateLabel();
+    if (fromStepper) flashDateBanner();
+    $("#name-day").textContent=names.day;
+    $("#name-night").textContent=names.night;
+    $("#price-day").textContent=money(c.u.day);
+    $("#price-night").textContent=money(c.u.night);
+    $all(".day-count").forEach(function(el){ el.textContent=String(c.n); });
+    $("#sel-day").textContent="性别"+state.day.gender+"/"+state.day.level;
+    $("#sel-night").textContent="性别"+state.night.gender+"/"+state.night.level;
+    $("#total-text").textContent=moneySum(c.total);
+    $("#sheet-total").textContent=moneySum(c.total);
+    $("#prod-day").style.display=(state.mode==="day"||state.mode==="24h")?"block":"none";
+    $("#prod-night").style.display=(state.mode==="night"||state.mode==="24h")?"block":"none";
+  }
+
+  $all(".desk-switch button").forEach(function(btn){
+    btn.addEventListener("click", function(){ setScheme(btn.getAttribute("data-scheme")); });
+  });
+
+  function startFlow(){
+    state.scene=null;
+    clearModeAndDate();
+    go(step1Screen());
+  }
+  $("#entry").addEventListener("click", startFlow);
+  $("#entry-float").addEventListener("click", startFlow);
+  $all("[data-back]").forEach(function(b){ b.addEventListener("click", goBack); });
+
+  $all("#scene-tabs-a .scene-tab").forEach(function(tab){
+    tab.addEventListener("click", function(){
+      var same = state.scene === tab.getAttribute("data-scene");
+      state.scene=tab.getAttribute("data-scene");
+      if (!same) clearModeAndDate();
+      syncSchemeA();
+    });
+  });
+  $all("#mode-chips-a .chip").forEach(function(chip){
+    chip.addEventListener("click", function(){
+      state.mode=chip.getAttribute("data-mode");
+      $all("#mode-chips-a .chip").forEach(function(c){ c.classList.toggle("on", c===chip); });
+      $("#next-a").disabled = !canGoStep2();
+    });
+  });
+
+  $all(".cal-prev").forEach(function(b){
+    b.addEventListener("click", function(){
+      state.viewMonth-=1; if(state.viewMonth<0){state.viewMonth=11;state.viewYear-=1;}
+      renderRange(); renderCal("cal-a"); renderCal("cal-b");
+    });
+  });
+  $all(".cal-next").forEach(function(b){
+    b.addEventListener("click", function(){
+      state.viewMonth+=1; if(state.viewMonth>11){state.viewMonth=0;state.viewYear+=1;}
+      renderRange(); renderCal("cal-a"); renderCal("cal-b");
+    });
+  });
+
+  $all("[data-to-step2]").forEach(function(b){
+    b.addEventListener("click", function(){
+      if(!canGoStep2()){
+        if(!state.scene) toast("请先选择场景");
+        else if(!state.mode) toast("请选择服务类型");
+        else toast("请选择服务日期");
+        return;
+      }
+      go("step2");
+    });
+  });
+
+  $all("#q-scene .q-opt").forEach(function(opt){
+    opt.addEventListener("click", function(){
+      state.scene=opt.getAttribute("data-scene");
+      syncSchemeB();
+    });
+  });
+  $all("#q-mode .q-opt").forEach(function(opt){
+    opt.addEventListener("click", function(){
+      state.mode=opt.getAttribute("data-mode");
+      syncSchemeB();
+    });
+  });
+  $("#q-next").addEventListener("click", function(){
+    if(!canGoStep2()){
+      if(!state.scene) toast("请先选择服务场景");
+      else if(!state.mode) toast("请选择服务类型");
+      else toast("请选择服务日期");
+      return;
+    }
+    go("step2");
+  });
+
+  $("#edit-date").addEventListener("click", function(){ go(step1Screen()); });
+  $all("[data-day]").forEach(function(btn){
+    btn.addEventListener("click", function(){ setDaysByDelta(Number(btn.getAttribute("data-day"))); });
+  });
+  $all("[data-toggle]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var box=$("#"+btn.getAttribute("data-toggle"));
+      var open=box.classList.toggle("open");
+      btn.textContent=open?"收起 ›":"修改 ›";
+    });
+  });
+  $all("[data-gender]").forEach(function(group){
+    var shift=group.getAttribute("data-gender");
+    Array.prototype.forEach.call(group.querySelectorAll(".chip"), function(chip){
+      chip.addEventListener("click", function(){
+        Array.prototype.forEach.call(group.querySelectorAll(".chip"), function(c){ c.classList.remove("on"); });
+        chip.classList.add("on");
+        state[shift].gender=chip.getAttribute("data-g");
+        renderStep2(false);
+      });
+    });
+  });
+  $all("[data-level]").forEach(function(group){
+    var shift=group.getAttribute("data-level");
+    Array.prototype.forEach.call(group.querySelectorAll(".level"), function(btn){
+      btn.addEventListener("click", function(){
+        Array.prototype.forEach.call(group.querySelectorAll(".level"), function(c){ c.classList.remove("on"); });
+        btn.classList.add("on");
+        state[shift].level=btn.getAttribute("data-level-name");
+        state[shift].add=Number(btn.getAttribute("data-add")||0);
+        renderStep2(false);
+      });
+    });
+  });
+
+  $("#open-pay").addEventListener("click", function(){
+    if(!$("#agree").checked){ toast("请先勾选平台服务协议"); return; }
+    renderStep2(false);
+    $("#pay-sheet").classList.add("open");
+    $("#pay-sheet").setAttribute("aria-hidden","false");
+  });
+  $("#close-pay").addEventListener("click", closePay);
+  $("#pay-sheet").addEventListener("click", function(e){ if(e.target===$("#pay-sheet")) closePay(); });
+  $all(".pay-opt").forEach(function(opt){
+    opt.addEventListener("click", function(){
+      $all(".pay-opt").forEach(function(o){ o.classList.remove("on"); o.querySelector(".radio").textContent=""; });
+      opt.classList.add("on"); opt.querySelector(".radio").textContent="✓";
+    });
+  });
+  $("#pay-now").addEventListener("click", function(){
+    var c=calc();
+    closePay();
+    toast("已支付 "+money(c.total)+" · "+(state.mode==="24h"?2:1)+"主单 · "+(state.mode==="24h"?c.n*2:c.n)+"预约");
+  });
+
+  syncHomeEntry();
+})();
+</script>
+</div>
+</body>
+</html>
