@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>详情页风险告知</title>
+  <style>
+    :root {
+      --teal: #1aa6a0;
+      --teal-light: #e8f7f6;
+      --bg: #f3f4f6;
+      --orange: #ff6a00;
+      --danger: #c45c00;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: #e8eaed;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 10px;
+      gap: 4px;
+    }
+    .page-title { text-align: center; flex-shrink: 0; }
+    .page-title h1 { font-size: 13px; font-weight: 600; }
+
+    .scene-tabs {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+      margin-bottom: 2px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .scene-tabs a {
+      border: 1px solid #ccc;
+      background: #fff;
+      padding: 5px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      color: #555;
+      text-decoration: none;
+    }
+    .scene-tabs a.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+    }
+
+    .stage-frame {
+      --fit: min(1, (100vh - 48px) / 640, (100vw - 24px) / 340);
+      width: calc(320px * var(--fit));
+      height: calc(640px * var(--fit));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .stage { transform: scale(var(--fit)); transform-origin: center center; }
+
+    .phone {
+      width: 320px;
+      height: 640px;
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 28px rgba(0,0,0,.14);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border: 5px solid #1c1c1e;
+    }
+
+    .status-bar {
+      height: 18px;
+      background: #fff;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 12px 1px;
+      font-size: 9px;
+      color: #333;
+      flex-shrink: 0;
+    }
+
+    .modal-hd {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      position: relative;
+      border-bottom: 1px solid #f0f0f0;
+      flex-shrink: 0;
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .modal-hd .x {
+      position: absolute;
+      right: 12px;
+      width: 24px; height: 24px;
+      border: none;
+      background: #f5f5f5;
+      border-radius: 50%;
+      color: #888;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .scroll {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      background: #fff;
+    }
+
+    .hero {
+      height: 160px;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.45)),
+        linear-gradient(135deg, #7ec8c3, #4aa89f);
+      position: relative;
+      color: #fff;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .hero .tag {
+      position: absolute;
+      left: 12px; top: 12px;
+      background: rgba(255,255,255,.2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    .hero h2 { font-size: 26px; font-weight: 700; letter-spacing: 2px; }
+    .hero .rec { font-size: 12px; margin-top: 4px; opacity: .95; }
+    .hero .brand {
+      margin-top: 10px;
+      font-size: 11px;
+      opacity: .9;
+    }
+
+    /* 入口：权益条（点击打开整合半屏） */
+    .guarantee-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: linear-gradient(90deg, #eef9f4, #f5fbf8);
+      border-bottom: 1px solid #e5f2ec;
+      cursor: pointer;
+      gap: 4px;
+    }
+    .guarantee-bar:active { background: #e6f5ef; }
+    .g-items {
+      display: flex;
+      flex: 1;
+      justify-content: space-between;
+      gap: 2px;
+      min-width: 0;
+    }
+    .g-item {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      color: var(--teal);
+      white-space: nowrap;
+    }
+    .g-item .ic {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: #fff;
+      font-size: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .g-arrow { color: #99c5bc; font-size: 12px; flex-shrink: 0; }
+
+    .info {
+      padding: 12px;
+    }
+    .info .name { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .info .loc {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+    .info .price-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+    .info .price {
+      color: var(--orange);
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .info .price small { font-size: 12px; font-weight: 500; }
+    .info .sales { font-size: 12px; color: #999; }
+
+    .section {
+      margin: 0 12px 12px;
+      padding-top: 12px;
+      border-top: 8px solid var(--bg);
+      margin-left: 0;
+      margin-right: 0;
+      padding: 12px;
+    }
+    .section h3 { font-size: 14px; margin-bottom: 8px; }
+    .section p { font-size: 12px; color: #888; line-height: 1.5; }
+
+    .footer {
+      flex-shrink: 0;
+      border-top: 1px solid #eee;
+      padding: 8px 10px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+    }
+    .ft-icons {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .ft-ic {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 9px;
+      color: #666;
+      gap: 1px;
+      position: relative;
+    }
+    .ft-ic .em { font-size: 16px; }
+    .ft-ic .badge {
+      position: absolute;
+      top: -2px; right: -4px;
+      background: #f44;
+      color: #fff;
+      font-size: 8px;
+      min-width: 12px;
+      height: 12px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 2px;
+    }
+    .btn-cart {
+      flex: 1;
+      height: 36px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #fff;
+      color: #666;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn-buy {
+      flex: 1;
+      height: 36px;
+      border: none;
+      border-radius: 4px;
+      background: var(--teal);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s;
+    }
+    .overlay.open { opacity: 1; pointer-events: auto; }
+
+    .sheet {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      background: #fff;
+      border-radius: 14px 14px 0 0;
+      z-index: 21;
+      transform: translateY(100%);
+      transition: transform .28s cubic-bezier(.2,.8,.2,1);
+      max-height: 85%;
+      display: flex;
+      flex-direction: column;
+    }
+    .sheet.open { transform: translateY(0); }
+
+    .sheet-top {
+      background: linear-gradient(180deg, #e8f7f2, #fff 70%);
+      border-radius: 14px 14px 0 0;
+      padding: 10px 14px 8px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .sheet-top h2 {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 4px 0 2px;
+    }
+    .sheet-close {
+      position: absolute;
+      right: 12px; top: 10px;
+      width: 24px; height: 24px;
+      border: none;
+      background: rgba(0,0,0,.06);
+      border-radius: 50%;
+      font-size: 14px;
+      color: #888;
+      cursor: pointer;
+    }
+    .sheet-body {
+      padding: 4px 14px 8px;
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .block { margin-bottom: 14px; }
+    .block-hd {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .block-hd .ico {
+      width: 18px; height: 18px;
+      border-radius: 4px;
+      background: var(--teal);
+      color: #fff;
+      font-size: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .block-hd h3 { font-size: 14px; font-weight: 600; }
+    .block ul { list-style: none; padding-left: 0; }
+    .block li {
+      font-size: 11px;
+      color: #666;
+      line-height: 1.55;
+      margin-bottom: 4px;
+      padding-left: 0;
+    }
+    .block li strong { color: #333; font-weight: 500; }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 0 12px;
+      color: #999;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #eee;
+    }
+
+    .risk-intro {
+      font-size: 11px;
+      color: #888;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .risk-item {
+      display: flex;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .risk-item:last-of-type { border-bottom: none; }
+    .risk-num {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: #fff3e0;
+      color: var(--danger);
+      font-size: 10px;
+      font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .risk-item h4 { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+    .risk-item p { font-size: 11px; color: #888; line-height: 1.45; }
+
+    .action-box {
+      margin-top: 8px;
+      padding: 10px;
+      background: #fff5f0;
+      border: 1px solid #ffd8c2;
+      border-radius: 8px;
+    }
+    .action-box h4 { font-size: 12px; color: #c2410c; margin-bottom: 4px; }
+    .action-box p { font-size: 11px; color: #9a3412; line-height: 1.45; }
+
+    .sheet-ft { padding: 8px 14px 14px; flex-shrink: 0; }
+    .btn-know {
+      width: 100%;
+      height: 40px;
+      border: none;
+      border-radius: 20px;
+      background: var(--teal);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .note {
+      max-width: 520px;
+      font-size: 11px;
+      color: #888;
+      line-height: 1.55;
+      text-align: center;
+      flex-shrink: 0;
+      padding: 0 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-title">
+    <h1>风险告知 · 交互原型</h1>
+  </div>
+  <div class="scene-tabs">
+    <a href="index.html">下单页风险告知</a>
+    <a href="call-risk.html">打电话页风险告知</a>
+    <a class="active" href="detail-risk.html">详情页风险告知</a>
+  </div>
+
+  <div class="stage-frame">
+    <div class="stage">
+      <div class="phone">
+        <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+        <div class="modal-hd">
+          服务详情
+          <button type="button" class="x">×</button>
+        </div>
+        <div class="scroll">
+          <div class="hero">
+            <span class="tag">精选</span>
+            <h2>日间特护</h2>
+            <div class="rec">推荐时长：8 小时</div>
+            <div class="brand">找护士 找护工 就上 e护通</div>
+          </div>
+
+          <div class="guarantee-bar" id="open-sheet" role="button" tabindex="0">
+            <div class="g-items">
+              <span class="g-item"><span class="ic">✓</span>三包保障</span>
+              <span class="g-item"><span class="ic">◎</span>过程留痕</span>
+              <span class="g-item"><span class="ic">证</span>持证上岗</span>
+              <span class="g-item"><span class="ic">⚡</span>极速维权</span>
+            </div>
+            <span class="g-arrow">›</span>
+          </div>
+
+          <div class="info">
+            <div class="name">护士居家日间8小时特护</div>
+            <div class="loc">📍 上海市</div>
+            <div class="price-row">
+              <div class="price">¥ 595.00<small>起</small></div>
+              <div class="sales">销量 261</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>服务评价</h3>
+            <p>暂无更多评价内容（示意）</p>
+          </div>
+        </div>
+
+        <div class="footer">
+          <div class="ft-icons">
+            <div class="ft-ic"><span class="em">🎧</span>客服</div>
+            <div class="ft-ic"><span class="em">🛒</span><span class="badge">2</span>购物车</div>
+            <div class="ft-ic"><span class="em">🎁</span>分享有礼</div>
+          </div>
+          <button type="button" class="btn-cart">加入购物车</button>
+          <button type="button" class="btn-buy">去下单</button>
+        </div>
+
+        <div class="overlay" id="overlay"></div>
+        <div class="sheet" id="sheet">
+          <div class="sheet-top">
+            <h2>权益保障</h2>
+            <button type="button" class="sheet-close" id="close-sheet">×</button>
+          </div>
+          <div class="sheet-body">
+            <!-- 平台内：保留原权益，略压缩重合表述 -->
+            <div class="block">
+              <div class="block-hd"><span class="ico">✓</span><h3>三包保障</h3></div>
+              <ul>
+                <li><strong>服务完整性：</strong>配备充足护理人员；人员变动或突发情况立即补派，保障服务不中断。</li>
+                <li><strong>服务均质性：</strong>服务人员须持有效专业证书，并完成不少于 220 小时培训，通过平台审核上岗。</li>
+                <li><strong>服务及时性：</strong>下单响应 30 分钟内；投诉响应 30 分钟内。</li>
+              </ul>
+            </div>
+            <div class="block">
+              <div class="block-hd"><span class="ico">◎</span><h3>过程留痕</h3></div>
+              <ul>
+                <li>售前：工作人员确认服务细节</li>
+                <li>售中：音视频及图片过程记录</li>
+                <li>售后：7×24 小时在线客服</li>
+              </ul>
+            </div>
+            <div class="block">
+              <div class="block-hd"><span class="ico">证</span><h3>持证上岗</h3></div>
+              <ul>
+                <li>服务人员持国家认可的有效服务证书，经平台核验后上岗。</li>
+              </ul>
+            </div>
+            <div class="block">
+              <div class="block-hd"><span class="ico">⚡</span><h3>极速维权</h3></div>
+              <ul>
+                <li>自营项目支持极速维权，保障用户合法权益。<strong>（仅适用于通过平台下单并支付的订单）</strong></li>
+              </ul>
+            </div>
+
+            <!-- 整合：风险告知，明确「脱离平台」条件，消解与极速维权的表面冲突 -->
+            <div class="divider">平台交易须知</div>
+            <p class="risk-intro">以上保障适用于平台内交易。请通过平台下单并支付；私下转账或取消订单后线下交易，平台无法保障售后与纠纷处理。</p>
+
+            <div class="risk-item">
+              <div class="risk-num">1</div>
+              <div>
+                <h4>售后难保障</h4>
+                <p>脱离平台后，加价、不到岗、服务质量等问题难以介入取证与处理（无法享受上方极速维权）。</p>
+              </div>
+            </div>
+            <div class="risk-item">
+              <div class="risk-num">2</div>
+              <div>
+                <h4>资金无保障</h4>
+                <p>微信/支付宝等私下转账，退款与赔付需自行协商解决。</p>
+              </div>
+            </div>
+            <div class="risk-item">
+              <div class="risk-num">3</div>
+              <div>
+                <h4>人身与财产风险</h4>
+                <p>脱离平台后，身份核验、服务记录与保险链路可能不完整（过程留痕、持证核验将无法完整覆盖）。</p>
+              </div>
+            </div>
+            <div class="action-box">
+              <h4>⚠ 如遇以下情况，请拒绝并举报</h4>
+              <p>护工诱导取消订单、加微信私下收款等：请拒绝，并联系客服向我们举报。</p>
+            </div>
+          </div>
+          <div class="sheet-ft">
+            <button type="button" class="btn-know" id="know">我知道了</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="note">点击绿色权益条可打开整合后的半屏：上半为原「权益保障」，下半为「平台交易须知」（风险告知）。</p>
+
+  <script>
+    var overlay = document.getElementById('overlay');
+    var sheet = document.getElementById('sheet');
+
+    function openSheet() {
+      overlay.classList.add('open');
+      sheet.classList.add('open');
+    }
+    function closeSheet() {
+      overlay.classList.remove('open');
+      sheet.classList.remove('open');
+    }
+
+    document.getElementById('open-sheet').addEventListener('click', openSheet);
+    overlay.addEventListener('click', closeSheet);
+    document.getElementById('close-sheet').addEventListener('click', closeSheet);
+    document.getElementById('know').addEventListener('click', closeSheet);
+
+    // 默认展开便于查看整合效果
+    openSheet();
+  </script>
+</body>
+</html>

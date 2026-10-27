@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>打电话页风险告知</title>
+  <style>
+    :root {
+      --teal: #1aa6a0;
+      --teal-dark: #15918c;
+      --bg: #f3f4f6;
+      --orange: #ff6a00;
+      --warn-bg: #fff8e8;
+      --warn-border: #f0d48a;
+      --warn-text: #8a5a00;
+      --danger: #c45c00;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: #e8eaed;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 10px;
+      gap: 4px;
+    }
+
+    .page-title { text-align: center; flex-shrink: 0; }
+    .page-title h1 { font-size: 13px; font-weight: 600; }
+
+    .scene-tabs {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+      margin-bottom: 2px;
+    }
+    .scene-tabs a {
+      border: 1px solid #ccc;
+      background: #fff;
+      padding: 5px 14px;
+      border-radius: 14px;
+      font-size: 12px;
+      cursor: pointer;
+      color: #555;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .scene-tabs a.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+    }
+
+    .stage-frame {
+      --fit: min(1, (100vh - 48px) / 640, (100vw - 24px) / 340);
+      width: calc(320px * var(--fit));
+      height: calc(640px * var(--fit));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .stage {
+      transform: scale(var(--fit));
+      transform-origin: center center;
+    }
+
+    .phone {
+      width: 320px;
+      height: 640px;
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 28px rgba(0,0,0,.14);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border: 5px solid #1c1c1e;
+    }
+
+    .status-bar {
+      height: 18px;
+      background: var(--teal);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 12px 1px;
+      font-size: 9px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .header {
+      background: var(--teal);
+      color: #fff;
+      padding: 0 10px 12px;
+      flex-shrink: 0;
+    }
+    .header-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 36px;
+      font-size: 15px;
+    }
+    .header-nav .title { font-size: 15px; font-weight: 500; }
+    .header-nav .right { display: flex; gap: 8px; font-size: 13px; }
+    .header-status {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-top: 4px;
+      gap: 8px;
+    }
+    .header-status .st { font-size: 18px; font-weight: 600; line-height: 1.2; }
+    .header-status .sub { font-size: 11px; opacity: .9; margin-top: 2px; }
+    .btn-report {
+      background: #fff;
+      color: var(--teal);
+      border: none;
+      border-radius: 14px;
+      padding: 5px 10px;
+      font-size: 11px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .scroll {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--bg);
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .map {
+      height: 200px;
+      background:
+        linear-gradient(180deg, rgba(26,166,160,.08), transparent 40%),
+        repeating-linear-gradient(0deg, transparent, transparent 23px, #e4e8ea 24px),
+        repeating-linear-gradient(90deg, transparent, transparent 23px, #e4e8ea 24px),
+        #eef1f3;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .pin {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 10px;
+    }
+    .pin.nurse { left: 38%; top: 28%; }
+    .pin.user { left: 55%; top: 48%; }
+    .pin .avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      border: 2px solid #fff;
+    }
+    .pin.nurse .avatar { background: #e8f7f6; }
+    .pin.user .avatar { background: #d4f0c8; font-size: 14px; }
+    .pin .bubble {
+      margin-top: 4px;
+      background: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+      color: #555;
+      white-space: nowrap;
+    }
+
+    .staff-card {
+      margin: -28px 10px 0;
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+      position: relative;
+      z-index: 2;
+    }
+    .staff-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: #e8f7f6;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .staff-info { flex: 1; min-width: 0; }
+    .staff-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+    .staff-meta { font-size: 11px; color: #888; }
+    .staff-meta .score { color: var(--orange); margin-right: 8px; }
+    .btn-phone {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid #e5e5e5;
+      background: #fff;
+      color: var(--teal);
+      font-size: 18px;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .btn-phone:active { background: #f5f5f5; }
+
+    .order-card {
+      margin: 10px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 12px;
+    }
+    .order-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      line-height: 1.45;
+    }
+    .order-row:last-child { margin-bottom: 0; }
+    .order-row .k { color: #999; width: 84px; flex-shrink: 0; }
+    .order-row .v { flex: 1; color: #333; }
+
+    .footer {
+      flex-shrink: 0;
+      background: #fff;
+      border-top: 1px solid #eee;
+      padding: 8px 12px 12px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .cs {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 10px;
+      color: var(--teal);
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .cs .ic { font-size: 18px; }
+    .btn-cancel {
+      flex: 1;
+      height: 40px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      background: #fff;
+      color: #666;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* overlays */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s;
+    }
+    .overlay.open { opacity: 1; pointer-events: auto; }
+
+    /* 轻量居中弹窗 */
+    .dialog {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 280px;
+      background: #fff;
+      border-radius: 12px;
+      z-index: 21;
+      transform: translate(-50%, -46%) scale(.96);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s, transform .2s;
+      overflow: hidden;
+    }
+    .dialog.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .dialog-body {
+      padding: 20px 18px 14px;
+      text-align: center;
+    }
+    .dialog-body h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .dialog-body p {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.55;
+      text-align: left;
+    }
+    .dialog-body .tip {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #c45c00;
+      line-height: 1.5;
+      text-align: left;
+    }
+    .dialog-ft {
+      display: flex;
+      border-top: 1px solid #eee;
+    }
+    .dialog-ft button {
+      flex: 1;
+      height: 44px;
+      border: none;
+      background: #fff;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .dialog-ft button + button {
+      border-left: 1px solid #eee;
+      color: var(--teal);
+      font-weight: 500;
+    }
+    .dialog-ft .cancel { color: #888; }
+
+    /* 系统呼叫面板 */
+    .call-sheet {
+      position: absolute;
+      left: 8px; right: 8px; bottom: 8px;
+      z-index: 30;
+      transform: translateY(120%);
+      transition: transform .28s cubic-bezier(.2,.8,.2,1);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .call-sheet.open { transform: translateY(0); }
+    .call-group {
+      background: #f7f7f7;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .call-row {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      text-align: center;
+      border: none;
+      background: #f7f7f7;
+      font-size: 16px;
+      cursor: pointer;
+      color: #333;
+    }
+    .call-row + .call-row { border-top: 1px solid #e8e8e8; }
+    .call-row.num { color: #999; font-size: 13px; cursor: default; }
+    .call-row.call { color: #007aff; font-weight: 500; }
+    .call-cancel {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      border: none;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      color: #007aff;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page-title">
+    <h1>风险告知 · 交互原型</h1>
+  </div>
+  <div class="scene-tabs">
+    <a href="index.html">下单页风险告知</a>
+    <a class="active" href="call-risk.html">打电话页风险告知</a>
+    <a href="detail-risk.html">详情页风险告知</a>
+  </div>
+
+  <div class="stage-frame">
+    <div class="stage">
+      <div class="phone" id="phone">
+        <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+        <div class="header">
+          <div class="header-nav">
+            <span>‹</span>
+            <span class="title">订单详情</span>
+            <span class="right"><span>○</span><span>···</span></span>
+          </div>
+          <div class="header-status">
+            <div>
+              <div class="st">待服务</div>
+              <div class="sub">服务人员已出发</div>
+            </div>
+            <button type="button" class="btn-report">一键举报</button>
+          </div>
+        </div>
+
+        <div class="scroll">
+          <div class="map">
+            <div class="pin nurse">
+              <div class="avatar">👩‍⚕️</div>
+              <div class="bubble">距您 76m</div>
+            </div>
+            <div class="pin user">
+              <div class="avatar">📍</div>
+            </div>
+          </div>
+
+          <div class="staff-card">
+            <div class="staff-avatar">👩‍⚕️</div>
+            <div class="staff-info">
+              <div class="staff-name">三十六测试　男　50岁</div>
+              <div class="staff-meta">
+                <span class="score">4.0分</span>
+                <span>服务完成量 6</span>
+              </div>
+            </div>
+            <button type="button" class="btn-phone" id="btn-phone" aria-label="打电话" title="点击打电话">📞</button>
+          </div>
+
+          <div class="order-card">
+            <div class="order-row"><span class="k">预约服务时间</span><span class="v">10月26日 15:30</span></div>
+            <div class="order-row"><span class="k">服务时长</span><span class="v">1次</span></div>
+            <div class="order-row"><span class="k">服务地址</span><span class="v">上海市上海市普陀区金沙江路1340弄8号 新曹杨中南大厦</span></div>
+            <div class="order-row"><span class="k">被护理人信息</span><span class="v">程　25岁　男</span></div>
+          </div>
+        </div>
+
+        <div class="footer">
+          <div class="cs"><span class="ic">🎧</span>联系客服</div>
+          <button type="button" class="btn-cancel">取消订单</button>
+        </div>
+
+        <!-- 遮罩 -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- 轻量弹窗：平台交易须知 -->
+        <div class="dialog" id="sheet-risk" role="dialog" aria-labelledby="dialog-title">
+          <div class="dialog-body">
+            <h2 id="dialog-title">风险提示</h2>
+            <p>通话中请勿约定私下转账或取消订单后线下交易，平台无法保障售后与纠纷处理。</p>
+            <p class="tip">如遇护工诱导加微信私下收款，请立即通过「一键举报」功能向我们反馈。</p>
+          </div>
+          <div class="dialog-ft">
+            <button type="button" class="cancel" id="cancel-risk">取消</button>
+            <button type="button" id="continue-risk">继续呼叫</button>
+          </div>
+        </div>
+
+        <!-- 系统呼叫面板 -->
+        <div class="call-sheet" id="call-sheet">
+          <div class="call-group">
+            <div class="call-row num">185-0036-9726</div>
+            <button type="button" class="call-row call" id="do-call">呼叫</button>
+          </div>
+          <button type="button" class="call-cancel" id="cancel-call">取消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var overlay = document.getElementById('overlay');
+    var sheetRisk = document.getElementById('sheet-risk');
+    var callSheet = document.getElementById('call-sheet');
+
+    function closeAll() {
+      overlay.classList.remove('open');
+      sheetRisk.classList.remove('open');
+      callSheet.classList.remove('open');
+    }
+
+    function openRisk() {
+      closeAll();
+      overlay.classList.add('open');
+      sheetRisk.classList.add('open');
+    }
+
+    function openCall() {
+      sheetRisk.classList.remove('open');
+      overlay.classList.add('open');
+      callSheet.classList.add('open');
+    }
+
+    document.getElementById('btn-phone').addEventListener('click', openRisk);
+    overlay.addEventListener('click', closeAll);
+    document.getElementById('cancel-risk').addEventListener('click', closeAll);
+    document.getElementById('continue-risk').addEventListener('click', openCall);
+    document.getElementById('cancel-call').addEventListener('click', closeAll);
+    document.getElementById('do-call').addEventListener('click', function () {
+      closeAll();
+      alert('已发起呼叫（示意）');
+    });
+  </script>
+</body>
+</html>
