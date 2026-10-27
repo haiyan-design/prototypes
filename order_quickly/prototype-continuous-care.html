@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>连续陪护快下单原型 · 双方案</title>
+  <title>连续陪护快下单原型</title>
   <style>html,body{margin:0;height:100%;background:#e8eaed;overflow:hidden}</style>
 </head>
 <body>
-<div id="ehutong-proto" aria-label="连续陪护快下单双方案原型">
+<div id="ehutong-proto" aria-label="连续陪护快下单原型">
 <style>
 #ehutong-proto{
   --brand:#1ab394;--brand-dark:#12967c;--orange:#ff7a45;--bg:#f2f3f5;--card:#fff;
@@ -19,9 +19,10 @@
 #ehutong-proto *{box-sizing:border-box}
 #ehutong-proto .desk-switch{
   position:fixed;top:16px;left:16px;z-index:50;
-  display:flex;flex-direction:column;gap:8px;width:200px;
+  display:flex;flex-direction:column;gap:8px;width:220px;
   background:#fff;border:1px solid #d8d8d8;border-radius:12px;padding:12px;
   box-shadow:0 4px 16px rgba(0,0,0,.06);
+  max-height:calc(100vh - 32px);overflow-y:auto;
 }
 #ehutong-proto .desk-switch .label{font-size:12px;color:#888;margin-bottom:2px}
 #ehutong-proto .desk-switch button{
@@ -97,7 +98,6 @@
 #ehutong-proto .rule-tip .rule-tip-body{display:inline}
 #ehutong-proto .rule-tip.compact{margin:0 0 12px;font-size:12px;line-height:1.5;padding:10px 12px}
 #ehutong-proto .date-banner + .rule-tip{margin-top:0;margin-bottom:12px}
-#ehutong-proto .screen[data-screen="step1a"] .rule-tip{margin:6px 0 4px;flex-shrink:0}
 #ehutong-proto .scene-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 #ehutong-proto .scene-tab{
   border:1px solid #e5e5e5;background:#fff;border-radius:12px;padding:14px 12px;text-align:center;cursor:pointer;
@@ -133,25 +133,7 @@
 #ehutong-proto .cal-day.end.in{border-radius:0 8px 8px 0}
 #ehutong-proto .cal-day.start.end{border-radius:8px}
 
-/* 方案一：场景/类型加宽加重，日历收矮 */
-#ehutong-proto .screen[data-screen="step1a"] .scroll{
-  overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding:8px 10px;display:flex;flex-direction:column;gap:8px;
-}
-#ehutong-proto .screen[data-screen="step1a"] .scene-title{font-size:12px;color:#666;margin:0}
-#ehutong-proto .screen[data-screen="step1a"] .scene-tab{padding:16px 12px}
-#ehutong-proto .screen[data-screen="step1a"] .scene-tab .n{font-size:17px}
-#ehutong-proto .screen[data-screen="step1a"] #body-a{
-  flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;
-}
-#ehutong-proto .screen[data-screen="step1a"] .card{margin:0;padding:12px 14px;flex-shrink:0}
-#ehutong-proto .screen[data-screen="step1a"] .card.mode-card .chips{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-#ehutong-proto .screen[data-screen="step1a"] .card.mode-card .chip{padding:10px 4px}
-#ehutong-proto .screen[data-screen="step1a"] .card.cal-card{flex:0 0 auto;padding:10px 12px}
-#ehutong-proto .screen[data-screen="step1a"] .cal-day{height:28px;font-size:12px}
-#ehutong-proto .screen[data-screen="step1a"] .bottom{padding:8px 12px 12px}
-
-/* 方案二：一页问卷 */
+/* 方案一：一页问卷 */
 #ehutong-proto .q-block{margin-bottom:12px}
 #ehutong-proto .q-ask{font-size:15px;font-weight:500;margin:0 0 8px}
 #ehutong-proto .q-opts{display:flex;flex-direction:column;gap:8px}
@@ -176,7 +158,7 @@
 #ehutong-proto .date-banner .row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 #ehutong-proto .date-banner .lab{font-size:12px;color:#888;margin-bottom:4px}
 #ehutong-proto .date-banner .val{font-size:16px;font-weight:500}
-#ehutong-proto .date-banner .link{border:0;background:transparent;color:var(--brand-dark);font-size:13px;cursor:pointer;padding:0}
+#ehutong-proto .date-banner .link{border:0;background:transparent;color:var(--brand-dark);font-size:13px;cursor:pointer;padding:0;white-space:nowrap;flex-shrink:0}
 #ehutong-proto .date-banner .sync-row{
   display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed #dce8e5;
 }
@@ -209,6 +191,7 @@
 #ehutong-proto .price{color:var(--orange);font-size:16px;font-weight:500}
 #ehutong-proto .stepper{display:inline-flex;align-items:center;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden}
 #ehutong-proto .stepper button{width:28px;height:28px;border:0;background:#fafafa;font-size:16px;cursor:pointer;color:#666}
+#ehutong-proto .stepper button:disabled{color:#ccc;cursor:not-allowed;background:#f5f5f5}
 #ehutong-proto .stepper span{min-width:28px;text-align:center;font-size:14px}
 #ehutong-proto .selected-bar{
   margin-top:10px;padding:10px 12px;border:1px solid #e8e8e8;border-radius:10px;
@@ -311,6 +294,50 @@
 #ehutong-proto .pay-opt.on .radio{border-color:var(--brand);background:var(--brand);color:#fff;font-size:12px}
 #ehutong-proto .sheet-tip{font-size:12px;color:#bbb;margin:12px 0 14px}
 #ehutong-proto .sheet-bar{display:flex;align-items:center;gap:10px}
+#ehutong-proto .visit-block{padding-top:2px}
+#ehutong-proto .visit-head{
+  width:100%;border:0;background:transparent;padding:10px 0 6px;cursor:pointer;text-align:left;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+#ehutong-proto .visit-head .left{flex-shrink:0}
+#ehutong-proto .visit-head .k{font-size:14px;line-height:1.3;color:var(--text)}
+#ehutong-proto .visit-head .lab{font-size:11px;color:#999;margin-top:3px;line-height:1.3}
+#ehutong-proto .visit-head .right{
+  flex:1;min-width:0;display:flex;align-items:center;justify-content:flex-end;
+}
+#ehutong-proto .visit-head .visit-action{
+  font-size:14px;color:var(--brand-dark);text-align:right;line-height:1.35;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;
+}
+#ehutong-proto .opt-chip{
+  display:inline-block;border:1px solid #e5e5e5;border-radius:8px;padding:8px 14px;
+  font-size:13px;background:#fff;margin:0 8px 8px 0;cursor:pointer;
+}
+#ehutong-proto .opt-chip.on{border-color:var(--brand);color:var(--brand-dark);box-shadow:inset 0 0 0 1px var(--brand)}
+#ehutong-proto .fee-bar{
+  margin-top:12px;padding:10px 12px;border-radius:8px;background:#fff8f0;color:#8a5a2b;
+  font-size:13px;display:flex;justify-content:space-between;
+}
+#ehutong-proto .extra-row{
+  display:flex;align-items:center;justify-content:space-between;padding:14px 0;
+  border-bottom:1px solid var(--line);font-size:14px;
+}
+#ehutong-proto .extra-row:last-child{border-bottom:0}
+#ehutong-proto .extra-row .r{color:#bbb}
+#ehutong-proto .level.disabled{color:#bbb;background:#fafafa;cursor:not-allowed}
+#ehutong-proto .thumb-img{width:64px;height:64px;border-radius:8px;flex-shrink:0;object-fit:cover;display:block}
+#ehutong-proto .nav .tools{font-size:16px;opacity:.95}
+#ehutong-proto .paybar.svc .btn-pay{border-radius:999px;padding:12px 28px}
+#ehutong-proto .visit-block .sync-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:8px;padding-top:10px;border-top:1px dashed #e5e5e5;
+}
+#ehutong-proto .visit-block .sync-row[hidden]{display:none!important}
+#ehutong-proto .visit-block .sync-row .sl{font-size:13px;color:#666}
+#ehutong-proto .visit-block .date-editor{
+  display:none;margin-top:10px;padding-top:10px;border-top:1px dashed #e5e5e5;
+}
+#ehutong-proto .visit-block .date-editor.open{display:block}
 @media (prefers-reduced-motion:reduce){#ehutong-proto .toast,#ehutong-proto .date-banner.flash{transition:none;animation:none}}
 </style>
 
@@ -318,11 +345,11 @@
   <div class="label">原型方案（电脑端切换）</div>
   <button type="button" class="on" data-scheme="a" role="tab" aria-selected="true">
     <span class="t">方案一</span>
-    <span class="d">同屏选场景/类型/日期 · 悬浮球入口</span>
+    <span class="d">首页连陪快约入口下单</span>
   </button>
-  <button type="button" data-scheme="b" role="tab" aria-selected="false">
-    <span class="t">方案二</span>
-    <span class="d">一页问卷 · 悬浮球入口</span>
+  <button type="button" data-scheme="s" role="tab" aria-selected="false">
+    <span class="t">从服务去下单连陪</span>
+    <span class="d">服务确认页改造 · 上门时间连选</span>
   </button>
 </div>
 
@@ -357,71 +384,7 @@
     <div class="tabbar"><div class="on">首页</div><div>分类</div><div>AI</div><div>购物车</div><div>我的</div></div>
   </section>
 
-  <!-- 方案一 第一页 -->
-  <section class="screen" data-screen="step1a">
-    <div class="nav">
-      <button type="button" class="back" data-back>‹ 返回</button>
-      <h1>选择服务与日期</h1>
-    </div>
-    <div class="scroll">
-      <div class="scene-title">服务场景</div>
-      <div class="scene-tabs" id="scene-tabs-a">
-        <button type="button" class="scene-tab" data-scene="hospital"><div class="n">住院</div><div class="d">院内陪护</div></button>
-        <button type="button" class="scene-tab" data-scene="home"><div class="n">居家</div><div class="d">上门看护</div></button>
-      </div>
-      <div id="body-a">
-        <div class="card mode-card">
-          <div class="sec">服务类型</div>
-          <div class="chips" id="mode-chips-a">
-            <button type="button" class="chip" data-mode="24h">
-              <span class="chip-t">日间+夜间陪护</span>
-              <span class="chip-time">08:00–次日08:00</span>
-            </button>
-            <button type="button" class="chip" data-mode="day">
-              <span class="chip-t">仅日间陪护</span>
-              <span class="chip-time">08:00–20:00</span>
-            </button>
-            <button type="button" class="chip" data-mode="night">
-              <span class="chip-t">仅夜间陪护</span>
-              <span class="chip-time">20:00–次日08:00</span>
-            </button>
-          </div>
-        </div>
-        <div class="card cal-card">
-          <div class="sec">服务日期</div>
-          <div class="hotel-dates">
-            <button type="button" class="hd on" data-pick="start" id="hd-start-a">
-              <div class="l">开始日期</div>
-              <div class="v ph start-label">请选择</div>
-            </button>
-            <div class="arrow">→</div>
-            <button type="button" class="hd" data-pick="end" id="hd-end-a">
-              <div class="l">结束日期</div>
-              <div class="v ph end-label">请选择</div>
-            </button>
-          </div>
-          <div class="hotel-days day-span"><em class="day-span-n">0</em>天连续陪护</div>
-          <div class="hotel-tip pick-tip">请选择开始日期</div>
-          <div class="rule-tip" data-rule-tip>
-            <span class="rt">连陪提醒</span>
-            <span class="rule-tip-body">连选多天时，日单均为同一人，夜单均为同一人；仅日/夜同理。</span>
-          </div>
-          <div class="cal-head">
-            <button type="button" class="cal-prev">‹</button>
-            <div class="m cal-month">2026年10月</div>
-            <button type="button" class="cal-next">›</button>
-          </div>
-          <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
-          <div class="cal-grid" id="cal-a"></div>
-        </div>
-      </div>
-    </div>
-    <div class="bottom" id="bottom-a">
-      <button type="button" class="btn-next" id="next-a" data-to-step2 disabled>下一步</button>
-    </div>
-  </section>
-
-  <!-- 方案二 第一页：一页问卷 -->
+  <!-- 方案一：首页连陪快约 · 一页问卷 -->
   <section class="screen" data-screen="step1b">
     <div class="nav">
       <button type="button" class="back" data-back>‹ 返回</button>
@@ -601,6 +564,101 @@
     </div>
   </section>
 
+  <!-- 从服务去下单连陪 -->
+  <section class="screen" data-screen="service-order">
+    <div class="nav">
+      <button type="button" class="back" data-back>‹</button>
+      <h1></h1>
+      <div class="tools">⌂ ···</div>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="field-row"><span class="k">服务地址</span><span class="v">上海市普陀区金沙江路1340弄8号… 嘿嘿嘿 11111111111<span class="arrow">›</span></span></div>
+        <div class="field-row"><span class="k">被护理人</span><span class="v">测试1 55岁 男<span class="arrow">›</span></span></div>
+        <div class="visit-block">
+          <button type="button" class="visit-head" id="svc-visit-toggle" aria-expanded="false">
+            <div class="left">
+              <div class="k">上门时间</div>
+              <div class="lab">连续陪护 · 至少3天</div>
+            </div>
+            <div class="right">
+              <span class="visit-action" id="svc-visit-action">请选择</span>
+            </div>
+          </button>
+          <div class="sync-row" id="svc-sync-row" hidden>
+            <span class="sl">服务天数</span>
+            <div class="stepper">
+              <button type="button" data-day="-1">−</button>
+              <span class="day-count" id="svc-day-count">3</span>
+              <button type="button" data-day="1">+</button>
+            </div>
+          </div>
+          <div class="date-editor" id="svc-date-editor">
+            <div class="hotel-dates">
+              <button type="button" class="hd on" data-pick="start">
+                <div class="l">开始日期</div>
+                <div class="v ph start-label">请选择</div>
+              </button>
+              <div class="arrow">→</div>
+              <button type="button" class="hd" data-pick="end">
+                <div class="l">结束日期</div>
+                <div class="v ph end-label">请选择</div>
+              </button>
+            </div>
+            <div class="hotel-days day-span"><em class="day-span-n">0</em>天连续陪护</div>
+            <div class="hotel-tip pick-tip">请选择开始日期</div>
+            <div class="cal-head">
+              <button type="button" class="cal-prev">‹</button>
+              <div class="m cal-month">2026年10月</div>
+              <button type="button" class="cal-next">›</button>
+            </div>
+            <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+            <div class="cal-grid" id="cal-s"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="prod">
+          <img class="thumb-img" src="assets/ref-fig2.png" alt="" />
+          <div class="prod-main">
+            <div class="prod-name">居家日间12小时看护</div>
+            <div class="price-row">
+              <span class="price" id="svc-unit-price">¥335.00</span>
+            </div>
+          </div>
+        </div>
+        <div class="sec" style="margin-top:12px">服务时长</div>
+        <button type="button" class="opt-chip on">12小时</button>
+        <div class="sec">性别要求</div>
+        <div id="svc-gender">
+          <button type="button" class="opt-chip on" data-g="不限">不限</button>
+          <button type="button" class="opt-chip" data-g="男">男</button>
+          <button type="button" class="opt-chip" data-g="女">女</button>
+        </div>
+        <div class="sec">人员等级</div>
+        <div class="level-grid" id="svc-levels">
+          <button type="button" class="level on" data-add="0">五级护理员<br/>+0.00</button>
+          <button type="button" class="level" data-add="76">四级护理员<br/>+76.00</button>
+          <button type="button" class="level" data-add="114">三级护理员<br/>+114.00</button>
+          <button type="button" class="level" data-add="152">二级护理员<br/>+152.00</button>
+          <button type="button" class="level disabled" data-add="190" disabled>一级护理员<br/>+190.00</button>
+        </div>
+        <div class="fee-bar"><span>上门费 ¥45.00</span><span id="svc-fee-mul">×1</span></div>
+      </div>
+      <div class="card">
+        <div class="extra-row"><span>特殊补充 <span style="color:#999;font-size:12px">(选填)</span></span><span class="r">请选择或填写 ›</span></div>
+        <div class="extra-row"><span>优惠券</span><span class="r">请选择 ›</span></div>
+      </div>
+    </div>
+    <div class="bottom">
+      <label class="agree"><input type="checkbox" id="svc-agree" checked /> 已阅读并同意《平台服务协议》</label>
+      <div class="paybar svc">
+        <div class="left"><div class="sum" id="svc-total">合计 ¥380.00</div><div class="detail">查看明细 ▾</div></div>
+        <button type="button" class="btn-pay" id="svc-pay">立即支付</button>
+      </div>
+    </div>
+  </section>
+
   <div class="sheet-mask" id="pay-sheet" aria-hidden="true">
     <div class="sheet" role="dialog" aria-label="选择支付方式">
       <div class="sheet-top">
@@ -639,8 +697,12 @@
     viewMonth: 9,
     day: { gender: "不限", level: "五级护理员", add: 0 },
     night: { gender: "不限", level: "五级护理员", add: 0 },
+    minDays: 3,
     maxDays: 14,
-    dateEditorOpen: false
+    dateEditorOpen: false,
+    svcEditorOpen: false,
+    svcAdd: 0,
+    svcBase: 335
   };
   var prices = { hospital: { day: 380, night: 405 }, home: { day: 360, night: 390 } };
   var visitFee = 45;
@@ -664,7 +726,7 @@
   function money(n){ return "¥ "+n.toFixed(2); }
   function moneySum(n){ return "合计 ¥"+n.toFixed(2); }
   function dateLabel(){ return fmt(state.start)+"–"+fmt(state.end)+"（连续"+dayCount()+"天）"; }
-  function step1Screen(){ return state.scheme === "b" ? "step1b" : "step1a"; }
+  function step1Screen(){ return "step1b"; }
   function ruleTipText(){
     if (state.mode === "day") {
       return "连选多天时，全部日单由同一人服务。";
@@ -683,8 +745,12 @@
   }
 
   function syncHomeEntry(){
-    // 方案一/二均用首页悬浮球入口
-    $("#entry-float").classList.add("show");
+    var isSvc = state.scheme === "s";
+    var ball = $("#entry-float");
+    if (ball) {
+      ball.style.display = isSvc ? "none" : "flex";
+      ball.classList.toggle("show", !isSvc);
+    }
   }
 
   function unitPrices(){
@@ -712,9 +778,9 @@
   function closePay(){ $("#pay-sheet").classList.remove("open"); $("#pay-sheet").setAttribute("aria-hidden","true"); }
 
   function refreshCals(){
-    renderCal("cal-a");
     renderCal("cal-b");
     renderCal("cal-c");
+    renderCal("cal-s");
   }
 
   function setDateEditorOpen(open){
@@ -729,21 +795,66 @@
     }
   }
 
+  function syncSvcVisitAction(){
+    var action = $("#svc-visit-action");
+    if (!action) return;
+    if (state.svcEditorOpen) action.textContent = "收起";
+    else if (hasDateRange()) action.textContent = dateLabel();
+    else action.textContent = "请选择";
+  }
+
+  function setSvcEditorOpen(open){
+    state.svcEditorOpen = !!open;
+    var ed = $("#svc-date-editor");
+    var toggle = $("#svc-visit-toggle");
+    if (ed) ed.classList.toggle("open", state.svcEditorOpen);
+    if (toggle) toggle.setAttribute("aria-expanded", state.svcEditorOpen ? "true" : "false");
+    syncSvcVisitAction();
+    if (state.svcEditorOpen) {
+      renderRange();
+      renderCal("cal-s");
+    }
+  }
+
+  function renderSvcOrder(){
+    var n = hasDateRange() ? dayCount() : 0;
+    var unit = state.svcBase + state.svcAdd;
+    var days = n > 0 ? n : 1;
+    var total = unit * days + visitFee;
+    var uv = $("#svc-unit-price");
+    var fm = $("#svc-fee-mul");
+    var tot = $("#svc-total");
+    var dc = $("#svc-day-count");
+    var sr = $("#svc-sync-row");
+    if (uv) uv.textContent = "¥"+unit.toFixed(2);
+    if (fm) fm.textContent = "×"+(n > 0 ? n : 1);
+    if (tot) tot.textContent = moneySum(total);
+    if (dc) dc.textContent = String(n > 0 ? n : state.minDays);
+    if (sr) sr.hidden = !hasDateRange();
+    syncSvcVisitAction();
+  }
+
   function go(name){
     state.screen = name;
     $all(".screen").forEach(function(s){ s.classList.toggle("active", s.getAttribute("data-screen")===name); });
     closePay();
-    if (name==="step1a") syncSchemeA();
     if (name==="step1b") syncSchemeB();
     if (name==="step2") {
       setDateEditorOpen(false);
       renderStep2(false);
     }
+    if (name==="service-order") {
+      setSvcEditorOpen(false);
+      renderRange();
+      renderCal("cal-s");
+      renderSvcOrder();
+    }
   }
 
   function goBack(){
+    if (state.scheme === "s" && state.screen === "service-order") return;
     if (state.screen==="step2") go(step1Screen());
-    else if (state.screen==="step1a" || state.screen==="step1b") go("home");
+    else if (state.screen==="step1b") go("home");
     else go("home");
   }
 
@@ -756,22 +867,16 @@
     });
     state.scene = null;
     clearModeAndDate();
+    state.svcAdd = 0;
     closePay();
     syncHomeEntry();
-    go("home");
-  }
-
-  function syncSchemeA(){
-    $all("#scene-tabs-a .scene-tab").forEach(function(t){
-      t.classList.toggle("on", t.getAttribute("data-scene")===state.scene);
-    });
-    $all("#mode-chips-a .chip").forEach(function(c){
-      c.classList.toggle("on", c.getAttribute("data-mode")===state.mode);
-    });
-    renderRange();
-    refreshCals();
-    syncRuleTips();
-    $("#next-a").disabled = !canGoStep2();
+    if (sch === "s") {
+      state.scene = "home";
+      state.mode = "day";
+      go("service-order");
+    } else {
+      go("home");
+    }
   }
 
   function clearModeAndDate(){
@@ -780,6 +885,7 @@
     state.end = null;
     state.picking = "start";
     setDateEditorOpen(false);
+    setSvcEditorOpen(false);
   }
 
   function renderRange(){
@@ -800,7 +906,7 @@
     $all(".day-span-n").forEach(function(el){ el.textContent = String(n); });
     $all(".pick-tip").forEach(function(el){
       if (state.picking === "end") {
-        el.textContent = "请选择结束日期（可与开始同一天）";
+        el.textContent = "请选择结束日期（至少连续"+state.minDays+"天）";
         el.classList.remove("done");
         el.hidden = false;
       } else if (complete) {
@@ -851,17 +957,22 @@
     var parts = ev.currentTarget.getAttribute("data-ymd").split("-");
     var d = new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
     if (state.picking==="start" || !state.start){
+      // 选开始日：只定开始，进入选结束
+      state.start = d;
+      state.end = null;
+      state.picking = "end";
+    } else if (d < state.start) {
+      // 酒店订房逻辑：选结束时点到更早日期 → 该日变为新开始日，继续选结束（不成区间）
       state.start = d;
       state.end = null;
       state.picking = "end";
     } else {
-      if (d < state.start) {
-        state.end = state.start;
-        state.start = d;
-      } else {
-        state.end = d;
-      }
-      if (dayCount() > state.maxDays) {
+      // 选结束日（≥ 开始日）→ 定区间
+      state.end = d;
+      if (dayCount() < state.minDays) {
+        state.end = addDays(state.start, state.minDays - 1);
+        toast("连续陪护至少"+state.minDays+"天，已为你调整至"+fmt(state.end));
+      } else if (dayCount() > state.maxDays) {
         state.end = addDays(state.start, state.maxDays - 1);
         toast("最多连续"+state.maxDays+"天");
       }
@@ -870,9 +981,9 @@
     renderRange();
     refreshCals();
     syncRuleTips();
-    if (state.screen==="step1a") $("#next-a").disabled = !canGoStep2();
     if (state.screen==="step1b") $("#q-next").disabled = !canGoStep2();
     if (state.screen==="step2" && hasDateRange()) renderStep2(false);
+    if (state.screen==="service-order") renderSvcOrder();
   }
 
   function syncSchemeB(){
@@ -895,11 +1006,15 @@
   function setDaysByDelta(delta){
     if (!hasDateRange()){ toast("请先选择服务日期"); return; }
     var next=dayCount()+delta;
-    if (next<1){ toast("至少选择1天"); return; }
+    if (next < state.minDays){
+      toast("连续陪护至少"+state.minDays+"天，无法再减少");
+      return;
+    }
     if (next>state.maxDays){ toast("最多连续"+state.maxDays+"天"); return; }
     state.end=addDays(state.start, next-1); state.picking="start";
     renderRange(); refreshCals();
-    renderStep2(true);
+    if (state.screen==="service-order") renderSvcOrder();
+    else renderStep2(true);
     toast(delta>0 ? ("已延长至 "+fmt(state.end)) : ("已缩短至 "+fmt(state.end)));
   }
 
@@ -910,7 +1025,7 @@
     $("#step2-summary").textContent=sceneLabel+" · "+modeLabel;
     $("#date-banner-val").textContent=dateLabel();
     var dateLab = $("#date-banner .lab");
-    if (dateLab) dateLab.textContent = "服务日期（开始日不变，加减只改结束日）";
+    if (dateLab) dateLab.textContent = "服务日期（至少"+state.minDays+"天；开始日不变，加减只改结束日）";
     var syncLab = $("#sync-stepper-lab");
     if (syncLab) syncLab.textContent = state.mode==="24h" ? "服务天数（日夜同步）" : "服务天数";
     $("#sync-stepper").hidden = false;
@@ -943,23 +1058,6 @@
   $("#entry-float").addEventListener("click", startFlow);
   $all("[data-back]").forEach(function(b){ b.addEventListener("click", goBack); });
 
-  $all("#scene-tabs-a .scene-tab").forEach(function(tab){
-    tab.addEventListener("click", function(){
-      var same = state.scene === tab.getAttribute("data-scene");
-      state.scene=tab.getAttribute("data-scene");
-      if (!same) clearModeAndDate();
-      syncSchemeA();
-    });
-  });
-  $all("#mode-chips-a .chip").forEach(function(chip){
-    chip.addEventListener("click", function(){
-      state.mode=chip.getAttribute("data-mode");
-      $all("#mode-chips-a .chip").forEach(function(c){ c.classList.toggle("on", c===chip); });
-      syncRuleTips();
-      $("#next-a").disabled = !canGoStep2();
-    });
-  });
-
   $all(".hd[data-pick]").forEach(function(btn){
     btn.addEventListener("click", function(){
       var which = btn.getAttribute("data-pick");
@@ -973,9 +1071,9 @@
       }
       renderRange();
       refreshCals();
-      if (state.screen==="step1a") $("#next-a").disabled = !canGoStep2();
       if (state.screen==="step1b") $("#q-next").disabled = !canGoStep2();
       if (state.screen==="step2" && hasDateRange()) renderStep2(false);
+      if (state.screen==="service-order") renderSvcOrder();
     });
   });
 
@@ -989,18 +1087,6 @@
     b.addEventListener("click", function(){
       state.viewMonth+=1; if(state.viewMonth>11){state.viewMonth=0;state.viewYear+=1;}
       renderRange(); refreshCals();
-    });
-  });
-
-  $all("[data-to-step2]").forEach(function(b){
-    b.addEventListener("click", function(){
-      if(!canGoStep2()){
-        if(!state.scene) toast("请先选择场景");
-        else if(!state.mode) toast("请选择服务类型");
-        else toast("请选择服务日期");
-        return;
-      }
-      go("step2");
     });
   });
 
@@ -1035,6 +1121,41 @@
     }
     state.picking = "start";
     setDateEditorOpen(true);
+  });
+
+  $("#svc-visit-toggle").addEventListener("click", function(){
+    if (state.svcEditorOpen) {
+      if (!hasDateRange()) { toast("请先选完开始与结束日期"); return; }
+      setSvcEditorOpen(false);
+      renderSvcOrder();
+      return;
+    }
+    state.picking = "start";
+    setSvcEditorOpen(true);
+  });
+
+  $all("#svc-gender .opt-chip").forEach(function(chip){
+    chip.addEventListener("click", function(){
+      $all("#svc-gender .opt-chip").forEach(function(c){ c.classList.remove("on"); });
+      chip.classList.add("on");
+    });
+  });
+  $all("#svc-levels .level:not(.disabled)").forEach(function(lv){
+    lv.addEventListener("click", function(){
+      $all("#svc-levels .level").forEach(function(c){ c.classList.remove("on"); });
+      lv.classList.add("on");
+      state.svcAdd = Number(lv.getAttribute("data-add") || 0);
+      renderSvcOrder();
+    });
+  });
+  $("#svc-pay").addEventListener("click", function(){
+    if (!hasDateRange()) {
+      toast("请先选择上门时间（至少"+state.minDays+"天）");
+      setSvcEditorOpen(true);
+      return;
+    }
+    if (!$("#svc-agree").checked) { toast("请先勾选平台服务协议"); return; }
+    toast("已提交连陪下单 · "+dateLabel());
   });
   $all("[data-day]").forEach(function(btn){
     btn.addEventListener("click", function(){ setDaysByDelta(Number(btn.getAttribute("data-day"))); });
