@@ -324,7 +324,7 @@
       cursor: pointer;
     }
     .sheet-body {
-      padding: 4px 14px 8px;
+      padding: 4px 14px 16px;
       overflow-y: auto;
       flex: 1;
       min-height: 0;
@@ -357,34 +357,77 @@
     }
     .block li strong { color: #333; font-weight: 500; }
 
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 4px 0 12px;
-      color: #999;
-      font-size: 12px;
-      font-weight: 500;
+    .boundary {
+      margin: 4px 0 8px;
+      padding: 10px 12px;
+      background: #f7f8fa;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      transition: opacity .2s;
     }
-    .divider::before,
-    .divider::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: #eee;
-    }
+    /* 展开后：短提示整段隐藏，只保留须知卡片 */
+    .boundary.is-expanded { display: none; }
 
-    .risk-intro {
+    .boundary-hd {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .boundary-hd .warn-ico {
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+      margin-top: 1px;
+      color: #c45c00;
+    }
+    .boundary-hd > p {
+      flex: 1;
       font-size: 11px;
       color: #888;
-      line-height: 1.5;
+      line-height: 1.55;
+    }
+    .more-expand,
+    .more-collapse {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--teal);
+      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* 展开区：独立卡片，与上方短提示拆开 */
+    .notice-detail {
+      display: none;
+      margin: 0 0 8px;
+      padding: 12px;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    }
+    .notice-detail.open { display: block; }
+    .notice-detail .label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+    .notice-detail .sub {
+      font-size: 11px;
+      color: #999;
+      line-height: 1.45;
       margin-bottom: 10px;
     }
     .risk-item {
       display: flex;
       gap: 8px;
       padding: 8px 0;
-      border-bottom: 1px solid #f5f5f5;
+      border-bottom: 1px solid #f0f0f0;
     }
     .risk-item:last-of-type { border-bottom: none; }
     .risk-num {
@@ -400,7 +443,6 @@
     }
     .risk-item h4 { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
     .risk-item p { font-size: 11px; color: #888; line-height: 1.45; }
-
     .action-box {
       margin-top: 8px;
       padding: 10px;
@@ -410,18 +452,13 @@
     }
     .action-box h4 { font-size: 12px; color: #c2410c; margin-bottom: 4px; }
     .action-box p { font-size: 11px; color: #9a3412; line-height: 1.45; }
-
-    .sheet-ft { padding: 8px 14px 14px; flex-shrink: 0; }
-    .btn-know {
+    .notice-detail .more-collapse {
+      display: block;
       width: 100%;
-      height: 40px;
-      border: none;
-      border-radius: 20px;
-      background: var(--teal);
-      color: #fff;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #f0f0f0;
+      text-align: center;
     }
 
     .note {
@@ -437,10 +474,10 @@
 </head>
 <body>
   <div class="page-title">
-    <h1>风险告知 · 交互原型</h1>
+    <h1>小程序风险告知</h1>
   </div>
   <div class="scene-tabs">
-    <a href="index.html">下单页风险告知</a>
+    <a href="小程序风险告知.html">下单页风险告知</a>
     <a href="call-risk.html">打电话页风险告知</a>
     <a class="active" href="detail-risk.html">详情页风险告知</a>
   </div>
@@ -529,70 +566,92 @@
             <div class="block">
               <div class="block-hd"><span class="ico">⚡</span><h3>极速维权</h3></div>
               <ul>
-                <li>自营项目支持极速维权，保障用户合法权益。<strong>（仅适用于通过平台下单并支付的订单）</strong></li>
+                <li>自营项目支持极速维权，保障用户合法权益。</li>
               </ul>
             </div>
 
-            <!-- 整合：风险告知，明确「脱离平台」条件，消解与极速维权的表面冲突 -->
-            <div class="divider">平台交易须知</div>
-            <p class="risk-intro">以上保障适用于平台内交易。请通过平台下单并支付；私下转账或取消订单后线下交易，平台无法保障售后与纠纷处理。</p>
+            <!-- 短边界（收起态） -->
+            <div class="boundary" id="boundary">
+              <div class="boundary-hd">
+                <svg class="warn-ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <path d="M8 1.5L1.5 13h13L8 1.5zM7.25 6h1.5v4h-1.5V6zm.75 6.25a.75.75 0 110-1.5.75.75 0 010 1.5z"/>
+                </svg>
+                <p>以上保障仅适用于通过平台下单并支付的订单。若私下转账，或取消订单后线下交易，平台将无法保障售后与纠纷处理。</p>
+              </div>
+              <button type="button" class="more-expand" id="expand-notice">了解更多 ›</button>
+            </div>
 
-            <div class="risk-item">
-              <div class="risk-num">1</div>
-              <div>
-                <h4>售后难保障</h4>
-                <p>脱离平台后，加价、不到岗、服务质量等问题难以介入取证与处理（无法享受上方极速维权）。</p>
+            <!-- 完整须知：独立卡片；收起在底部 -->
+            <div class="notice-detail" id="notice-detail">
+              <div class="label">平台交易须知</div>
+              <p class="sub">为保障您的资金与售后权益，请务必通过平台完成下单与支付</p>
+              <div class="risk-item">
+                <div class="risk-num">1</div>
+                <div>
+                  <h4>售后难保障</h4>
+                  <p>加价、不到岗、服务质量等问题，脱离平台后难以介入取证与处理。</p>
+                </div>
               </div>
-            </div>
-            <div class="risk-item">
-              <div class="risk-num">2</div>
-              <div>
-                <h4>资金无保障</h4>
-                <p>微信/支付宝等私下转账，退款与赔付需自行协商解决。</p>
+              <div class="risk-item">
+                <div class="risk-num">2</div>
+                <div>
+                  <h4>资金无保障</h4>
+                  <p>微信/支付宝等私下转账，退款与赔付需自行协商解决。</p>
+                </div>
               </div>
-            </div>
-            <div class="risk-item">
-              <div class="risk-num">3</div>
-              <div>
-                <h4>人身与财产风险</h4>
-                <p>脱离平台后，身份核验、服务记录与保险链路可能不完整（过程留痕、持证核验将无法完整覆盖）。</p>
+              <div class="risk-item">
+                <div class="risk-num">3</div>
+                <div>
+                  <h4>人身与财产风险</h4>
+                  <p>脱离平台后，身份核验、服务记录与保险链路可能不完整。</p>
+                </div>
               </div>
+              <div class="action-box">
+                <h4>⚠ 如遇以下情况，请拒绝并举报</h4>
+                <p>护工诱导取消订单、加微信私下收款等：请拒绝，并联系客服向我们举报。</p>
+              </div>
+              <button type="button" class="more-collapse" id="collapse-notice">收起 ∧</button>
             </div>
-            <div class="action-box">
-              <h4>⚠ 如遇以下情况，请拒绝并举报</h4>
-              <p>护工诱导取消订单、加微信私下收款等：请拒绝，并联系客服向我们举报。</p>
-            </div>
-          </div>
-          <div class="sheet-ft">
-            <button type="button" class="btn-know" id="know">我知道了</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <p class="note">点击绿色权益条可打开整合后的半屏：上半为原「权益保障」，下半为「平台交易须知」（风险告知）。</p>
+  <p class="note">展开后短提示完全隐藏；须知为独立卡片，「收起」在内容底部。</p>
 
   <script>
     var overlay = document.getElementById('overlay');
     var sheet = document.getElementById('sheet');
+    var boundary = document.getElementById('boundary');
+    var noticeDetail = document.getElementById('notice-detail');
 
     function openSheet() {
       overlay.classList.add('open');
       sheet.classList.add('open');
     }
+    function collapseNotice() {
+      noticeDetail.classList.remove('open');
+      boundary.classList.remove('is-expanded');
+    }
+    function expandNotice() {
+      noticeDetail.classList.add('open');
+      boundary.classList.add('is-expanded');
+      setTimeout(function () {
+        noticeDetail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 50);
+    }
     function closeSheet() {
       overlay.classList.remove('open');
       sheet.classList.remove('open');
+      collapseNotice();
     }
 
+    document.getElementById('expand-notice').addEventListener('click', expandNotice);
+    document.getElementById('collapse-notice').addEventListener('click', collapseNotice);
     document.getElementById('open-sheet').addEventListener('click', openSheet);
     overlay.addEventListener('click', closeSheet);
     document.getElementById('close-sheet').addEventListener('click', closeSheet);
-    document.getElementById('know').addEventListener('click', closeSheet);
-
-    // 默认展开便于查看整合效果
-    openSheet();
   </script>
 </body>
 </html>

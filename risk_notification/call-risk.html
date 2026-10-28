@@ -298,14 +298,31 @@
       pointer-events: auto;
       transform: translate(-50%, -50%) scale(1);
     }
+    .dialog-close {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: #f5f5f5;
+      border-radius: 50%;
+      font-size: 14px;
+      color: #888;
+      cursor: pointer;
+      line-height: 1;
+      z-index: 1;
+    }
     .dialog-body {
       padding: 20px 18px 14px;
       text-align: center;
+      position: relative;
     }
     .dialog-body h2 {
       font-size: 16px;
       font-weight: 600;
       margin-bottom: 10px;
+      padding: 0 20px;
     }
     .dialog-body p {
       font-size: 13px;
@@ -314,11 +331,8 @@
       text-align: left;
     }
     .dialog-body .tip {
-      margin-top: 10px;
-      font-size: 12px;
+      margin-top: 8px;
       color: #c45c00;
-      line-height: 1.5;
-      text-align: left;
     }
     .dialog-ft {
       display: flex;
@@ -386,10 +400,10 @@
 </head>
 <body>
   <div class="page-title">
-    <h1>风险告知 · 交互原型</h1>
+    <h1>小程序风险告知</h1>
   </div>
   <div class="scene-tabs">
-    <a href="index.html">下单页风险告知</a>
+    <a href="小程序风险告知.html">下单页风险告知</a>
     <a class="active" href="call-risk.html">打电话页风险告知</a>
     <a href="detail-risk.html">详情页风险告知</a>
   </div>
@@ -454,10 +468,11 @@
 
         <!-- 轻量弹窗：平台交易须知 -->
         <div class="dialog" id="sheet-risk" role="dialog" aria-labelledby="dialog-title">
+          <button type="button" class="dialog-close" id="close-risk" aria-label="关闭">×</button>
           <div class="dialog-body">
             <h2 id="dialog-title">风险提示</h2>
-            <p>通话中请勿约定私下转账或取消订单后线下交易，平台无法保障售后与纠纷处理。</p>
-            <p class="tip">如遇护工诱导加微信私下收款，请立即通过「一键举报」功能向我们反馈。</p>
+            <p>通话中请勿约定私下转账或取消后线下交易，平台无法保障售后。</p>
+            <p class="tip">如遇诱导加微信收款，请使用「一键举报」向我们反馈。</p>
           </div>
           <div class="dialog-ft">
             <button type="button" class="cancel" id="cancel-risk">取消</button>
@@ -502,6 +517,7 @@
 
     document.getElementById('btn-phone').addEventListener('click', openRisk);
     overlay.addEventListener('click', closeAll);
+    document.getElementById('close-risk').addEventListener('click', closeAll);
     document.getElementById('cancel-risk').addEventListener('click', closeAll);
     document.getElementById('continue-risk').addEventListener('click', openCall);
     document.getElementById('cancel-call').addEventListener('click', closeAll);
