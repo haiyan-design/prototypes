@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>服务详情 · 各种陪护项目</title>
+  <link rel="stylesheet" href="../css/common.css?v=41" />
+</head>
+<body class="pdp-shot-body">
+  <!-- 按用户截图整页还原；左上返回热区可回到订单详情 -->
+  <div class="pdp-shot">
+    <img
+      class="pdp-shot-img"
+      src="../assets/product-hero.png?v=41"
+      alt="各种陪护项目 · 服务详情"
+      width="471"
+      height="1024"
+    />
+    <a class="pdp-hotspot back" id="backLink" href="order-detail-booked.html" aria-label="返回"></a>
+  </div>
+
+  <script>
+    (function () {
+      var from = new URLSearchParams(location.search).get("from");
+      var map = {
+        booked: "order-detail-booked.html",
+        completed: "order-completed.html",
+        reviewed: "order-reviewed.html",
+        cancelled: "order-detail-cancelled.html",
+        refunded: "order-detail-refunded.html",
+        "pending-complete": "order-detail-pending-complete.html"
+      };
+      if (from && map[from]) {
+        document.getElementById("backLink").setAttribute("href", map[from]);
+      }
+    })();
+  </script>
+</body>
+</html>

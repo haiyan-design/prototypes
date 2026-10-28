@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>订单详情 · 退款成功（已预约）</title>
+  <link rel="stylesheet" href="../css/common.css?v=41" />
+</head>
+<body>
+  <div class="page">
+    <div class="status-bar">
+      <span>16:30</span>
+      <span style="font-size:12px;font-weight:500">▮▮▮</span>
+    </div>
+    <div class="nav-bar">
+      <div class="nav-left">
+        <a class="nav-icon" href="order-list-refunded.html" aria-label="返回"><span class="icon i-back"></span></a>
+      </div>
+      <div class="nav-title">订单详情</div>
+      <div class="nav-right">
+        <div class="mp-capsule">
+          <span><span class="icon icon-sm i-more" style="color:#fff"></span></span>
+          <span style="font-size:14px;opacity:.9">◎</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-hero">
+      <h2>退款成功</h2>
+    </div>
+
+    <div class="sheet">
+      <div class="card">
+        <a class="goods-row" href="product-detail.html?from=booked">
+          <img class="goods-thumb" src="../assets/service.png" alt="" />
+          <div style="flex:1;min-width:0">
+            <div class="goods-title">各种陪护项目</div>
+            <span class="goods-tag">1次</span>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="color:var(--orange);font-size:15px;font-weight:600">¥ 303.00</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">剩余0次</div>
+          </div>
+        </a>
+
+        <!-- 已预约：上门时间左 + 退款成功右；下方右侧仅联系客服（无重新预约） -->
+        <div class="svc-record">
+          <div class="svc-record-hd">
+            <div class="svc-record-row">上门时间：2026-10-21 12:00:00</div>
+            <a class="svc-link" href="javascript:void(0)">退款成功 ›</a>
+          </div>
+          <div class="svc-record-ft right">
+            <div class="svc-actions">
+              <button class="btn btn-ghost" type="button">联系客服</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="info-row"><span class="label">服务地址</span><span class="value">上海市上海市普陀区金沙江路1340弄8号 新曹杨中南大厦</span></div>
+        <div class="info-row"><span class="label">被护理人信息</span><span class="value">程 25岁 男</span></div>
+        <div class="info-row"><span class="label">情况描述</span><span class="value">--</span></div>
+      </div>
+
+      <div class="card">
+        <div class="price-rows" style="margin-top:0;padding-top:0;border-top:0">
+          <div class="price-row total"><span class="label">订单总价</span><span class="amount">¥ 303</span></div>
+          <div class="price-row"><span class="label">服务价格</span><span>¥ 300.00</span></div>
+          <div class="price-row"><span class="label">人员等级价格</span><span>¥ 3.00</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="bottom-icon">
+      <span class="icon i-headset"></span>
+      联系客服
+    </div>
+    <a class="btn btn-primary" href="reorder-checkout.html?from=booked&v=25">再来一单</a>
+  </div>
+<script src="../js/sku-off.js?v=3"></script>
+</body>
+</html>

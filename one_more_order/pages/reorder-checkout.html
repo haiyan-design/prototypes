@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>确认支付</title>
+  <link rel="stylesheet" href="../css/common.css?v=43" />
+</head>
+<body>
+  <div class="toast" id="toast" hidden></div>
+  <div class="page checkout-page" style="padding-bottom:120px">
+    <div class="status-bar">
+      <span>13:39</span>
+      <span style="font-size:12px;font-weight:500">▮▮▮ 52%</span>
+    </div>
+    <div class="nav-bar">
+      <div class="nav-left">
+        <a class="nav-icon" id="backLink" href="order-completed.html"><span class="icon i-back"></span></a>
+        <a class="nav-icon" href="javascript:void(0)" aria-label="首页"><span class="icon i-home"></span></a>
+      </div>
+      <div class="nav-title"></div>
+      <div class="nav-right">
+        <div class="mp-capsule">
+          <span><span class="icon icon-sm i-more" style="color:#fff"></span></span>
+          <span style="font-size:14px;opacity:.9">◎</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="edge-banner" id="edgeBanner" hidden></div>
+
+    <div class="addr-card">
+      <div class="addr-line">
+        <span class="lbl">服务地址</span>
+        <div class="val">
+          上海市 上海市 普陀区 金沙江路1340弄8号 新曹杨中南大厦<br />
+          <span style="color:#666">嘿嘿嘿 11111111111</span>
+        </div>
+        <span class="icon i-chev"></span>
+      </div>
+      <div class="addr-line" style="border-top:1px solid #f0f0f0;margin-top:4px;padding-top:10px">
+        <span class="lbl">被护理人</span>
+        <div class="val" id="patientText">程 25岁 男</div>
+        <span class="icon i-chev"></span>
+      </div>
+    </div>
+
+    <div class="sku-card">
+      <div class="sku-top">
+        <img class="sku-thumb" src="../assets/service.png" alt="" />
+        <div style="flex:1;min-width:0">
+          <div class="sku-name" id="skuName">各种陪护项目</div>
+          <span class="goods-tag" id="skuDuration">1次</span>
+          <div class="sku-meta">
+            <span class="sku-price" id="skuPrice">¥ 148.00</span>
+            <div class="stepper">
+              <button type="button">−</button>
+              <span>1</span>
+              <button type="button">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="selected-row">
+        <span>已选：<em id="selectedText">性别不限/五级护理员</em></span>
+        <button class="mod" type="button" id="modBtn">修改 ›</button>
+      </div>
+
+      <div class="option-block" id="optionPanel" hidden>
+        <h4>性别要求</h4>
+        <div class="chips" id="genderChips">
+          <button class="chip active" type="button" data-v="不限">不限</button>
+          <button class="chip" type="button" data-v="男">男</button>
+          <button class="chip" type="button" data-v="女">女</button>
+        </div>
+        <h4>人员等级</h4>
+        <div class="chips chips-grid" id="levelChips">
+          <button class="chip active" type="button" data-v="五级护理员" data-extra="0">五级护理员 +0.00</button>
+          <button class="chip" type="button" data-v="四级护理员" data-extra="76">四级护理员 +76.00</button>
+          <button class="chip" type="button" data-v="三级护理员" data-extra="114">三级护理员 +114.00</button>
+          <button class="chip" type="button" data-v="二级护理员" data-extra="152">二级护理员 +152.00</button>
+          <button class="chip" type="button" data-v="一级护理员" data-extra="190">一级护理员 +190.00</button>
+        </div>
+        <div class="door-fee">
+          <span>上门费 ¥45.00</span>
+          <span class="qty">x1</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 优先服务人员：默认推荐本单人员，可勾选；多人走「更换」半屏 -->
+    <div class="staff-card">
+      <div class="staff-card-hd">
+        <span class="ttl">优先服务人员</span>
+        <button class="chg" type="button" id="staffChangeBtn">更换 ›</button>
+      </div>
+      <button class="staff-pick" type="button" id="staffPick" aria-pressed="false">
+        <span class="check" aria-hidden="true"></span>
+        <img class="staff-av" id="staffAvatar" src="../assets/nurse.png" alt="" />
+        <div class="staff-meta">
+          <div class="name">
+            <span id="staffName">徐测试</span>
+            <span class="tag" id="staffTag">本单服务</span>
+          </div>
+          <div class="sub" id="staffSub">五级护理员 · 3.6分 · 服务过 3 次</div>
+        </div>
+      </button>
+      <p class="staff-tip" id="staffTip">当前不优先指定，将由平台按您的服务要求安排；可勾选或点「更换」选择历史服务人员。</p>
+    </div>
+
+    <!-- 特殊补充 / 优惠券：随页面滚动，位于优先服务人员下方 -->
+    <div class="extra-card">
+      <div class="extra-row">
+        <div class="extra-left">
+          <span class="extra-title">特殊补充</span>
+          <span class="extra-opt">（选填）</span>
+        </div>
+        <div class="extra-right">
+          <span class="extra-placeholder">请选择或填写</span>
+          <span class="icon i-chev"></span>
+        </div>
+      </div>
+      <div class="extra-row">
+        <div class="extra-left">
+          <span class="extra-title">优惠券</span>
+        </div>
+        <div class="extra-right">
+          <span class="extra-placeholder">请选择</span>
+          <span class="icon i-chev"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 仅支付栏固定底部 -->
+  <div class="checkout-dock">
+    <div class="pay-bar in-dock">
+      <label class="agree">
+        <span class="radio" id="agreeRadio"></span>
+        <span>已阅读并同意<span class="link">《平台服务协议》</span></span>
+      </label>
+      <div class="pay-row">
+        <div class="pay-total">
+          <div>合计 <span class="sum" id="totalPrice">¥ 148.00</span></div>
+          <div class="detail">查看明细 ∨</div>
+        </div>
+        <button class="btn btn-primary" type="button" id="payBtn">立即支付</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pay-mask" id="payMask"></div>
+
+  <!-- 历史服务人员半屏 -->
+  <div class="staff-sheet" id="staffSheet" aria-hidden="true">
+    <div class="staff-sheet-hd">
+      <span class="ttl">选择优先服务人员</span>
+      <button class="close" type="button" id="staffSheetClose" aria-label="关闭">×</button>
+    </div>
+    <div class="staff-sheet-list" id="staffList"></div>
+  </div>
+
+  <div class="pay-sheet" id="paySheet" aria-hidden="true">
+    <div class="pay-sheet-hd">
+      <div class="pay-guarantees">
+        <span>三包保障</span>
+        <span>过程留痕</span>
+        <span>持证上岗</span>
+        <span>极速维权</span>
+      </div>
+      <button class="pay-close" type="button" id="payClose" aria-label="关闭">×</button>
+    </div>
+    <div class="pay-methods" id="payMethods">
+      <div class="pay-method active" data-method="wx">
+        <div class="pm-icon wx">微</div>
+        <div class="pm-body"><div class="pm-name">微信支付</div></div>
+        <div class="pay-check"></div>
+      </div>
+      <div class="pay-method" data-method="coin">
+        <div class="pm-icon coin">币</div>
+        <div class="pm-body">
+          <div class="pm-name">金币支付</div>
+          <div class="pm-sub">e护通金币:0.00</div>
+        </div>
+        <div class="pay-check"></div>
+      </div>
+      <div class="pay-method" data-method="friend">
+        <div class="pm-icon friend">付</div>
+        <div class="pm-body"><div class="pm-name">好友代付</div></div>
+        <div class="pay-check"></div>
+      </div>
+    </div>
+    <div class="pay-tip">温馨提示：如需发票，请在服务完成后联系客服</div>
+    <div class="pay-sheet-ft">
+      <div class="sum"><span>合计</span> <em id="sheetTotal">¥ 148.00</em></div>
+      <button class="btn btn-primary" type="button" id="payNowBtn">立即支付</button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var BASE = 103; // 服务价
+      var DOOR = 45;
+
+      var params = new URLSearchParams(location.search);
+      var from = params.get("from") || "completed";
+      var SOURCE_MAP = {
+        completed: { back: "order-completed.html" },
+        reviewed: { back: "order-reviewed.html" },
+        cancelled: { back: "order-detail-cancelled.html" },
+        "cancelled-list": { back: "order-list-cancelled.html" },
+        refunded: { back: "order-detail-refunded.html" },
+        "refunded-list": { back: "order-list-refunded.html" },
+        booked: { back: "order-detail-booked.html" },
+        "pending-complete": { back: "order-detail-pending-complete.html" },
+        "pending-complete-list": { back: "order-list-pending-complete.html" },
+        "mine-latest": { back: "mine.html" }
+      };
+      document.getElementById("backLink").setAttribute(
+        "href",
+        (SOURCE_MAP[from] || SOURCE_MAP.completed).back
+      );
+
+      /* —— 历史服务人员（原型 mock，含性别/等级用于冲突校验） —— */
+      var STAFF_LIST = [
+        { id: "s1", name: "徐测试", gender: "男", level: "五级护理员", score: "3.6", times: 3, last: "本单服务", avatar: "../assets/nurse.png", fromOrder: true, available: true },
+        { id: "s2", name: "李护理", gender: "女", level: "四级护理员", score: "4.8", times: 5, last: "最近服务 10月12日", avatar: "../assets/nurse.png", available: true },
+        { id: "s3", name: "王阿姨", gender: "女", level: "三级护理员", score: "4.9", times: 8, last: "最近服务 9月28日", avatar: "../assets/avatar.png", available: true },
+        { id: "s4", name: "赵护工", gender: "男", level: "五级护理员", score: "4.2", times: 2, last: "最近服务 8月03日", avatar: "../assets/nurse.png", available: true },
+        { id: "s5", name: "陈姐", gender: "女", level: "二级护理员", score: "4.7", times: 1, last: "最近服务 7月15日", avatar: "../assets/avatar.png", available: true }
+      ];
+      var preferOn = false;
+      /* 卡片展示推荐候选人；默认不勾选；preferOn 只表示是否带上偏好 */
+      var selectedStaffId = "s1";
+      var staffModuleForcedOff = false; /* 品类不支持指定 / 边界：强制不展示 */
+      var toastTimer = null;
+
+      var staffCard = document.querySelector(".staff-card");
+      var staffPick = document.getElementById("staffPick");
+      var staffTip = document.getElementById("staffTip");
+      var toastEl = document.getElementById("toast");
+      var TIP_ON = "将优先安排该人员；若其时间冲突或暂不可接单，将为您安排同等条件的其他人员。";
+      var TIP_OFF = "当前不优先指定，将由平台按您的服务要求安排；可勾选或点「更换」选择历史服务人员。";
+
+      function findStaff(id) {
+        for (var i = 0; i < STAFF_LIST.length; i++) {
+          if (STAFF_LIST[i].id === id) return STAFF_LIST[i];
+        }
+        return null;
+      }
+
+      function availableStaffList() {
+        return STAFF_LIST.filter(function (s) { return s.available !== false; });
+      }
+
+      function selectableStaffList(spec) {
+        return availableStaffList().filter(function (s) { return staffMatches(s, spec); });
+      }
+
+      /* 推荐：本单服务人（若可选）→ 否则服务次数最多 */
+      function pickRecommendStaff(spec) {
+        var list = selectableStaffList(spec);
+        if (!list.length) return null;
+        var i;
+        for (i = 0; i < list.length; i++) {
+          if (list[i].fromOrder) return list[i];
+        }
+        list = list.slice().sort(function (a, b) { return b.times - a.times; });
+        return list[0];
+      }
+
+      /**
+       * 展示条件：有业务可用的历史人（未离职等）。
+       * 规格全都不匹配时仍展示（路径 B：取消勾选但卡片留人），不因改规格把模块藏掉。
+       * 仅「无人可用 / 品类不支持」时整块隐藏、不提醒。
+       * 原人不可用时静默换下一位推荐，不提示「原人不可约」。
+       */
+      function syncStaffModule() {
+        var spec = currentSpec();
+        var available = availableStaffList();
+        if (staffModuleForcedOff || !available.length) {
+          preferOn = false;
+          staffCard.hidden = true;
+          if (typeof openSheet !== "undefined" && openSheet === "staff") closeStaffSheet();
+          return;
+        }
+        var wasHidden = staffCard.hidden;
+        staffCard.hidden = false;
+        var cur = findStaff(selectedStaffId);
+        if (!cur || cur.available === false || wasHidden) {
+          var rec = pickRecommendStaff(spec) || available.slice().sort(function (a, b) {
+            return b.times - a.times;
+          })[0];
+          selectedStaffId = rec.id;
+          preferOn = false;
+        }
+        renderStaffCard();
+      }
+
+      function currentSpec() {
+        return {
+          gender: document.querySelector("#genderChips .chip.active").dataset.v,
+          level: document.querySelector("#levelChips .chip.active").dataset.v
+        };
+      }
+
+      function getMismatchFlags(staff, spec) {
+        if (!staff) return { gender: true, level: true };
+        return {
+          gender: spec.gender !== "不限" && staff.gender !== spec.gender,
+          level: staff.level !== spec.level
+        };
+      }
+
+      /* prefer: "gender" | "level" | "all"
+         路径A/D：all（几项不符写几项）；路径B：只报本次改动项；路径C：仅行内标注、无Toast */
+      function getMismatchReasons(staff, spec, prefer) {
+        var flags = getMismatchFlags(staff, spec);
+        var reasons = [];
+        if (prefer === "gender") {
+          if (flags.gender) reasons.push("gender");
+          else if (flags.level) reasons.push("level");
+          return reasons;
+        }
+        if (prefer === "level") {
+          if (flags.level) reasons.push("level");
+          else if (flags.gender) reasons.push("gender");
+          return reasons;
+        }
+        if (flags.gender) reasons.push("gender");
+        if (flags.level) reasons.push("level");
+        return reasons;
+      }
+
+      function staffMatches(staff, spec) {
+        return getMismatchReasons(staff, spec, "all").length === 0;
+      }
+
+      function mismatchToast(name, reasons, mode) {
+        var both = reasons.indexOf("gender") >= 0 && reasons.indexOf("level") >= 0;
+        if (mode === "cancel") {
+          if (both) return "因性别要求、人员等级均与「" + name + "」不符，已取消优先指定，将由平台安排";
+          if (reasons[0] === "gender") return "因性别要求与「" + name + "」不符，已取消优先指定，将由平台安排";
+          return "因人员等级要求与「" + name + "」不符，已取消优先指定，将由平台安排";
+        }
+        if (both) return "「" + name + "」与当前性别要求、人员等级均不符，请修改规格或点「更换」选择其他人";
+        if (reasons[0] === "gender") return "「" + name + "」与当前性别要求不符，请修改性别或点「更换」选择其他人";
+        return "「" + name + "」与当前人员等级要求不符，请修改人员等级或点「更换」选择其他人";
+      }
+
+      function mismatchLabel(reasons) {
+        var both = reasons.indexOf("gender") >= 0 && reasons.indexOf("level") >= 0;
+        if (both) return "性别、人员等级不符";
+        if (reasons[0] === "gender") return "性别不符";
+        return "人员等级不符";
+      }
+
+      function showToast(msg) {
+        toastEl.hidden = false;
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () {
+          toastEl.classList.remove("show");
+          setTimeout(function () { toastEl.hidden = true; }, 200);
+        }, 2200);
+      }
+
+      /* 路径 B：已勾选 + 改规格 → 取消勾选；未勾选时不弹（避免刷屏） */
+      function resolveStaffConflict(showTip, preferReason) {
+        if (!preferOn) return false;
+        var s = findStaff(selectedStaffId);
+        if (!s) return false;
+        var reasons = getMismatchReasons(s, currentSpec(), preferReason || "all");
+        if (!reasons.length) return false;
+        preferOn = false;
+        renderStaffCard();
+        if (showTip !== false) {
+          showToast(mismatchToast(s.name, reasons, "cancel"));
+        }
+        return true;
+      }
+
+      function renderStaffCard() {
+        var s = findStaff(selectedStaffId) || pickRecommendStaff(currentSpec());
+        if (!s) return;
+        if (preferOn) {
+          staffPick.classList.add("on");
+          staffPick.setAttribute("aria-pressed", "true");
+          staffTip.textContent = TIP_ON;
+        } else {
+          staffPick.classList.remove("on");
+          staffPick.setAttribute("aria-pressed", "false");
+          staffTip.textContent = TIP_OFF;
+        }
+        document.getElementById("staffAvatar").src = s.avatar;
+        document.getElementById("staffName").textContent = s.name;
+        var tag = document.getElementById("staffTag");
+        tag.hidden = !s.fromOrder;
+        tag.textContent = s.fromOrder ? "本单服务" : "历史服务";
+        document.getElementById("staffSub").textContent =
+          s.gender + " · " + s.level + " · " + s.score + "分 · 服务过 " + s.times + " 次";
+      }
+
+      /* 路径 A：先规格后勾选 → 拦截，不写「已取消」 */
+      staffPick.addEventListener("click", function () {
+        if (staffCard.hidden) return;
+        if (preferOn) {
+          preferOn = false;
+          renderStaffCard();
+          return;
+        }
+        var s = findStaff(selectedStaffId);
+        if (!s) return;
+        var reasons = getMismatchReasons(s, currentSpec(), "all");
+        if (reasons.length) {
+          showToast(mismatchToast(s.name, reasons, "block"));
+          return;
+        }
+        preferOn = true;
+        renderStaffCard();
+      });
+
+      var mask = document.getElementById("payMask");
+      var paySheet = document.getElementById("paySheet");
+      var staffSheet = document.getElementById("staffSheet");
+      var openSheet = null; // "pay" | "staff"
+
+      function openStaffSheet() {
+        openSheet = "staff";
+        renderStaffList();
+        mask.classList.add("show");
+        staffSheet.classList.add("show");
+        staffSheet.setAttribute("aria-hidden", "false");
+      }
+      function closeStaffSheet() {
+        staffSheet.classList.remove("show");
+        staffSheet.setAttribute("aria-hidden", "true");
+        if (openSheet === "staff") {
+          mask.classList.remove("show");
+          openSheet = null;
+        }
+      }
+      function renderStaffList() {
+        var spec = currentSpec();
+        var html = "";
+        var noneOn = !preferOn;
+        html +=
+          '<button class="staff-none' + (noneOn ? " on" : "") + '" type="button" data-id="">' +
+          '<span class="check"></span>' +
+          '<span class="txt">不指定，由平台安排<small>按性别、等级等要求派单</small></span>' +
+          "</button>";
+        availableStaffList().forEach(function (s) {
+          var reasons = getMismatchReasons(s, spec, "all");
+          var ok = reasons.length === 0;
+          var on = preferOn && selectedStaffId === s.id;
+          html +=
+            '<button class="staff-item' + (on ? " on" : "") + (ok ? "" : " disabled") +
+            '" type="button" data-id="' + s.id + '"' + (ok ? "" : ' data-mismatch="1"') + ">" +
+            '<span class="check"></span>' +
+            '<img class="staff-av" src="' + s.avatar + '" alt="" />' +
+            '<div class="staff-meta">' +
+            '<div class="name"><span>' + s.name + "</span>" +
+            (s.fromOrder ? '<span class="tag">本单服务</span>' : "") +
+            "</div>" +
+            '<div class="sub">' + s.gender + " · " + s.level + " · " + s.score + "分 · 服务过 " + s.times + " 次</div>" +
+            '<div class="sub">' + s.last + "</div>" +
+            (ok ? "" : '<div class="mismatch">' + mismatchLabel(reasons) + "</div>") +
+            "</div></button>";
+        });
+        document.getElementById("staffList").innerHTML = html;
+      }
+
+      /* 路径 C：置灰项已有行内标注，点击无 Toast、不选中 */
+      document.getElementById("staffList").addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-id]");
+        if (!btn) return;
+        if (btn.classList.contains("disabled") || btn.getAttribute("data-mismatch") === "1") return;
+        var id = btn.getAttribute("data-id");
+        if (!id) {
+          preferOn = false;
+        } else {
+          preferOn = true;
+          selectedStaffId = id;
+        }
+        renderStaffCard();
+        closeStaffSheet();
+      });
+
+      document.getElementById("staffChangeBtn").addEventListener("click", function () {
+        if (staffCard.hidden) return;
+        openStaffSheet();
+      });
+      document.getElementById("staffSheetClose").addEventListener("click", closeStaffSheet);
+
+      var panel = document.getElementById("optionPanel");
+      document.getElementById("modBtn").addEventListener("click", function () {
+        var open = panel.hasAttribute("hidden");
+        if (open) {
+          panel.removeAttribute("hidden");
+          this.textContent = "收起 ›";
+        } else {
+          panel.setAttribute("hidden", "");
+          this.textContent = "修改 ›";
+        }
+      });
+
+      function bindChips(root, onChange) {
+        root.querySelectorAll(".chip").forEach(function (chip) {
+          chip.addEventListener("click", function () {
+            root.querySelectorAll(".chip").forEach(function (c) { c.classList.remove("active"); });
+            chip.classList.add("active");
+            onChange();
+          });
+        });
+      }
+
+      function sync(changed) {
+        var g = document.querySelector("#genderChips .chip.active").dataset.v;
+        var l = document.querySelector("#levelChips .chip.active");
+        var extra = Number(l.dataset.extra || 0);
+        var genderLabel = g === "不限" ? "性别不限" : "性别" + g;
+        document.getElementById("selectedText").textContent = genderLabel + "/" + l.dataset.v;
+        var total = BASE + extra + DOOR;
+        var text = "¥ " + total.toFixed(2);
+        document.getElementById("skuPrice").textContent = text;
+        document.getElementById("totalPrice").textContent = text;
+        document.getElementById("sheetTotal").textContent = text;
+        resolveStaffConflict(true, changed);
+        syncStaffModule();
+      }
+
+      bindChips(document.getElementById("genderChips"), function () { sync("gender"); });
+      bindChips(document.getElementById("levelChips"), function () { sync("level"); });
+
+      var agreed = false;
+      document.querySelector(".agree").addEventListener("click", function () {
+        agreed = !agreed;
+        document.getElementById("agreeRadio").style.background = agreed ? "var(--brand)" : "";
+        document.getElementById("agreeRadio").style.borderColor = agreed ? "var(--brand)" : "#ccc";
+      });
+
+      function openPay() {
+        openSheet = "pay";
+        document.getElementById("sheetTotal").textContent =
+          document.getElementById("totalPrice").textContent;
+        mask.classList.add("show");
+        paySheet.classList.add("show");
+      }
+      function closePay() {
+        paySheet.classList.remove("show");
+        if (openSheet === "pay") {
+          mask.classList.remove("show");
+          openSheet = null;
+        }
+      }
+
+      /* 路径 D：支付前兜底，报全部不符项 */
+      document.getElementById("payBtn").addEventListener("click", function () {
+        if (!agreed) { alert("请先阅读并同意《平台服务协议》"); return; }
+        resolveStaffConflict(true, "all");
+        openPay();
+      });
+      document.getElementById("payClose").addEventListener("click", closePay);
+      mask.addEventListener("click", function () {
+        if (openSheet === "staff") closeStaffSheet();
+        else if (openSheet === "pay") closePay();
+      });
+
+      document.getElementById("payMethods").addEventListener("click", function (e) {
+        var item = e.target.closest(".pay-method");
+        if (!item) return;
+        this.querySelectorAll(".pay-method").forEach(function (el) { el.classList.remove("active"); });
+        item.classList.add("active");
+      });
+
+      document.getElementById("payNowBtn").addEventListener("click", function () {
+        var method = document.querySelector(".pay-method.active .pm-name").textContent;
+        var preferText = preferOn
+          ? "优先「" + findStaff(selectedStaffId).name + "」"
+          : "不指定人员";
+        closePay();
+        alert("原型演示：已选择「" + method + "」并提交支付（" + preferText + "）");
+      });
+
+      /* —— 异常与边界（?edge=） —— */
+      function showEdgeBanner(html, danger) {
+        var el = document.getElementById("edgeBanner");
+        el.hidden = false;
+        el.className = "edge-banner" + (danger ? " danger" : "");
+        el.innerHTML = html;
+      }
+
+      function applyEdge(edge) {
+        if (!edge) return;
+        var addrCard = document.querySelector(".addr-card");
+        var addrLines = addrCard.querySelectorAll(".addr-line");
+
+        if (edge === "addr-missing") {
+          addrLines[0].querySelector(".val").innerHTML = "";
+          showEdgeBanner("原地址不存在，请重新选择服务地址后再支付。");
+        }
+
+        if (edge === "patient-bad") {
+          document.getElementById("patientText").textContent = "";
+          showEdgeBanner("原被护理人已删除，请重新选择后再支付。");
+        }
+
+        /* 原单人不可用，但仍有其他可选历史人：静默换推荐，不提醒 */
+        if (edge === "staff-gone") {
+          var origin = findStaff("s1");
+          if (origin) origin.available = false;
+          preferOn = false;
+          selectedStaffId = "s1"; /* syncStaffModule 会因不可用改推下一位 */
+        }
+
+        /* 无可选历史人 / 品类不支持指定：整块不展示、不提醒 */
+        if (edge === "staff-none") {
+          STAFF_LIST.forEach(function (s) { s.available = false; });
+          staffModuleForcedOff = true;
+          preferOn = false;
+        }
+      }
+
+      applyEdge(params.get("edge"));
+      sync();
+    })();
+  </script>
+</body>
+</html>
