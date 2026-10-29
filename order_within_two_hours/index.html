@@ -206,124 +206,42 @@
   .mbtns .cancel { background: #fff; border: 1px solid #ccc; color: #666; }
   .mbtns .ok { background: var(--green); border: none; color: #fff; }
 
-  /* 日期时间半屏：顶栏 + 尽快区 + 指定时段区，层级分开，内容不减 */
+  /* 日期时间半屏：轻提示 + 日期/时间一体；尽快时刻并进滚轮 */
   .sheet {
     position: absolute; left: 0; right: 0; bottom: 0; z-index: 40;
     background: #fff; border-radius: 16px 16px 0 0;
     transform: translateY(105%); transition: transform .25s ease;
-    height: 72%; max-height: 72%; display: flex; flex-direction: column;
+    height: 68%; max-height: 68%; display: flex; flex-direction: column;
   }
   .sheet.on { transform: translateY(0); }
-  .sheet-handle {
-    width: 36px; height: 4px; border-radius: 2px; background: #e0e0e0;
-    margin: 8px auto 0; flex-shrink: 0;
-  }
-  .sheet-top {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 16px 8px; flex-shrink: 0;
-  }
-  .sheet-top .title { font-size: 17px; font-weight: 600; color: #111; }
-  .sheet-top .ok {
-    color: var(--green); font-size: 15px; font-weight: 600; cursor: pointer;
-    padding: 4px 2px;
-  }
-
-  /* 二选一：尽快 / 预约指定时间（单选圆点，不是可空勾） */
-  .opt {
-    margin: 0 16px; padding: 12px 14px; border-radius: 12px;
-    border: 1px solid #ececec; background: #fafafa;
-    flex-shrink: 0; cursor: pointer;
-  }
-  .opt.on {
-    background: linear-gradient(180deg, #f2fbf8 0%, #eef8f5 100%);
-    border-color: #cfe9e1;
-  }
-  .opt-row {
-    display: flex; align-items: center; gap: 10px;
-  }
-  .opt .radio {
-    width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #ccc;
-    background: #fff; flex-shrink: 0; position: relative;
-  }
-  .opt.on .radio {
-    border-color: var(--green);
-  }
-  .opt.on .radio::after {
-    content: ""; position: absolute; left: 50%; top: 50%;
-    width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%;
-    background: var(--green);
-  }
-  .opt .t1 { font-size: 15px; font-weight: 600; color: #111; }
-  .opt .tip {
-    margin: 10px 0 0 30px; padding-top: 9px; border-top: 1px dashed #d5e8e1;
+  /* 与现网一致：半屏顶直接黄底提醒，无上方白缝 */
+  .sheet-tip {
+    margin: 0; padding: 10px 16px;
+    background: var(--yellow-bg);
+    border-radius: 16px 16px 0 0;
     display: flex; align-items: flex-start; gap: 6px;
-    font-size: 11px; color: #9a7b2e; line-height: 1.45;
+    font-size: 13px; color: var(--yellow-text); line-height: 1.4; flex-shrink: 0;
   }
-  .opt:not(.on) .tip { display: none; }
-  .opt .tip .i {
-    width: 14px; height: 14px; border-radius: 50%; background: var(--yellow-icon);
-    color: #fff; font: italic 700 9px/14px Georgia, serif; text-align: center;
+  .sheet-tip .i {
+    width: 16px; height: 16px; border-radius: 50%; background: var(--yellow-icon);
+    color: #fff; font: italic 700 11px/16px Georgia, serif; text-align: center;
     flex-shrink: 0; margin-top: 1px;
   }
-  .asap-cs {
-    padding: 6px 18px 8px; font-size: 11px; color: #aaa; flex-shrink: 0; line-height: 1.4;
-  }
-  .asap-cs .link {
+  .sheet-tip .link {
     color: var(--green); text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
   }
-
-  .sched-block {
-    margin: 0 16px 0; padding: 0; border-radius: 12px;
-    border: 1px solid #ececec; background: #fafafa;
-    flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden;
-  }
-  .sched-block.on {
-    background: #fff; border-color: #cfe9e1;
-  }
-  .sched-head {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 14px; cursor: pointer; flex-shrink: 0;
-  }
-  .sched-head .radio {
-    width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #ccc;
-    background: #fff; flex-shrink: 0; position: relative;
-  }
-  .sched-block.on .sched-head .radio { border-color: var(--green); }
-  .sched-block.on .sched-head .radio::after {
-    content: ""; position: absolute; left: 50%; top: 50%;
-    width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%;
-    background: var(--green);
-  }
-  .sched-head .t1 { font-size: 15px; font-weight: 600; color: #111; flex: 1; }
-  /* 尽快选中时：指定区弱化，点头栏单选项即可进入（与尽快二选一） */
-  .sheet.mode-asap .sched-body {
-    opacity: 0.4; pointer-events: none;
-  }
-  .sheet.mode-half .sched-body { opacity: 1; pointer-events: auto; }
-
   .hdr {
-    display: flex; align-items: center; padding: 0 12px 8px; gap: 8px; flex-shrink: 0;
-  }
-  .hdr .tabs {
-    display: flex; background: #f3f4f5; border-radius: 8px; padding: 3px; gap: 2px; flex: 1;
+    display: flex; align-items: center; padding: 12px 16px 10px; gap: 12px; flex-shrink: 0;
   }
   .hdr .d, .hdr .t {
-    flex: 1; text-align: center; font-size: 13px; font-weight: 500; color: #888;
-    padding: 7px 6px; border-radius: 6px; cursor: pointer; border: none;
+    font-size: 15px; font-weight: 500; color: #c0c0c0; padding-bottom: 4px; cursor: pointer;
   }
   .hdr .d.on, .hdr .t.on {
-    background: #fff; color: #111; box-shadow: 0 1px 2px rgba(0,0,0,.06);
+    color: #333; border-bottom: 2px solid #333;
   }
-  .hdr .d.muted, .hdr .t.muted { color: #bbb; }
-
-  .sched-body {
-    flex: 1; min-height: 0; display: flex; flex-direction: column;
-    border-top: 1px solid #f0f0f0;
+  .hdr .ok {
+    margin-left: auto; color: var(--green); font-size: 15px; font-weight: 600; cursor: pointer;
   }
-  .sheet.mode-asap .cal .days .sel {
-    background: transparent; color: #222; font-weight: 400;
-  }
-
   .pane { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
   .pane-cal, .pane-time { display: none; flex: 1; min-height: 0; flex-direction: column; }
   .pane-cal.on, .pane-time.on { display: flex; }
@@ -355,28 +273,38 @@
     background: var(--green); color: #fff; font-weight: 500;
   }
 
+  /* 时分滚轮：贴近现网间距；⚡ 极弱，选中行略清晰 */
   .roller {
-    height: 100%; min-height: 220px; display: flex; justify-content: center; gap: 48px; position: relative;
-    -webkit-mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent);
-    mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent);
+    height: 100%; min-height: 220px; display: flex; justify-content: center; gap: 80px; position: relative;
+    -webkit-mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent);
+    mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent);
   }
   .roller::before {
-    content: ""; position: absolute; left: 28px; right: 28px; top: 50%;
-    transform: translateY(-50%); height: 36px;
-    border-top: 1px solid #eee; border-bottom: 1px solid #eee; pointer-events: none;
+    content: ""; position: absolute; left: 48px; right: 48px; top: 50%;
+    transform: translateY(-50%); height: 40px;
+    border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; pointer-events: none;
   }
   .rcol {
     height: 100%; overflow-y: auto; scroll-snap-type: y mandatory;
-    width: 64px; text-align: center; padding: 0; /* 上下 padding 由 JS 按列高动态算，保证落在选中框正中 */
+    width: 64px; text-align: center; padding: 0;
     scrollbar-width: none;
   }
   .rcol::-webkit-scrollbar { display: none; }
   .rcol div {
-    height: 36px; line-height: 36px; font-size: 18px; color: #ccc;
+    height: 40px; line-height: 40px; font-size: 20px; color: #e8e8e8;
     scroll-snap-align: center; cursor: pointer;
     flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+    position: relative;
   }
-  .rcol div.on { color: #111; font-weight: 700; font-size: 20px; }
+  .rcol div.on { color: #111; font-weight: 600; font-size: 22px; }
+  .rcol div .bolt {
+    position: absolute; left: calc(50% + 15px); top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px; line-height: 1; color: #f0d090;
+    font-weight: 400; pointer-events: none; opacity: .55;
+  }
+  .rcol div.on .bolt { color: #e0a820; opacity: .85; font-size: 11px; }
 
   .toast {
     position: absolute; left: 50%; bottom: 28%; transform: translateX(-50%);
@@ -527,7 +455,7 @@
                 <span class="ph" id="list-time-label">请选择 &gt;</span>
               </div>
               <div class="mhint">
-                院内最快30分钟上门。若需更早，请<span class="link" data-cs>联系客服</span>
+                最快约30分钟上门。更早请<span class="link" data-cs>联系客服</span>
               </div>
               <div class="mbtns">
                 <button type="button" class="cancel" id="list-cancel">取消</button>
@@ -622,7 +550,7 @@
                 <span class="ph" id="buy-time-label">请选择 &gt;</span>
               </div>
               <div class="mhint">
-                院内最快30分钟上门。若需更早，请<span class="link" data-cs>联系客服</span>
+                最快约30分钟上门。更早请<span class="link" data-cs>联系客服</span>
               </div>
               <div class="mbtns">
                 <button type="button" class="cancel" id="buy-cancel">取消</button>
@@ -644,20 +572,29 @@
   const NOW = { h: 15, m: 53 };
   // 尽快 = 现在 + 30′ → 16:23
   const ASAP = { h: 16, m: 23, label: '16:23' };
-  // 当天半点从尽快之后：16:30 起；其它日期 24 小时半点（00:00–23:30）
+  // 当天：尽快精确时刻并进滚轮，其后接半点；其它日期 00:00–23:30
   const TODAY = { y: 2026, m: 10, d: 28 };
 
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
   function isToday(d) {
     return d && d.y === TODAY.y && d.m === TODAY.m && d.d === TODAY.d;
   }
-  /** 按所选日期生成半点：当天=尽快后；其它日=全天 00:00–23:30 */
+  /** 当天含尽快时刻 + 之后半点；其它日全天半点 */
   function halfSlotsFor(date) {
     const out = [];
-    let h = isToday(date) ? 16 : 0;
-    let m = isToday(date) ? 30 : 0;
+    if (isToday(date)) {
+      out.push({ h: ASAP.h, m: ASAP.m, label: ASAP.label, asap: true });
+      let h = 16, m = 30;
+      while (h < 24) {
+        out.push({ h, m, label: pad(h) + ':' + pad(m), asap: false });
+        m += 30;
+        if (m >= 60) { m = 0; h += 1; }
+      }
+      return out;
+    }
+    let h = 0, m = 0;
     while (h < 24) {
-      out.push({ h, m, label: pad(h) + ':' + pad(m) });
+      out.push({ h, m, label: pad(h) + ':' + pad(m), asap: false });
       m += 30;
       if (m >= 60) { m = 0; h += 1; }
     }
@@ -708,42 +645,24 @@
 
   function sheetHTML(prefix) {
     return `
-      <div class="sheet-handle"></div>
-      <div class="sheet-top">
-        <span class="title">选择上门时间</span>
+      <div class="sheet-tip">
+        <span class="i">i</span>
+        <span>最快约30分钟上门，可在下方选择。更早请<span class="link" data-cs>联系客服</span></span>
+      </div>
+      <div class="hdr">
+        <span class="d on" id="${prefix}-tab-date">2026年10月28日</span>
+        <span class="t" id="${prefix}-tab-time">${ASAP.label}</span>
         <span class="ok" id="${prefix}-ok">确定</span>
       </div>
-      <div class="opt on" id="${prefix}-asap">
-        <div class="opt-row">
-          <span class="radio"></span>
-          <div class="t1">尽快上门 · ${ASAP.label}</div>
+      <div class="pane">
+        <div class="pane-cal on" id="${prefix}-pane-cal">
+          <div class="cal-week-fixed"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+          <div class="cal-scroll" id="${prefix}-cal-scroll"></div>
         </div>
-        <div class="tip"><span class="i">i</span>院内最快约30分钟上门</div>
-      </div>
-      <div class="asap-cs">若需更早，请 <span class="link" data-cs>联系客服</span></div>
-      <div class="sched-block" id="${prefix}-sched">
-        <div class="sched-head" id="${prefix}-sched-head">
-          <span class="radio"></span>
-          <span class="t1">预约指定时间</span>
-        </div>
-        <div class="sched-body">
-          <div class="hdr">
-            <div class="tabs">
-              <span class="d" id="${prefix}-tab-date">2026年10月28日</span>
-              <span class="t" id="${prefix}-tab-time">${halfSlotsFor(TODAY)[0].label}</span>
-            </div>
-          </div>
-          <div class="pane">
-            <div class="pane-cal on" id="${prefix}-pane-cal">
-              <div class="cal-week-fixed"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-              <div class="cal-scroll" id="${prefix}-cal-scroll"></div>
-            </div>
-            <div class="pane-time" id="${prefix}-pane-time">
-              <div class="roller">
-                <div class="rcol" id="${prefix}-hour"></div>
-                <div class="rcol" id="${prefix}-min"></div>
-              </div>
-            </div>
+        <div class="pane-time" id="${prefix}-pane-time">
+          <div class="roller">
+            <div class="rcol" id="${prefix}-hour"></div>
+            <div class="rcol" id="${prefix}-min"></div>
           </div>
         </div>
       </div>`;
@@ -791,7 +710,7 @@
     if (e.target.closest('[data-cs]')) toast(toastForScene());
   });
 
-  // —— picker state machine ——
+  // —— picker：日期 + 时间一体；尽快时刻并进滚轮 ——
   function createPicker(opts) {
     const {
       sheetId, maskId, prefix, onConfirm, openTriggers, closeExtra
@@ -801,15 +720,11 @@
     const mask = document.getElementById(maskId);
     sheet.innerHTML = sheetHTML(prefix);
 
-    let mode = 'asap'; // asap | half
-    let view = 'date'; // date | time
+    let view = 'date'; // date | time；打开默认日期，时间 Tab 浅色
     let selected = { ...TODAY };
     let slots = halfSlotsFor(selected);
     let slot = slots[0];
 
-    const asapEl = document.getElementById(prefix + '-asap');
-    const schedEl = document.getElementById(prefix + '-sched');
-    const schedHead = document.getElementById(prefix + '-sched-head');
     const tabDate = document.getElementById(prefix + '-tab-date');
     const tabTime = document.getElementById(prefix + '-tab-time');
     const paneCal = document.getElementById(prefix + '-pane-cal');
@@ -819,42 +734,34 @@
     const minCol = document.getElementById(prefix + '-min');
     const okBtn = document.getElementById(prefix + '-ok');
 
-    function paintModeRadios() {
-      asapEl.classList.toggle('on', mode === 'asap');
-      schedEl.classList.toggle('on', mode === 'half');
-    }
-
-    /** 换日期后重建半点列表；尽量保留当前选中时分，不强制跳到最早 */
     function syncSlotsFromDate() {
       slots = halfSlotsFor(selected);
       const keep = slots.find(s => s.h === slot.h && s.m === slot.m);
       slot = keep || slots[0];
     }
 
+    function resultText() {
+      if (slot.asap && isToday(selected)) return `尽快上门 · ${slot.label}`;
+      return `${selected.y}年${selected.m}月${selected.d}日 ${slot.label}`;
+    }
+
     function renderCalendar() {
-      // 尽快模式下不画日期选中点，避免和尽快同时呈「已选」
-      // 只渲染当月及之后，不能往前翻更早月份
-      const sel = mode === 'half' ? selected : null;
       const months = monthsFromToday(6);
       calScroll.innerHTML = months.map((mo, i) =>
-        buildMonthGrid(mo.y, mo.m, sel, { first: i === 0 })
+        buildMonthGrid(mo.y, mo.m, selected, { first: i === 0 })
       ).join('');
       calScroll.querySelectorAll('[data-d]').forEach(el => {
         if (el.classList.contains('past') || el.classList.contains('dim')) return;
         el.addEventListener('click', () => {
           selected = { y: +el.dataset.y, m: +el.dataset.m, d: +el.dataset.d };
-          pickScheduled();
           syncSlotsFromDate();
           renderCalendar();
           syncHdr();
         });
       });
-      // 重绘后若已选未来日，滚到该月，避免无感地回到更早月份顶部
-      if (mode === 'half' && selected && !isToday(selected)) {
+      if (selected && !isToday(selected)) {
         requestAnimationFrame(() => {
-          const mark = calScroll.querySelector(
-            `[data-month="${selected.y}-${selected.m}"]`
-          );
+          const mark = calScroll.querySelector(`[data-month="${selected.y}-${selected.m}"]`);
           if (mark) mark.scrollIntoView({ block: 'start' });
         });
       } else {
@@ -878,8 +785,7 @@
     }
 
     function syncColPad(col) {
-      // 上下留白 = (可视高 - 行高) / 2，选中项才能落在中间选框
-      const rowH = 36;
+      const rowH = 40;
       const pad = Math.max(0, (col.clientHeight - rowH) / 2);
       col.style.paddingTop = pad + 'px';
       col.style.paddingBottom = pad + 'px';
@@ -901,13 +807,14 @@
     }
 
     function renderMinutes(snap) {
-      const mins = [...new Set(slots.filter(s => s.h === slot.h).map(s => s.m))];
-      if (!mins.includes(slot.m)) {
-        slot = slots.find(s => s.h === slot.h) || slots[0];
-      }
-      minCol.innerHTML = mins.map(m =>
-        `<div data-m="${m}" class="${m === slot.m ? 'on' : ''}">${pad(m)}</div>`
-      ).join('');
+      const hourSlots = slots.filter(s => s.h === slot.h);
+      if (!hourSlots.some(s => s.m === slot.m)) slot = hourSlots[0] || slots[0];
+      // 数字居中对齐；尽快项旁闪电弱标（absolute，不挤开 23/30）
+      minCol.innerHTML = hourSlots.map(s => {
+        const on = s.m === slot.m ? 'on' : '';
+        const bolt = s.asap ? '<span class="bolt" aria-hidden="true">⚡</span>' : '';
+        return `<div data-m="${s.m}" class="${on}">${pad(s.m)}${bolt}</div>`;
+      }).join('');
       if (snap !== false) {
         requestAnimationFrame(() => scrollColTo(minCol, minCol.querySelector('.on')));
       }
@@ -919,7 +826,6 @@
         `<div data-h="${h}" class="${h === slot.h ? 'on' : ''}">${pad(h)}</div>`
       ).join('');
       renderMinutes(false);
-      // 等时间面板显示并完成布局后再算 padding / 滚到中间
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           syncColPad(hourCol);
@@ -930,91 +836,35 @@
       });
     }
 
+    function syncTimeLabel() {
+      tabTime.textContent = slot.label;
+    }
+
     function commitHourFromScroll() {
       const el = centeredItem(hourCol);
       if (!el) return;
       const h = +el.dataset.h;
-      if (h === slot.h) {
-        paintHourOn();
-        return;
-      }
-      // 换小时：取该小时最早可选半点（如 17 → 17:00），不沿用上一小时的分
+      if (h === slot.h) { paintHourOn(); return; }
       slot = slots.find(s => s.h === h) || slots[0];
       paintHourOn();
       renderMinutes(true);
-      enterHalfVisual();
+      syncTimeLabel();
     }
 
     function commitMinFromScroll() {
       const el = centeredItem(minCol);
       if (!el) return;
       const m = +el.dataset.m;
-      if (m === slot.m) {
-        minCol.querySelectorAll('[data-m]').forEach(node => {
-          node.classList.toggle('on', +node.dataset.m === slot.m);
-        });
-        return;
-      }
       slot = slots.find(s => s.h === slot.h && s.m === m) || slots[0];
       minCol.querySelectorAll('[data-m]').forEach(node => {
         node.classList.toggle('on', +node.dataset.m === slot.m);
       });
-      enterHalfVisual();
-    }
-
-    function paintCalSel() {
-      calScroll.querySelectorAll('.sel').forEach(el => el.classList.remove('sel'));
-      if (mode !== 'half') return;
-      const el = calScroll.querySelector(
-        `[data-y="${selected.y}"][data-m="${selected.m}"][data-d="${selected.d}"]`
-      );
-      if (el && !el.classList.contains('past') && !el.classList.contains('dim')) {
-        el.classList.add('sel');
-      }
-    }
-
-    /** 从尽快切到指定时间时的视觉（滚轮内切换不重绘整页） */
-    function enterHalfVisual() {
-      mode = 'half';
-      sheet.classList.add('mode-half');
-      sheet.classList.remove('mode-asap');
-      paintModeRadios();
-      tabDate.classList.remove('muted');
-      tabTime.classList.remove('muted');
-      if (view === 'time') {
-        tabDate.classList.remove('on');
-        tabTime.classList.add('on');
-      } else {
-        tabDate.classList.add('on');
-        tabTime.classList.remove('on');
-      }
-      tabTime.textContent = slot.label;
-      paintCalSel();
+      syncTimeLabel();
     }
 
     function syncHdr() {
       tabDate.textContent = `${selected.y}年${selected.m}月${selected.d}日`;
-      tabTime.textContent = slot.label;
-
-      sheet.classList.toggle('mode-asap', mode === 'asap');
-      sheet.classList.toggle('mode-half', mode === 'half');
-      paintModeRadios();
-
-      if (mode === 'asap') {
-        // 尽快选中：指定区是另一条路，Tab 灰预览、无日期选中点
-        tabDate.classList.remove('on');
-        tabTime.classList.remove('on');
-        tabDate.classList.add('muted');
-        tabTime.classList.add('muted');
-        view = 'date';
-        paneCal.classList.add('on');
-        paneTime.classList.remove('on');
-        paintCalSel();
-        return;
-      }
-
-      tabDate.classList.remove('muted');
-      tabTime.classList.remove('muted');
+      syncTimeLabel();
       if (view === 'date') {
         tabDate.classList.add('on');
         tabTime.classList.remove('on');
@@ -1027,21 +877,13 @@
         paneTime.classList.add('on');
         renderRoller();
       }
-      paintCalSel();
-    }
-
-    function pickScheduled() {
-      if (mode === 'asap') {
-        mode = 'half';
-        if (!slot) slot = slots[0];
-      }
     }
 
     function open() {
-      mode = 'asap';
       view = 'date';
       selected = { ...TODAY };
-      syncSlotsFromDate();
+      slots = halfSlotsFor(selected);
+      slot = slots[0]; // 当天默认最早：尽快时刻（时间 Tab 浅色展示）
       renderCalendar();
       syncHdr();
       mask.classList.add('on');
@@ -1053,30 +895,8 @@
       else mask.classList.remove('on');
     }
 
-    asapEl.addEventListener('click', () => {
-      mode = 'asap';
-      view = 'date';
-      selected = { ...TODAY };
-      syncSlotsFromDate();
-      renderCalendar();
-      syncHdr();
-    });
-    // 点「预约指定时间」头栏 → 离开尽快，进入自选
-    schedHead.addEventListener('click', () => {
-      pickScheduled();
-      view = 'date';
-      syncHdr();
-    });
-    tabDate.addEventListener('click', () => {
-      pickScheduled();
-      view = 'date';
-      syncHdr();
-    });
-    tabTime.addEventListener('click', () => {
-      pickScheduled();
-      view = 'time';
-      syncHdr();
-    });
+    tabDate.addEventListener('click', () => { view = 'date'; syncHdr(); });
+    tabTime.addEventListener('click', () => { view = 'time'; syncHdr(); });
     hourCol.addEventListener('scroll', () => {
       if (rollerLock) return;
       clearTimeout(hourTimer);
@@ -1090,30 +910,30 @@
     hourCol.addEventListener('click', e => {
       const el = e.target.closest('[data-h]');
       if (!el) return;
-      const h = +el.dataset.h;
-      slot = slots.find(s => s.h === h) || slots[0];
+      slot = slots.find(s => s.h === +el.dataset.h) || slots[0];
       paintHourOn();
       scrollColTo(hourCol, el);
       renderMinutes(true);
-      enterHalfVisual();
+      syncTimeLabel();
     });
     minCol.addEventListener('click', e => {
       const el = e.target.closest('[data-m]');
       if (!el) return;
-      const m = +el.dataset.m;
-      slot = slots.find(s => s.h === slot.h && s.m === m) || slots[0];
+      slot = slots.find(s => s.h === slot.h && s.m === +el.dataset.m) || slots[0];
       minCol.querySelectorAll('[data-m]').forEach(node => {
         node.classList.toggle('on', +node.dataset.m === slot.m);
       });
       scrollColTo(minCol, el);
-      enterHalfVisual();
+      syncTimeLabel();
     });
 
     okBtn.addEventListener('click', () => {
-      const result = mode === 'asap'
-        ? { type: 'asap', text: `尽快上门 · ${ASAP.label}`, value: ASAP.label }
-        : { type: 'half', text: `${selected.y}年${selected.m}月${selected.d}日 ${slot.label}`, value: slot.label, selected };
-      onConfirm(result);
+      onConfirm({
+        type: slot.asap ? 'asap' : 'half',
+        text: resultText(),
+        value: slot.label,
+        selected
+      });
       close();
     });
 
@@ -1216,7 +1036,7 @@
     onConfirm(result) {
       orderTimeLabel.innerHTML = result.text + ' <span class="chev">›</span>';
       orderTimeLabel.classList.remove('ph');
-      orderTimeLabel.classList.add('asap');
+      orderTimeLabel.classList.toggle('asap', result.type === 'asap');
     }
   });
 
