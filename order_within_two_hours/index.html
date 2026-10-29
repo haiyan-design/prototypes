@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>院内近约 · 可交互原型</title>
+<style>
+  :root {
+    --green: #0a8f78;
+    --green-deep: #087a66;
+    --yellow-bg: #fff8e6;
+    --yellow-text: #b8860b;
+    --yellow-icon: #f0a020;
+    --pw: 375px;
+    --ph: 812px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    height: 100%; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+    background: #dfe3e6; color: #222;
+  }
+  .app {
+    height: 100%; display: flex; flex-direction: column; min-height: 0;
+  }
+  .chrome {
+    flex: 0 0 auto; padding: 10px 14px 8px;
+    border-bottom: 1px solid #cfd4d8; background: #e8ecef;
+  }
+  .chrome h1 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .scene-tabs { display: flex; gap: 8px; }
+  .scene-tabs button {
+    flex: 1; height: 36px; border-radius: 18px; border: 1px solid #ccc;
+    background: #fff; font-size: 12px; color: #333; cursor: pointer;
+  }
+  .scene-tabs button.on {
+    background: var(--green); border-color: var(--green); color: #fff; font-weight: 600;
+  }
+  .stage {
+    flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center;
+    padding: 10px; overflow: hidden;
+  }
+  .phone-scale { position: relative; flex-shrink: 0; }
+  .phone {
+    width: var(--pw); height: var(--ph);
+    position: absolute; left: 0; top: 0;
+    transform-origin: top left;
+    background: #f5f5f5; overflow: hidden;
+    border-radius: 24px; box-shadow: 0 12px 40px rgba(0,0,0,.2);
+  }
+
+  /* —— shared phone chrome —— */
+  .status {
+    height: 44px; background: var(--green-deep); color: #fff;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 14px 6px; font-size: 13px; font-weight: 600;
+  }
+  .nav {
+    height: 44px; background: var(--green-deep);
+    display: flex; align-items: center; padding: 0 10px; gap: 8px; position: relative;
+  }
+  .nav .back { color: #fff; font-size: 22px; width: 28px; line-height: 1; cursor: pointer; }
+  .nav .search {
+    flex: 1; height: 30px; background: #fff; border-radius: 4px;
+    display: flex; align-items: center; padding: 0 10px; font-size: 13px; color: #bbb;
+  }
+  .nav .sbtn { color: #fff; font-size: 14px; }
+  .nav.simple { justify-content: space-between; }
+  .nav.simple .icons { color: #fff; font-size: 16px; display: flex; gap: 12px; }
+
+  .body { height: calc(100% - 88px); position: relative; background: #f5f5f5; overflow: hidden; }
+
+  /* list page */
+  .list-scroll {
+    height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 20px;
+  }
+  .cal-entry {
+    margin: 10px 12px 0; background: #fff; border-radius: 8px;
+    padding: 12px 14px; display: flex; align-items: center; gap: 10px; font-size: 15px;
+  }
+  .cal-entry .ico {
+    width: 28px; height: 28px; border-radius: 6px; background: #e8f7f3;
+    color: var(--green); display: flex; align-items: center; justify-content: center; font-size: 13px;
+  }
+  .cal-entry .sub { font-size: 11px; color: #999; margin-top: 2px; }
+  .cal-entry .arrow { margin-left: auto; color: #ccc; }
+  .otabs {
+    margin-top: 10px; background: #fff; display: flex; padding: 12px 6px 0;
+    border-bottom: 1px solid #eee; overflow-x: auto; gap: 0;
+  }
+  .otabs span {
+    flex: 0 0 auto; min-width: 56px; text-align: center; font-size: 13px; color: #666;
+    padding: 0 8px 10px; position: relative; white-space: nowrap;
+  }
+  .otabs .on { color: var(--green); font-weight: 600; }
+  .otabs .on::after {
+    content: ""; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+    width: 24px; height: 3px; background: var(--green); border-radius: 2px;
+  }
+  .ocard {
+    margin: 10px 12px; background: #fff; border-radius: 8px; padding: 12px;
+  }
+  .ocard .top { display: flex; justify-content: space-between; font-size: 11px; color: #999; margin-bottom: 10px; }
+  .ocard .st { color: #f08a2e; font-size: 13px; }
+  .ocard .mid { display: flex; gap: 10px; }
+  .thumb {
+    width: 64px; height: 64px; border-radius: 4px;
+    background: linear-gradient(135deg, #c8e6df, #9fd0c4); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px;
+  }
+  .ocard .name { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+  .tag { display: inline-block; font-size: 11px; color: #888; border: 1px solid #ddd; padding: 1px 6px; border-radius: 2px; }
+  .price {
+    margin-top: 10px; display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; color: #888;
+  }
+  .price .pay { color: #333; }
+  .price .pay em { color: #e67e22; font-style: normal; font-weight: 600; font-size: 14px; }
+  .acts { margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px; }
+  .btn-o, .btn-p {
+    font-size: 13px; padding: 6px 14px; border-radius: 20px; border: 1px solid #ccc; background: #fff; cursor: pointer;
+  }
+  .btn-p { background: var(--green); border-color: var(--green); color: #fff; }
+  .btn-p.done { background: #fff; border-color: var(--green); color: var(--green); }
+
+  /* order page */
+  .checkout { padding: 12px; height: 100%; overflow: auto; padding-bottom: 80px; }
+  .modes { display: flex; gap: 10px; margin-bottom: 12px; }
+  .mode {
+    flex: 1; background: #fff; border-radius: 8px; padding: 12px 10px;
+    border: 1.5px solid #e5e5e5;
+  }
+  .mode.on { border-color: var(--green); background: #f3fbf8; }
+  .mode .mt { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .mode .ms { font-size: 11px; color: #999; line-height: 1.35; }
+  .radio {
+    width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #ccc;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 10px;
+  }
+  .mode.on .radio { border-color: var(--green); background: var(--green); color: #fff; }
+  .fcard { background: #fff; border-radius: 8px; padding: 0 12px; }
+  .frow {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 14px 0; border-bottom: 1px solid #f2f2f2; font-size: 14px;
+  }
+  .frow:last-child { border-bottom: none; }
+  .fl { width: 72px; flex-shrink: 0; color: #333; padding-top: 1px; }
+  .fv { flex: 1; text-align: right; color: #333; line-height: 1.4; }
+  .fv.ph { color: #bbb; }
+  .fv.asap { color: var(--green); font-weight: 500; }
+  .chev { color: #ccc; margin-left: 2px; }
+  .addr-type {
+    display: inline-block; font-size: 10px; padding: 1px 5px; border-radius: 2px;
+    background: #e8f7f3; color: var(--green); margin-left: 4px; vertical-align: middle;
+  }
+  .paybar {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 56px;
+    background: #fff; border-top: 1px solid #eee;
+    display: flex; align-items: center; justify-content: flex-end; padding: 0 12px; gap: 10px;
+  }
+  .paybar .sum { font-size: 13px; color: #666; margin-right: auto; }
+  .paybar .sum b { color: #e54; font-size: 16px; }
+  .paybar .go {
+    height: 40px; padding: 0 22px; border: none; border-radius: 20px;
+    background: var(--green); color: #fff; font-size: 15px; cursor: pointer;
+  }
+
+  /* masks / sheets */
+  .mask {
+    position: absolute; inset: 0; background: rgba(0,0,0,.45); z-index: 20;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .mask.on { opacity: 1; pointer-events: auto; }
+
+  /* 预约服务 · 半屏：对齐现网截图约 47% 高，内容置顶、按钮贴底 */
+  .book-sheet {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 30;
+    background: #fff; border-radius: 14px 14px 0 0;
+    transform: translateY(105%); transition: transform .25s ease;
+    height: 48%; max-height: 48%;
+    padding: 16px 16px 22px;
+    display: flex; flex-direction: column;
+  }
+  .book-sheet.on { transform: translateY(0); }
+  .book-sheet .mtitle {
+    text-align: center; font-size: 17px; font-weight: 600; margin-bottom: 8px; position: relative;
+    flex-shrink: 0;
+  }
+  .book-sheet .x {
+    position: absolute; right: 0; top: 0; color: #999; font-size: 20px; font-weight: 400;
+    line-height: 1; cursor: pointer; width: 28px; text-align: right;
+  }
+  .mrow {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 0; border-bottom: 1px solid #f2f2f2; font-size: 15px;
+    flex-shrink: 0;
+  }
+  .mrow .ph { color: #bbb; }
+  .mrow .val { color: var(--green); font-weight: 500; }
+  .mrow.tap { cursor: pointer; }
+  .mhint { font-size: 12px; color: #999; line-height: 1.55; padding: 12px 0 0; flex-shrink: 0; }
+  .mhint .link { color: var(--green); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+  .mbtns { display: flex; gap: 12px; margin-top: auto; padding-top: 20px; flex-shrink: 0; }
+  .mbtns button {
+    flex: 1; height: 44px; border-radius: 22px; font-size: 16px; cursor: pointer;
+  }
+  .mbtns .cancel { background: #fff; border: 1px solid #ccc; color: #666; }
+  .mbtns .ok { background: var(--green); border: none; color: #fff; }
+
+  /* 日期时间半屏：顶栏 + 尽快区 + 指定时段区，层级分开，内容不减 */
+  .sheet {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 40;
+    background: #fff; border-radius: 16px 16px 0 0;
+    transform: translateY(105%); transition: transform .25s ease;
+    height: 72%; max-height: 72%; display: flex; flex-direction: column;
+  }
+  .sheet.on { transform: translateY(0); }
+  .sheet-handle {
+    width: 36px; height: 4px; border-radius: 2px; background: #e0e0e0;
+    margin: 8px auto 0; flex-shrink: 0;
+  }
+  .sheet-top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px 8px; flex-shrink: 0;
+  }
+  .sheet-top .title { font-size: 17px; font-weight: 600; color: #111; }
+  .sheet-top .ok {
+    color: var(--green); font-size: 15px; font-weight: 600; cursor: pointer;
+    padding: 4px 2px;
+  }
+
+  /* 二选一：尽快 / 预约指定时间（单选圆点，不是可空勾） */
+  .opt {
+    margin: 0 16px; padding: 12px 14px; border-radius: 12px;
+    border: 1px solid #ececec; background: #fafafa;
+    flex-shrink: 0; cursor: pointer;
+  }
+  .opt.on {
+    background: linear-gradient(180deg, #f2fbf8 0%, #eef8f5 100%);
+    border-color: #cfe9e1;
+  }
+  .opt-row {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .opt .radio {
+    width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #ccc;
+    background: #fff; flex-shrink: 0; position: relative;
+  }
+  .opt.on .radio {
+    border-color: var(--green);
+  }
+  .opt.on .radio::after {
+    content: ""; position: absolute; left: 50%; top: 50%;
+    width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%;
+    background: var(--green);
+  }
+  .opt .t1 { font-size: 15px; font-weight: 600; color: #111; }
+  .opt .tip {
+    margin: 10px 0 0 30px; padding-top: 9px; border-top: 1px dashed #d5e8e1;
+    display: flex; align-items: flex-start; gap: 6px;
+    font-size: 11px; color: #9a7b2e; line-height: 1.45;
+  }
+  .opt:not(.on) .tip { display: none; }
+  .opt .tip .i {
+    width: 14px; height: 14px; border-radius: 50%; background: var(--yellow-icon);
+    color: #fff; font: italic 700 9px/14px Georgia, serif; text-align: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .asap-cs {
+    padding: 6px 18px 8px; font-size: 11px; color: #aaa; flex-shrink: 0; line-height: 1.4;
+  }
+  .asap-cs .link {
+    color: var(--green); text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+  }
+
+  .sched-block {
+    margin: 0 16px 0; padding: 0; border-radius: 12px;
+    border: 1px solid #ececec; background: #fafafa;
+    flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden;
+  }
+  .sched-block.on {
+    background: #fff; border-color: #cfe9e1;
+  }
+  .sched-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px; cursor: pointer; flex-shrink: 0;
+  }
+  .sched-head .radio {
+    width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #ccc;
+    background: #fff; flex-shrink: 0; position: relative;
+  }
+  .sched-block.on .sched-head .radio { border-color: var(--green); }
+  .sched-block.on .sched-head .radio::after {
+    content: ""; position: absolute; left: 50%; top: 50%;
+    width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%;
+    background: var(--green);
+  }
+  .sched-head .t1 { font-size: 15px; font-weight: 600; color: #111; flex: 1; }
+  /* 尽快选中时：指定区弱化，点头栏单选项即可进入（与尽快二选一） */
+  .sheet.mode-asap .sched-body {
+    opacity: 0.4; pointer-events: none;
+  }
+  .sheet.mode-half .sched-body { opacity: 1; pointer-events: auto; }
+
+  .hdr {
+    display: flex; align-items: center; padding: 0 12px 8px; gap: 8px; flex-shrink: 0;
+  }
+  .hdr .tabs {
+    display: flex; background: #f3f4f5; border-radius: 8px; padding: 3px; gap: 2px; flex: 1;
+  }
+  .hdr .d, .hdr .t {
+    flex: 1; text-align: center; font-size: 13px; font-weight: 500; color: #888;
+    padding: 7px 6px; border-radius: 6px; cursor: pointer; border: none;
+  }
+  .hdr .d.on, .hdr .t.on {
+    background: #fff; color: #111; box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  }
+  .hdr .d.muted, .hdr .t.muted { color: #bbb; }
+
+  .sched-body {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+    border-top: 1px solid #f0f0f0;
+  }
+  .sheet.mode-asap .cal .days .sel {
+    background: transparent; color: #222; font-weight: 400;
+  }
+
+  .pane { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .pane-cal, .pane-time { display: none; flex: 1; min-height: 0; flex-direction: column; }
+  .pane-cal.on, .pane-time.on { display: flex; }
+
+  .cal-week-fixed {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    text-align: center; font-size: 12px; color: #aaa; padding: 2px 12px 0; flex-shrink: 0;
+  }
+  .cal-scroll {
+    flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    padding: 0 12px 20px;
+    overscroll-behavior-y: none; /* 到顶后不能再往上滑出更早月份 */
+  }
+  .cal-month-title {
+    font-size: 12px; font-weight: 600; color: #999; padding: 12px 4px 4px;
+  }
+  .cal-month-title.first { display: none; }
+  .cal .days {
+    display: grid; grid-template-columns: repeat(7, 1fr); text-align: center;
+  }
+  .cal .days span {
+    height: 44px; display: flex; align-items: center; justify-content: center;
+    font-size: 15px; color: #222; cursor: pointer;
+  }
+  .cal .days .dim { color: #d0d0d0; pointer-events: none; }
+  .cal .days .past { color: #ccc; pointer-events: none; }
+  .cal .days .sel {
+    width: 34px; height: 34px; margin: 0 auto; border-radius: 50%;
+    background: var(--green); color: #fff; font-weight: 500;
+  }
+
+  .roller {
+    height: 100%; min-height: 220px; display: flex; justify-content: center; gap: 48px; position: relative;
+    -webkit-mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent);
+    mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent);
+  }
+  .roller::before {
+    content: ""; position: absolute; left: 28px; right: 28px; top: 50%;
+    transform: translateY(-50%); height: 36px;
+    border-top: 1px solid #eee; border-bottom: 1px solid #eee; pointer-events: none;
+  }
+  .rcol {
+    height: 100%; overflow-y: auto; scroll-snap-type: y mandatory;
+    width: 64px; text-align: center; padding: 0; /* 上下 padding 由 JS 按列高动态算，保证落在选中框正中 */
+    scrollbar-width: none;
+  }
+  .rcol::-webkit-scrollbar { display: none; }
+  .rcol div {
+    height: 36px; line-height: 36px; font-size: 18px; color: #ccc;
+    scroll-snap-align: center; cursor: pointer;
+    flex-shrink: 0;
+  }
+  .rcol div.on { color: #111; font-weight: 700; font-size: 20px; }
+
+  .toast {
+    position: absolute; left: 50%; bottom: 28%; transform: translateX(-50%);
+    background: rgba(0,0,0,.78); color: #fff; font-size: 13px;
+    padding: 10px 14px; border-radius: 8px; z-index: 60;
+    opacity: 0; pointer-events: none; transition: opacity .2s; white-space: nowrap;
+  }
+  .toast.on { opacity: 1; }
+
+  .scene { display: none; width: 100%; height: 100%; }
+  .scene.on { display: block; }
+
+  /* 先买后约 · 支付成功页 */
+  .payok {
+    height: 100%; display: flex; flex-direction: column; background: #f5f5f5;
+  }
+  .payok-hero {
+    background: var(--green-deep); padding: 28px 20px 36px; text-align: center; color: #fff;
+    border-radius: 0 0 20px 20px;
+  }
+  .payok-check {
+    width: 64px; height: 64px; margin: 0 auto 14px; border-radius: 50%;
+    background: #fff; color: var(--green); font-size: 34px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; line-height: 1;
+  }
+  .payok-hero h2 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+  .payok-hero p { font-size: 13px; opacity: .9; }
+  .payok-body { flex: 1; padding: 14px 12px 20px; overflow: auto; }
+  .payok-sec {
+    display: flex; align-items: center; gap: 6px; font-size: 14px; color: #333;
+    font-weight: 500; margin-bottom: 10px;
+  }
+  .payok-sec .dot {
+    width: 14px; height: 14px; border-radius: 2px; background: #ddd;
+    display: inline-block;
+  }
+  .bought {
+    background: #fff; border-radius: 10px; padding: 14px; display: flex; gap: 10px; align-items: center;
+  }
+  .bought .thumb {
+    width: 56px; height: 56px; border-radius: 6px;
+    background: linear-gradient(135deg, #b8d4f0, #7eb0e0);
+  }
+  .bought .info { flex: 1; min-width: 0; }
+  .bought .name { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+  .bought .remain { font-size: 13px; color: #666; }
+  .bought .remain em { color: var(--green); font-style: normal; font-weight: 600; }
+  .bought .go {
+    flex-shrink: 0; height: 32px; padding: 0 14px; border: none; border-radius: 16px;
+    background: #f08a2e; color: #fff; font-size: 13px; cursor: pointer;
+  }
+  .bought .go.done { background: #fff; border: 1px solid var(--green); color: var(--green); }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="chrome">
+    <h1>院内近约 · 可交互原型</h1>
+    <div class="scene-tabs">
+      <button type="button" class="on" data-scene="list">列表预约</button>
+      <button type="button" data-scene="order">订单页预约</button>
+      <button type="button" data-scene="buy">先买后约</button>
+    </div>
+  </div>
+  <div class="stage">
+    <div class="phone-scale">
+      <div class="phone" id="phone">
+
+        <!-- ===== LIST SCENE ===== -->
+        <div class="scene on" id="scene-list">
+          <div class="status"><span>15:53</span><span>▮▮▮</span></div>
+          <div class="nav">
+            <span class="back">‹</span>
+            <div class="search">搜索订单</div>
+            <span class="sbtn">搜索</span>
+          </div>
+          <div class="body">
+            <div class="list-scroll">
+              <div class="cal-entry">
+                <span class="ico">📅</span>
+                <div>
+                  <div>服务日历</div>
+                  <div class="sub">查看待服务 / 服务中安排</div>
+                </div>
+                <span class="arrow">›</span>
+              </div>
+              <div class="otabs">
+                <span>全部</span><span>待支付</span><span class="on">待预约</span><span>待服务</span><span>服务中</span><span>待评价</span>
+              </div>
+
+              <div class="ocard">
+                <div class="top"><span>订单号:2610281629277487965</span><span class="st">待预约</span></div>
+                <div class="mid">
+                  <div class="thumb">洗护</div>
+                  <div>
+                    <div class="name">卧床患者全身洗护</div>
+                    <span class="tag">1次</span>
+                  </div>
+                </div>
+                <div class="price"><span>剩余1次</span><span class="pay">实付款 <em>¥299.00</em></span></div>
+                <div class="acts">
+                  <button type="button" class="btn-o" data-cs>联系客服</button>
+                  <button type="button" class="btn-p js-list-book">去预约</button>
+                </div>
+              </div>
+
+              <div class="ocard">
+                <div class="top"><span>订单号:2610281628001234567</span><span class="st">待预约</span></div>
+                <div class="mid">
+                  <div class="thumb">洗护</div>
+                  <div>
+                    <div class="name">卧床患者全身洗护</div>
+                    <span class="tag">1次</span>
+                  </div>
+                </div>
+                <div class="price"><span>剩余1次</span><span class="pay">实付款 <em>¥299.00</em></span></div>
+                <div class="acts">
+                  <button type="button" class="btn-o" data-cs>联系客服</button>
+                  <button type="button" class="btn-p js-list-book">去预约</button>
+                </div>
+              </div>
+
+              <div class="ocard">
+                <div class="top"><span>订单号:2610271650551198670</span><span class="st">待预约</span></div>
+                <div class="mid">
+                  <div class="thumb">陪护</div>
+                  <div>
+                    <div class="name">各种陪护项目</div>
+                    <span class="tag">1次</span>
+                  </div>
+                </div>
+                <div class="price"><span>剩余2次</span><span class="pay">实付款 <em>¥309.00</em></span></div>
+                <div class="acts">
+                  <button type="button" class="btn-o" data-cs>联系客服</button>
+                  <button type="button" class="btn-p js-list-book">去预约</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="mask" id="list-mask"></div>
+
+            <!-- 半屏1：预约服务 -->
+            <div class="book-sheet" id="list-book">
+              <div class="mtitle">预约服务<span class="x" id="list-book-x">×</span></div>
+              <div class="mrow"><span>剩余次数</span><span id="list-remain">1次</span></div>
+              <div class="mrow tap" id="list-pick-time">
+                <span>预约服务时间</span>
+                <span class="ph" id="list-time-label">请选择 &gt;</span>
+              </div>
+              <div class="mhint">
+                院内最快30分钟上门。若需更早，请<span class="link" data-cs>联系客服</span>
+              </div>
+              <div class="mbtns">
+                <button type="button" class="cancel" id="list-cancel">取消</button>
+                <button type="button" class="ok" id="list-confirm">确认</button>
+              </div>
+            </div>
+
+            <!-- 半屏2：日期时间 -->
+            <div class="sheet" id="list-sheet"></div>
+            <div class="toast" id="list-toast">已打开客服入口（示意）</div>
+          </div>
+        </div>
+
+        <!-- ===== ORDER SCENE ===== -->
+        <div class="scene" id="scene-order">
+          <div class="status"><span>15:53</span><span>▮▮▮</span></div>
+          <div class="nav simple">
+            <span class="back">‹</span>
+            <span class="icons">⌂ ···</span>
+          </div>
+          <div class="body">
+            <div class="checkout">
+              <div class="modes">
+                <div class="mode">
+                  <div class="mt"><span class="radio"></span>先买后约</div>
+                  <div class="ms">随时预约 | 不约可退</div>
+                </div>
+                <div class="mode on">
+                  <div class="mt"><span class="radio">✓</span>立即预约</div>
+                  <div class="ms">下单即约 | 快速响应</div>
+                </div>
+              </div>
+              <div class="fcard">
+                <div class="frow">
+                  <span class="fl">服务地址</span>
+                  <span class="fv">市一医院 内科3楼302床<span class="addr-type">院内</span> <span class="chev">›</span></span>
+                </div>
+                <div class="frow">
+                  <span class="fl">被护理人</span>
+                  <span class="fv">测试1 55岁 男 <span class="chev">›</span></span>
+                </div>
+                <div class="frow" id="order-pick-time" style="cursor:pointer">
+                  <span class="fl">上门时间</span>
+                  <span class="fv ph" id="order-time-label">请选择 <span class="chev">›</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="paybar">
+              <div class="sum">合计 <b>¥800.00</b></div>
+              <button type="button" class="go" id="order-pay">立即支付</button>
+            </div>
+
+            <div class="mask" id="order-mask"></div>
+            <div class="sheet" id="order-sheet"></div>
+            <div class="toast" id="order-toast">已打开客服入口（示意）</div>
+          </div>
+        </div>
+
+        <!-- ===== BUY LATER SCENE：支付成功 → 去预约（交互同列表） ===== -->
+        <div class="scene" id="scene-buy">
+          <div class="status"><span>15:53</span><span>▮▮▮</span></div>
+          <div class="nav simple">
+            <span class="back">‹</span>
+            <span class="icons">⌂ ···</span>
+          </div>
+          <div class="body">
+            <div class="payok">
+              <div class="payok-hero">
+                <div class="payok-check">✓</div>
+                <h2>支付成功</h2>
+                <p>请尽快完成服务预约</p>
+              </div>
+              <div class="payok-body">
+                <div class="payok-sec"><span class="dot"></span>已购服务（共1项）</div>
+                <div class="bought">
+                  <div class="thumb"></div>
+                  <div class="info">
+                    <div class="name">居家看护8小时1次</div>
+                    <div class="remain">待预约 <em>2次</em></div>
+                  </div>
+                  <button type="button" class="go" id="buy-go">去预约</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="mask" id="buy-mask"></div>
+            <div class="book-sheet" id="buy-book">
+              <div class="mtitle">预约服务<span class="x" id="buy-book-x">×</span></div>
+              <div class="mrow"><span>剩余次数</span><span id="buy-remain">2次</span></div>
+              <div class="mrow tap" id="buy-pick-time">
+                <span>预约服务时间</span>
+                <span class="ph" id="buy-time-label">请选择 &gt;</span>
+              </div>
+              <div class="mhint">
+                院内最快30分钟上门。若需更早，请<span class="link" data-cs>联系客服</span>
+              </div>
+              <div class="mbtns">
+                <button type="button" class="cancel" id="buy-cancel">取消</button>
+                <button type="button" class="ok" id="buy-confirm">确认</button>
+              </div>
+            </div>
+            <div class="sheet" id="buy-sheet"></div>
+            <div class="toast" id="buy-toast">已打开客服入口（示意）</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const NOW = { h: 15, m: 53 };
+  // 尽快 = 现在 + 30′ → 16:23
+  const ASAP = { h: 16, m: 23, label: '16:23' };
+  // 当天半点从尽快之后：16:30 起；其它日期 24 小时半点（00:00–23:30）
+  const TODAY = { y: 2026, m: 10, d: 28 };
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function isToday(d) {
+    return d && d.y === TODAY.y && d.m === TODAY.m && d.d === TODAY.d;
+  }
+  /** 按所选日期生成半点：当天=尽快后；其它日=全天 00:00–23:30 */
+  function halfSlotsFor(date) {
+    const out = [];
+    let h = isToday(date) ? 16 : 0;
+    let m = isToday(date) ? 30 : 0;
+    while (h < 24) {
+      out.push({ h, m, label: pad(h) + ':' + pad(m) });
+      m += 30;
+      if (m >= 60) { m = 0; h += 1; }
+    }
+    return out;
+  }
+
+  /** 从当月起连续生成 count 个月（不含更早月份） */
+  function monthsFromToday(count) {
+    const list = [];
+    let y = TODAY.y, m = TODAY.m;
+    for (let i = 0; i < count; i++) {
+      list.push({ y, m });
+      m += 1;
+      if (m > 12) { m = 1; y += 1; }
+    }
+    return list;
+  }
+
+  // 周一开始；首月不展示上月日期（避免「看到之前月份」）；后续月可补灰字对齐
+  function buildMonthGrid(year, month /*1-12*/, selected, opts = {}) {
+    const first = new Date(year, month - 1, 1);
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const sunBased = first.getDay();
+    const offset = (sunBased + 6) % 7; // 周一开始
+    const prevDays = new Date(year, month - 1, 0).getDate();
+    const today = TODAY;
+    const titleCls = opts.first ? 'cal-month-title first' : 'cal-month-title';
+    let html = `<div class="${titleCls}" data-month="${year}-${month}">${year}年${month}月</div><div class="cal"><div class="days">`;
+    for (let i = 0; i < offset; i++) {
+      // 当月（列表第一项）不渲染上月数字，只留空位
+      html += opts.first
+        ? `<span class="dim"></span>`
+        : `<span class="dim">${prevDays - offset + 1 + i}</span>`;
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const isPast = year < today.y || (year === today.y && month < today.m) ||
+        (year === today.y && month === today.m && d < today.d);
+      const isSel = selected && selected.y === year && selected.m === month && selected.d === d;
+      const cls = isSel ? 'sel' : (isPast ? 'past' : '');
+      html += `<span class="${cls}" data-y="${year}" data-m="${month}" data-d="${d}">${d}</span>`;
+    }
+    const filled = offset + daysInMonth;
+    const trail = (7 - (filled % 7)) % 7;
+    for (let d = 1; d <= trail; d++) html += `<span class="dim">${d}</span>`;
+    html += `</div></div>`;
+    return html;
+  }
+
+  function sheetHTML(prefix) {
+    return `
+      <div class="sheet-handle"></div>
+      <div class="sheet-top">
+        <span class="title">选择上门时间</span>
+        <span class="ok" id="${prefix}-ok">确定</span>
+      </div>
+      <div class="opt on" id="${prefix}-asap">
+        <div class="opt-row">
+          <span class="radio"></span>
+          <div class="t1">尽快上门 · ${ASAP.label}</div>
+        </div>
+        <div class="tip"><span class="i">i</span>院内最快约30分钟上门</div>
+      </div>
+      <div class="asap-cs">若需更早，请 <span class="link" data-cs>联系客服</span></div>
+      <div class="sched-block" id="${prefix}-sched">
+        <div class="sched-head" id="${prefix}-sched-head">
+          <span class="radio"></span>
+          <span class="t1">预约指定时间</span>
+        </div>
+        <div class="sched-body">
+          <div class="hdr">
+            <div class="tabs">
+              <span class="d" id="${prefix}-tab-date">2026年10月28日</span>
+              <span class="t" id="${prefix}-tab-time">${halfSlotsFor(TODAY)[0].label}</span>
+            </div>
+          </div>
+          <div class="pane">
+            <div class="pane-cal on" id="${prefix}-pane-cal">
+              <div class="cal-week-fixed"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+              <div class="cal-scroll" id="${prefix}-cal-scroll"></div>
+            </div>
+            <div class="pane-time" id="${prefix}-pane-time">
+              <div class="roller">
+                <div class="rcol" id="${prefix}-hour"></div>
+                <div class="rcol" id="${prefix}-min"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function fit() {
+    const stage = document.querySelector('.stage');
+    const wrap = document.querySelector('.phone-scale');
+    const phone = document.getElementById('phone');
+    const sw = stage.clientWidth - 12;
+    const sh = stage.clientHeight - 12;
+    const scale = Math.min(sw / 375, sh / 812, 1);
+    wrap.style.width = (375 * scale) + 'px';
+    wrap.style.height = (812 * scale) + 'px';
+    phone.style.transform = 'scale(' + scale + ')';
+  }
+  window.addEventListener('resize', fit);
+
+  // scene switch
+  document.querySelectorAll('.scene-tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.scene-tabs button').forEach(b => b.classList.toggle('on', b === btn));
+      document.getElementById('scene-list').classList.toggle('on', btn.dataset.scene === 'list');
+      document.getElementById('scene-order').classList.toggle('on', btn.dataset.scene === 'order');
+      document.getElementById('scene-buy').classList.toggle('on', btn.dataset.scene === 'buy');
+      closeAll();
+    });
+  });
+
+  function toast(id) {
+    const el = document.getElementById(id);
+    el.classList.add('on');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('on'), 1400);
+  }
+
+  function toastForScene() {
+    const id = document.querySelector('.scene.on').id;
+    if (id === 'scene-list') return 'list-toast';
+    if (id === 'scene-buy') return 'buy-toast';
+    return 'order-toast';
+  }
+
+  document.body.addEventListener('click', e => {
+    if (e.target.closest('[data-cs]')) toast(toastForScene());
+  });
+
+  // —— picker state machine ——
+  function createPicker(opts) {
+    const {
+      sheetId, maskId, prefix, onConfirm, openTriggers, closeExtra
+    } = opts;
+
+    const sheet = document.getElementById(sheetId);
+    const mask = document.getElementById(maskId);
+    sheet.innerHTML = sheetHTML(prefix);
+
+    let mode = 'asap'; // asap | half
+    let view = 'date'; // date | time
+    let selected = { ...TODAY };
+    let slots = halfSlotsFor(selected);
+    let slot = slots[0];
+
+    const asapEl = document.getElementById(prefix + '-asap');
+    const schedEl = document.getElementById(prefix + '-sched');
+    const schedHead = document.getElementById(prefix + '-sched-head');
+    const tabDate = document.getElementById(prefix + '-tab-date');
+    const tabTime = document.getElementById(prefix + '-tab-time');
+    const paneCal = document.getElementById(prefix + '-pane-cal');
+    const paneTime = document.getElementById(prefix + '-pane-time');
+    const calScroll = document.getElementById(prefix + '-cal-scroll');
+    const hourCol = document.getElementById(prefix + '-hour');
+    const minCol = document.getElementById(prefix + '-min');
+    const okBtn = document.getElementById(prefix + '-ok');
+
+    function paintModeRadios() {
+      asapEl.classList.toggle('on', mode === 'asap');
+      schedEl.classList.toggle('on', mode === 'half');
+    }
+
+    /** 换日期后重建半点列表；尽量保留当前选中时分，不强制跳到最早 */
+    function syncSlotsFromDate() {
+      slots = halfSlotsFor(selected);
+      const keep = slots.find(s => s.h === slot.h && s.m === slot.m);
+      slot = keep || slots[0];
+    }
+
+    function renderCalendar() {
+      // 尽快模式下不画日期选中点，避免和尽快同时呈「已选」
+      // 只渲染当月及之后，不能往前翻更早月份
+      const sel = mode === 'half' ? selected : null;
+      const months = monthsFromToday(6);
+      calScroll.innerHTML = months.map((mo, i) =>
+        buildMonthGrid(mo.y, mo.m, sel, { first: i === 0 })
+      ).join('');
+      calScroll.querySelectorAll('[data-d]').forEach(el => {
+        if (el.classList.contains('past') || el.classList.contains('dim')) return;
+        el.addEventListener('click', () => {
+          selected = { y: +el.dataset.y, m: +el.dataset.m, d: +el.dataset.d };
+          pickScheduled();
+          syncSlotsFromDate();
+          renderCalendar();
+          syncHdr();
+        });
+      });
+      // 重绘后若已选未来日，滚到该月，避免无感地回到更早月份顶部
+      if (mode === 'half' && selected && !isToday(selected)) {
+        requestAnimationFrame(() => {
+          const mark = calScroll.querySelector(
+            `[data-month="${selected.y}-${selected.m}"]`
+          );
+          if (mark) mark.scrollIntoView({ block: 'start' });
+        });
+      } else {
+        calScroll.scrollTop = 0;
+      }
+    }
+
+    let rollerLock = false;
+    let hourTimer = null;
+    let minTimer = null;
+
+    function centeredItem(col) {
+      const mid = col.scrollTop + col.clientHeight / 2;
+      let best = null, bestDist = Infinity;
+      col.querySelectorAll('div').forEach(el => {
+        const elMid = el.offsetTop + el.offsetHeight / 2;
+        const d = Math.abs(elMid - mid);
+        if (d < bestDist) { bestDist = d; best = el; }
+      });
+      return best;
+    }
+
+    function syncColPad(col) {
+      // 上下留白 = (可视高 - 行高) / 2，选中项才能落在中间选框
+      const rowH = 36;
+      const pad = Math.max(0, (col.clientHeight - rowH) / 2);
+      col.style.paddingTop = pad + 'px';
+      col.style.paddingBottom = pad + 'px';
+    }
+
+    function scrollColTo(col, el) {
+      if (!el || !col) return;
+      syncColPad(col);
+      rollerLock = true;
+      const top = el.offsetTop - (col.clientHeight - el.offsetHeight) / 2;
+      col.scrollTop = Math.max(0, top);
+      requestAnimationFrame(() => { rollerLock = false; });
+    }
+
+    function paintHourOn() {
+      hourCol.querySelectorAll('[data-h]').forEach(el => {
+        el.classList.toggle('on', +el.dataset.h === slot.h);
+      });
+    }
+
+    function renderMinutes(snap) {
+      const mins = [...new Set(slots.filter(s => s.h === slot.h).map(s => s.m))];
+      if (!mins.includes(slot.m)) {
+        slot = slots.find(s => s.h === slot.h) || slots[0];
+      }
+      minCol.innerHTML = mins.map(m =>
+        `<div data-m="${m}" class="${m === slot.m ? 'on' : ''}">${pad(m)}</div>`
+      ).join('');
+      if (snap !== false) {
+        requestAnimationFrame(() => scrollColTo(minCol, minCol.querySelector('.on')));
+      }
+    }
+
+    function renderRoller() {
+      const hours = [...new Set(slots.map(s => s.h))];
+      hourCol.innerHTML = hours.map(h =>
+        `<div data-h="${h}" class="${h === slot.h ? 'on' : ''}">${pad(h)}</div>`
+      ).join('');
+      renderMinutes(false);
+      // 等时间面板显示并完成布局后再算 padding / 滚到中间
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          syncColPad(hourCol);
+          syncColPad(minCol);
+          scrollColTo(hourCol, hourCol.querySelector('.on'));
+          scrollColTo(minCol, minCol.querySelector('.on'));
+        });
+      });
+    }
+
+    function commitHourFromScroll() {
+      const el = centeredItem(hourCol);
+      if (!el) return;
+      const h = +el.dataset.h;
+      if (h === slot.h) {
+        paintHourOn();
+        return;
+      }
+      // 换小时：取该小时最早可选半点（如 17 → 17:00），不沿用上一小时的分
+      slot = slots.find(s => s.h === h) || slots[0];
+      paintHourOn();
+      renderMinutes(true);
+      enterHalfVisual();
+    }
+
+    function commitMinFromScroll() {
+      const el = centeredItem(minCol);
+      if (!el) return;
+      const m = +el.dataset.m;
+      if (m === slot.m) {
+        minCol.querySelectorAll('[data-m]').forEach(node => {
+          node.classList.toggle('on', +node.dataset.m === slot.m);
+        });
+        return;
+      }
+      slot = slots.find(s => s.h === slot.h && s.m === m) || slots[0];
+      minCol.querySelectorAll('[data-m]').forEach(node => {
+        node.classList.toggle('on', +node.dataset.m === slot.m);
+      });
+      enterHalfVisual();
+    }
+
+    function paintCalSel() {
+      calScroll.querySelectorAll('.sel').forEach(el => el.classList.remove('sel'));
+      if (mode !== 'half') return;
+      const el = calScroll.querySelector(
+        `[data-y="${selected.y}"][data-m="${selected.m}"][data-d="${selected.d}"]`
+      );
+      if (el && !el.classList.contains('past') && !el.classList.contains('dim')) {
+        el.classList.add('sel');
+      }
+    }
+
+    /** 从尽快切到指定时间时的视觉（滚轮内切换不重绘整页） */
+    function enterHalfVisual() {
+      mode = 'half';
+      sheet.classList.add('mode-half');
+      sheet.classList.remove('mode-asap');
+      paintModeRadios();
+      tabDate.classList.remove('muted');
+      tabTime.classList.remove('muted');
+      if (view === 'time') {
+        tabDate.classList.remove('on');
+        tabTime.classList.add('on');
+      } else {
+        tabDate.classList.add('on');
+        tabTime.classList.remove('on');
+      }
+      tabTime.textContent = slot.label;
+      paintCalSel();
+    }
+
+    function syncHdr() {
+      tabDate.textContent = `${selected.y}年${selected.m}月${selected.d}日`;
+      tabTime.textContent = slot.label;
+
+      sheet.classList.toggle('mode-asap', mode === 'asap');
+      sheet.classList.toggle('mode-half', mode === 'half');
+      paintModeRadios();
+
+      if (mode === 'asap') {
+        // 尽快选中：指定区是另一条路，Tab 灰预览、无日期选中点
+        tabDate.classList.remove('on');
+        tabTime.classList.remove('on');
+        tabDate.classList.add('muted');
+        tabTime.classList.add('muted');
+        view = 'date';
+        paneCal.classList.add('on');
+        paneTime.classList.remove('on');
+        paintCalSel();
+        return;
+      }
+
+      tabDate.classList.remove('muted');
+      tabTime.classList.remove('muted');
+      if (view === 'date') {
+        tabDate.classList.add('on');
+        tabTime.classList.remove('on');
+        paneCal.classList.add('on');
+        paneTime.classList.remove('on');
+      } else {
+        tabDate.classList.remove('on');
+        tabTime.classList.add('on');
+        paneCal.classList.remove('on');
+        paneTime.classList.add('on');
+        renderRoller();
+      }
+      paintCalSel();
+    }
+
+    function pickScheduled() {
+      if (mode === 'asap') {
+        mode = 'half';
+        if (!slot) slot = slots[0];
+      }
+    }
+
+    function open() {
+      mode = 'asap';
+      view = 'date';
+      selected = { ...TODAY };
+      syncSlotsFromDate();
+      renderCalendar();
+      syncHdr();
+      mask.classList.add('on');
+      sheet.classList.add('on');
+    }
+    function close() {
+      sheet.classList.remove('on');
+      if (closeExtra) closeExtra();
+      else mask.classList.remove('on');
+    }
+
+    asapEl.addEventListener('click', () => {
+      mode = 'asap';
+      view = 'date';
+      selected = { ...TODAY };
+      syncSlotsFromDate();
+      renderCalendar();
+      syncHdr();
+    });
+    // 点「预约指定时间」头栏 → 离开尽快，进入自选
+    schedHead.addEventListener('click', () => {
+      pickScheduled();
+      view = 'date';
+      syncHdr();
+    });
+    tabDate.addEventListener('click', () => {
+      pickScheduled();
+      view = 'date';
+      syncHdr();
+    });
+    tabTime.addEventListener('click', () => {
+      pickScheduled();
+      view = 'time';
+      syncHdr();
+    });
+    hourCol.addEventListener('scroll', () => {
+      if (rollerLock) return;
+      clearTimeout(hourTimer);
+      hourTimer = setTimeout(commitHourFromScroll, 80);
+    });
+    minCol.addEventListener('scroll', () => {
+      if (rollerLock) return;
+      clearTimeout(minTimer);
+      minTimer = setTimeout(commitMinFromScroll, 80);
+    });
+    hourCol.addEventListener('click', e => {
+      const el = e.target.closest('[data-h]');
+      if (!el) return;
+      const h = +el.dataset.h;
+      slot = slots.find(s => s.h === h) || slots[0];
+      paintHourOn();
+      scrollColTo(hourCol, el);
+      renderMinutes(true);
+      enterHalfVisual();
+    });
+    minCol.addEventListener('click', e => {
+      const el = e.target.closest('[data-m]');
+      if (!el) return;
+      const m = +el.dataset.m;
+      slot = slots.find(s => s.h === slot.h && s.m === m) || slots[0];
+      minCol.querySelectorAll('[data-m]').forEach(node => {
+        node.classList.toggle('on', +node.dataset.m === slot.m);
+      });
+      scrollColTo(minCol, el);
+      enterHalfVisual();
+    });
+
+    okBtn.addEventListener('click', () => {
+      const result = mode === 'asap'
+        ? { type: 'asap', text: `尽快上门 · ${ASAP.label}`, value: ASAP.label }
+        : { type: 'half', text: `${selected.y}年${selected.m}月${selected.d}日 ${slot.label}`, value: slot.label, selected };
+      onConfirm(result);
+      close();
+    });
+
+    mask.addEventListener('click', () => {
+      if (sheet.classList.contains('on')) close();
+    });
+
+    openTriggers.forEach(sel => {
+      const el = typeof sel === 'string' ? document.querySelector(sel) : sel;
+      if (el) el.addEventListener('click', open);
+    });
+
+    return { open, close, sheet, mask };
+  }
+
+  // LIST：去预约 → 预约服务半屏 → 点时间 → 日期时间半屏
+  const listMask = document.getElementById('list-mask');
+  const listBook = document.getElementById('list-book');
+  const listTimeLabel = document.getElementById('list-time-label');
+  const listRemain = document.getElementById('list-remain');
+  let listActiveBtn = null;
+
+  function openListBook(remainText) {
+    listRemain.textContent = remainText || '1次';
+    listTimeLabel.textContent = '请选择 >';
+    listTimeLabel.className = 'ph';
+    listMask.classList.add('on');
+    listBook.classList.add('on');
+    document.getElementById('list-sheet').classList.remove('on');
+  }
+  function closeListHard() {
+    listBook.classList.remove('on');
+    document.getElementById('list-sheet').classList.remove('on');
+    listMask.classList.remove('on');
+  }
+
+  document.getElementById('list-book-x').addEventListener('click', closeListHard);
+  document.getElementById('list-cancel').addEventListener('click', closeListHard);
+  document.getElementById('list-confirm').addEventListener('click', () => {
+    if (listTimeLabel.classList.contains('ph')) {
+      const t = document.getElementById('list-toast');
+      t.textContent = '请选择预约服务时间';
+      toast('list-toast');
+      setTimeout(() => { t.textContent = '已打开客服入口（示意）'; }, 1500);
+      return;
+    }
+    if (listActiveBtn) {
+      listActiveBtn.textContent = '已约';
+      listActiveBtn.classList.add('done');
+    }
+    closeListHard();
+    const t = document.getElementById('list-toast');
+    t.textContent = '预约成功';
+    toast('list-toast');
+    setTimeout(() => { t.textContent = '已打开客服入口（示意）'; }, 1500);
+  });
+
+  const listPicker = createPicker({
+    sheetId: 'list-sheet',
+    maskId: 'list-mask',
+    prefix: 'l',
+    openTriggers: ['#list-pick-time'],
+    closeExtra() {
+      // 关掉日期半屏后，仍停在预约服务半屏
+      if (listBook.classList.contains('on')) listMask.classList.add('on');
+      else listMask.classList.remove('on');
+    },
+    onConfirm(result) {
+      listTimeLabel.textContent = result.text + ' >';
+      listTimeLabel.classList.remove('ph');
+      listTimeLabel.classList.add('val');
+      listMask.classList.add('on');
+      listBook.classList.add('on');
+    }
+  });
+
+  // 点「预约服务时间」时：预约服务半屏先收起一点视觉上被盖住，日期半屏盖上
+  document.getElementById('list-pick-time').addEventListener('click', () => {
+    listBook.classList.add('on');
+    listMask.classList.add('on');
+  });
+
+  document.querySelectorAll('.js-list-book').forEach(btn => {
+    btn.addEventListener('click', () => {
+      listActiveBtn = btn;
+      const card = btn.closest('.ocard');
+      const remain = card ? (card.querySelector('.price span') || {}).textContent : '1次';
+      const n = /剩余(\d+)次/.exec(remain || '');
+      openListBook(n ? n[1] + '次' : '1次');
+    });
+  });
+
+  // ORDER flow
+  const orderTimeLabel = document.getElementById('order-time-label');
+  createPicker({
+    sheetId: 'order-sheet',
+    maskId: 'order-mask',
+    prefix: 'o',
+    openTriggers: ['#order-pick-time'],
+    onConfirm(result) {
+      orderTimeLabel.innerHTML = result.text + ' <span class="chev">›</span>';
+      orderTimeLabel.classList.remove('ph');
+      orderTimeLabel.classList.add('asap');
+    }
+  });
+
+  document.getElementById('order-pay').addEventListener('click', () => {
+    if (orderTimeLabel.classList.contains('ph')) {
+      toast('order-toast');
+      document.getElementById('order-toast').textContent = '请先选择上门时间';
+      setTimeout(() => { document.getElementById('order-toast').textContent = '已打开客服入口（示意）'; }, 1500);
+      return;
+    }
+    toast('order-toast');
+    document.getElementById('order-toast').textContent = '前往支付（示意）';
+    setTimeout(() => { document.getElementById('order-toast').textContent = '已打开客服入口（示意）'; }, 1500);
+  });
+
+  // BUY：支付成功 → 去预约 → 预约服务半屏 → 选时（同列表）
+  const buyMask = document.getElementById('buy-mask');
+  const buyBook = document.getElementById('buy-book');
+  const buyTimeLabel = document.getElementById('buy-time-label');
+  const buyGo = document.getElementById('buy-go');
+
+  function openBuyBook() {
+    document.getElementById('buy-remain').textContent = '2次';
+    buyTimeLabel.textContent = '请选择 >';
+    buyTimeLabel.className = 'ph';
+    buyMask.classList.add('on');
+    buyBook.classList.add('on');
+    document.getElementById('buy-sheet').classList.remove('on');
+  }
+  function closeBuyHard() {
+    buyBook.classList.remove('on');
+    document.getElementById('buy-sheet').classList.remove('on');
+    buyMask.classList.remove('on');
+  }
+
+  document.getElementById('buy-book-x').addEventListener('click', closeBuyHard);
+  document.getElementById('buy-cancel').addEventListener('click', closeBuyHard);
+  document.getElementById('buy-confirm').addEventListener('click', () => {
+    if (buyTimeLabel.classList.contains('ph')) {
+      const t = document.getElementById('buy-toast');
+      t.textContent = '请选择预约服务时间';
+      toast('buy-toast');
+      setTimeout(() => { t.textContent = '已打开客服入口（示意）'; }, 1500);
+      return;
+    }
+    buyGo.textContent = '已约';
+    buyGo.classList.add('done');
+    closeBuyHard();
+    const t = document.getElementById('buy-toast');
+    t.textContent = '预约成功';
+    toast('buy-toast');
+    setTimeout(() => { t.textContent = '已打开客服入口（示意）'; }, 1500);
+  });
+
+  createPicker({
+    sheetId: 'buy-sheet',
+    maskId: 'buy-mask',
+    prefix: 'b',
+    openTriggers: ['#buy-pick-time'],
+    closeExtra() {
+      if (buyBook.classList.contains('on')) buyMask.classList.add('on');
+      else buyMask.classList.remove('on');
+    },
+    onConfirm(result) {
+      buyTimeLabel.textContent = result.text + ' >';
+      buyTimeLabel.classList.remove('ph');
+      buyTimeLabel.classList.add('val');
+      buyMask.classList.add('on');
+      buyBook.classList.add('on');
+    }
+  });
+
+  document.getElementById('buy-pick-time').addEventListener('click', () => {
+    buyBook.classList.add('on');
+    buyMask.classList.add('on');
+  });
+
+  buyGo.addEventListener('click', openBuyBook);
+
+  function closeAll() {
+    ['list-sheet', 'order-sheet', 'buy-sheet', 'list-book', 'buy-book'].forEach(id =>
+      document.getElementById(id).classList.remove('on')
+    );
+    ['list-mask', 'order-mask', 'buy-mask'].forEach(id =>
+      document.getElementById(id).classList.remove('on')
+    );
+  }
+
+  fit();
+})();
+</script>
+</body>
+</html>
