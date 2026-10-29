@@ -47,16 +47,13 @@
       font-weight: 600;
     }
 
-    .scene-tabs,
-    .scheme-tabs {
+    .scene-tabs {
       display: flex;
       gap: 6px;
       flex-shrink: 0;
+      margin-bottom: 2px;
     }
-    .scene-tabs { margin-bottom: 2px; }
-    .scheme-tabs { margin-bottom: 2px; }
-    .scene-tabs a,
-    .scheme-tabs button {
+    .scene-tabs a {
       border: 1px solid #ccc;
       background: #fff;
       padding: 5px 14px;
@@ -68,26 +65,15 @@
       display: inline-flex;
       align-items: center;
     }
-    .scene-tabs a.active,
-    .scheme-tabs button.active {
+    .scene-tabs a.active {
       background: var(--teal);
       border-color: var(--teal);
       color: #fff;
     }
-    .scheme-tabs button {
-      border-color: #ddd;
-      background: #f7f7f7;
-    }
-    .scheme-tabs button.active {
-      background: #333;
-      border-color: #333;
-      color: #fff;
-    }
 
     .stage-frame {
-      /* 缩放后仍占正确布局空间，避免页面滚动 */
-      --fit: min(1, (100vh - 72px) / 620, (100vw - 24px) / 660);
-      width: calc(660px * var(--fit));
+      --fit: min(1, (100vh - 48px) / 620, (100vw - 24px) / 320);
+      width: calc(320px * var(--fit));
       height: calc(620px * var(--fit));
       display: flex;
       align-items: center;
@@ -99,7 +85,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 16px;
       transform: scale(var(--fit));
       transform-origin: center center;
     }
@@ -278,9 +263,9 @@
       z-index: 5;
     }
 
-    /* —— 方案一：黄底警示条 —— */
+    /* 黄底警示条（定稿） */
     .risk-bar {
-      display: none;
+      display: flex;
       align-items: flex-start;
       gap: 6px;
       padding: 8px 10px;
@@ -289,7 +274,6 @@
       border-bottom: 1px solid var(--warn-border);
       cursor: pointer;
     }
-    body.scheme-1 .risk-bar { display: flex; }
     .risk-bar:hover { background: #fff3d6; }
     .risk-bar .icon {
       flex-shrink: 0;
@@ -303,32 +287,16 @@
       line-height: 1.4;
       color: var(--warn-text);
     }
+    .risk-bar .text strong {
+      font-weight: 700;
+      color: #a04000;
+    }
     .risk-bar .more {
       flex-shrink: 0;
       font-size: 10px;
       color: var(--danger);
       white-space: nowrap;
       margin-top: 1px;
-    }
-
-    /* —— 方案二：弱化一行（贴协议） —— */
-    .risk-light {
-      display: none;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px 0;
-      font-size: 10px;
-      line-height: 1.35;
-      color: #999;
-      cursor: pointer;
-    }
-    body.scheme-2 .risk-light { display: flex; }
-    .risk-light .text { flex: 1; min-width: 0; }
-    .risk-light .link {
-      flex-shrink: 0;
-      color: #888;
-      text-decoration: underline;
-      text-underline-offset: 2px;
     }
 
     .agree {
@@ -339,7 +307,6 @@
       font-size: 10px;
       color: #666;
     }
-    body.scheme-2 .agree { padding-top: 4px; }
     .agree .check {
       width: 12px; height: 12px;
       border-radius: 2px;
@@ -527,7 +494,7 @@
     }
   </style>
 </head>
-<body class="scheme-2">
+<body>
   <div class="page-title">
     <h1>小程序风险告知</h1>
   </div>
@@ -535,109 +502,12 @@
     <a class="active" href="小程序风险告知.html">下单页风险告知</a>
     <a href="call-risk.html">打电话页风险告知</a>
     <a href="detail-risk.html">详情页风险告知</a>
-  </div>
-  <div class="scheme-tabs">
-    <button type="button" data-scheme="1">完整（对照）</button>
-    <button type="button" class="active" data-scheme="2">弱化（采用）</button>
+    <a href="cancel-risk.html">取消订单风险提示</a>
   </div>
 
   <div class="stage-frame">
   <div class="stage">
-    <!-- 左：确认支付 -->
-    <div class="phone" id="phone-cart">
-      <div class="status-bar"><span>9:41</span><span>●●●</span></div>
-      <div class="nav">
-        <span>‹</span>
-        <span class="icons"><span>○</span><span>···</span></span>
-      </div>
-      <div class="scroll">
-        <div class="card">
-          <div class="row"><span class="k">服务地址</span><span class="v">上海市普陀区真光路1288号凯德龙之梦…</span></div>
-          <div class="row"><span class="k">被护理人</span><span class="v">张女士 · 28岁 · 女</span></div>
-        </div>
-        <div class="card">
-          <div class="product">
-            <div class="thumb">夜间</div>
-            <div class="info">
-              <div class="name">护士居家夜间10小时特护</div>
-              <span class="tag">10小时</span>
-              <div class="meta">
-                <span class="price">¥800.00</span>
-                <div class="qty"><span>−</span>1<span>+</span></div>
-              </div>
-            </div>
-          </div>
-          <div class="select-row">
-            <span>已选：不限性别 / 护士</span>
-            <a href="#">修改</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="bottom">
-        <div class="risk-bar" onclick="openSheet('cart')" role="button" tabindex="0">
-          <svg class="icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-            <path d="M8 1.5L1.5 13h13L8 1.5zM7.25 6h1.5v4h-1.5V6zm.75 6.25a.75.75 0 110-1.5.75.75 0 010 1.5z"/>
-          </svg>
-          <div class="text">请通过平台下单并支付。私下转账或取消后线下交易，平台无法保障售后与纠纷处理。</div>
-          <div class="more">了解更多 ›</div>
-        </div>
-        <div class="risk-light" onclick="openSheet('cart')" role="button" tabindex="0">
-          <span class="text">请通过平台下单支付，勿私下转账</span>
-          <span class="link">了解更多</span>
-        </div>
-        <div class="agree">
-          <span class="check">✓</span>
-          <span>已阅读并同意<a href="#">《平台服务协议》</a></span>
-        </div>
-        <div class="pay-row">
-          <div>
-            <div class="total">合计 <span class="amt">¥800.00</span><span class="info-i" title="最终支付价格会因服务地点不同有所差异">i</span></div>
-            <div class="detail-link">查看明细 ▾</div>
-          </div>
-          <button type="button" class="btn-pay">确认支付</button>
-        </div>
-      </div>
-
-      <div class="overlay" id="overlay-cart" onclick="closeSheet('cart')"></div>
-      <div class="sheet" id="sheet-cart">
-        <div class="sheet-handle"></div>
-        <div class="sheet-hd">
-          <h2>平台交易须知</h2>
-          <button type="button" class="sheet-close" onclick="closeSheet('cart')" aria-label="关闭">×</button>
-        </div>
-        <p class="sheet-sub">为保障您的资金与售后权益，请务必通过平台完成下单与支付</p>
-        <div class="sheet-body">
-          <div class="risk-item">
-            <div class="risk-num">1</div>
-            <div>
-              <h3>售后难保障</h3>
-              <p>加价、不到岗、服务质量等问题，脱离平台后难以介入取证与处理。</p>
-            </div>
-          </div>
-          <div class="risk-item">
-            <div class="risk-num">2</div>
-            <div>
-              <h3>资金无保障</h3>
-              <p>微信/支付宝等私下转账，退款与赔付需自行协商解决。</p>
-            </div>
-          </div>
-          <div class="risk-item">
-            <div class="risk-num">3</div>
-            <div>
-              <h3>人身与财产风险</h3>
-              <p>脱离平台后，身份核验、服务记录与保险链路可能不完整。</p>
-            </div>
-          </div>
-          <div class="action-box">
-            <h3>⚠ 如遇以下情况，请拒绝并举报</h3>
-            <p>护工诱导取消订单、加微信私下收款等：请拒绝，并联系客服向我们举报。</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 右：先买后约支付 -->
+    <!-- 下单页（购物车确认支付页同款警示条，示意保留一屏） -->
     <div class="phone" id="phone-order">
       <div class="status-bar"><span>9:41</span><span>●●●</span></div>
       <div class="nav">
@@ -683,16 +553,12 @@
       </div>
 
       <div class="bottom">
-        <div class="risk-bar" onclick="openSheet('order')" role="button" tabindex="0">
+        <div class="risk-bar" onclick="openSheet()" role="button" tabindex="0">
           <svg class="icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
             <path d="M8 1.5L1.5 13h13L8 1.5zM7.25 6h1.5v4h-1.5V6zm.75 6.25a.75.75 0 110-1.5.75.75 0 010 1.5z"/>
           </svg>
-          <div class="text">请通过平台下单并支付。私下转账或取消后线下交易，平台无法保障售后与纠纷处理。</div>
+          <div class="text">请通过平台下单并支付。私下转账或线下交易，发生纠纷及人身、财产损失，平台<strong>概不负责</strong>。</div>
           <div class="more">了解更多 ›</div>
-        </div>
-        <div class="risk-light" onclick="openSheet('order')" role="button" tabindex="0">
-          <span class="text">请通过平台下单支付，勿私下转账</span>
-          <span class="link">了解更多</span>
         </div>
         <div class="agree">
           <span class="check">✓</span>
@@ -707,12 +573,12 @@
         </div>
       </div>
 
-      <div class="overlay" id="overlay-order" onclick="closeSheet('order')"></div>
-      <div class="sheet" id="sheet-order">
+      <div class="overlay" id="overlay" onclick="closeSheet()"></div>
+      <div class="sheet" id="sheet">
         <div class="sheet-handle"></div>
         <div class="sheet-hd">
           <h2>平台交易须知</h2>
-          <button type="button" class="sheet-close" onclick="closeSheet('order')" aria-label="关闭">×</button>
+          <button type="button" class="sheet-close" onclick="closeSheet()" aria-label="关闭">×</button>
         </div>
         <p class="sheet-sub">为保障您的资金与售后权益，请务必通过平台完成下单与支付</p>
         <div class="sheet-body">
@@ -748,26 +614,14 @@
   </div>
 
   <script>
-    function openSheet(id) {
-      document.getElementById('overlay-' + id).classList.add('open');
-      document.getElementById('sheet-' + id).classList.add('open');
+    function openSheet() {
+      document.getElementById('overlay').classList.add('open');
+      document.getElementById('sheet').classList.add('open');
     }
-    function closeSheet(id) {
-      document.getElementById('overlay-' + id).classList.remove('open');
-      document.getElementById('sheet-' + id).classList.remove('open');
+    function closeSheet() {
+      document.getElementById('overlay').classList.remove('open');
+      document.getElementById('sheet').classList.remove('open');
     }
-
-    document.querySelectorAll('.scheme-tabs button').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var s = btn.getAttribute('data-scheme');
-        document.body.className = 'scheme-' + s;
-        document.querySelectorAll('.scheme-tabs button').forEach(function (b) {
-          b.classList.toggle('active', b === btn);
-        });
-        closeSheet('cart');
-        closeSheet('order');
-      });
-    });
   </script>
 </body>
 </html>

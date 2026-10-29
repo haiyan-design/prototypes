@@ -330,6 +330,10 @@
       line-height: 1.55;
       text-align: left;
     }
+    .dialog-body p strong {
+      font-weight: 700;
+      color: #333;
+    }
     .dialog-body .tip {
       margin-top: 8px;
       color: #c45c00;
@@ -406,6 +410,7 @@
     <a href="小程序风险告知.html">下单页风险告知</a>
     <a class="active" href="call-risk.html">打电话页风险告知</a>
     <a href="detail-risk.html">详情页风险告知</a>
+    <a href="cancel-risk.html">取消订单风险提示</a>
   </div>
 
   <div class="stage-frame">
@@ -471,7 +476,7 @@
           <button type="button" class="dialog-close" id="close-risk" aria-label="关闭">×</button>
           <div class="dialog-body">
             <h2 id="dialog-title">风险提示</h2>
-            <p>通话中请勿约定私下转账或取消后线下交易，平台无法保障售后。</p>
+            <p>通话中请勿约定私下转账或线下交易，发生纠纷及人身、财产损失，平台<strong>概不负责</strong>。</p>
             <p class="tip">如遇诱导加微信收款，请使用「一键举报」向我们反馈。</p>
           </div>
           <div class="dialog-ft">
