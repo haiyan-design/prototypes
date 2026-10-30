@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>确认支付</title>
-  <link rel="stylesheet" href="../css/common.css?v=43" />
+  <link rel="stylesheet" href="../css/common.css?v=44" />
 </head>
 <body>
   <div class="toast" id="toast" hidden></div>
@@ -216,7 +216,8 @@
         booked: { back: "order-detail-booked.html" },
         "pending-complete": { back: "order-detail-pending-complete.html" },
         "pending-complete-list": { back: "order-list-pending-complete.html" },
-        "mine-latest": { back: "mine.html" }
+        "mine-latest": { back: "mine.html" },
+        "home-staff": { back: "home.html" }
       };
       document.getElementById("backLink").setAttribute(
         "href",
@@ -626,6 +627,15 @@
 
       applyEdge(params.get("edge"));
       sync();
+
+      /* 首页人维度入口：默认勾选上次服务人员 */
+      if (from === "home-staff" && params.get("prefer") === "1" && !staffCard.hidden) {
+        var homeStaff = findStaff(selectedStaffId);
+        if (homeStaff && staffMatches(homeStaff, currentSpec())) {
+          preferOn = true;
+          renderStaffCard();
+        }
+      }
     })();
   </script>
 </body>

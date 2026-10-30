@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>首页 · 人员推荐再来一单</title>
+  <link rel="stylesheet" href="../css/common.css?v=62" />
+</head>
+<body class="pdp-shot-body home-body">
+  <div class="home-scroll">
+    <div class="pdp-shot home-shot">
+      <img
+        class="pdp-shot-img home-shot-img"
+        src="../assets/home-shot.png?v=62"
+        alt="e护通首页"
+        width="471"
+        height="1024"
+      />
+    </div>
+  </div>
+
+  <div class="tabbar home-tabbar">
+    <div class="tabbar-item active"><span class="icon i-home"></span>首页</div>
+    <div class="tabbar-item"><span class="icon i-grid"></span>分类</div>
+    <div class="tabbar-center"><span class="icon i-user"></span>e护通智</div>
+    <div class="tabbar-item tabbar-cart">
+      <span class="badge">1</span>
+      <span class="icon i-cart"></span>购物车
+    </div>
+    <a class="tabbar-item" href="mine.html"><span class="icon i-user"></span>我的</a>
+  </div>
+
+  <div class="staff-push" id="staffPush" hidden>
+    <div class="staff-push-mask" data-close="1"></div>
+    <div class="staff-push-dialog" role="dialog" aria-modal="true" aria-labelledby="staffPushTitle">
+      <button type="button" class="staff-push-close" data-close="1" aria-label="关闭">×</button>
+      <div class="staff-push-head">
+        <h2 class="staff-push-title" id="staffPushTitle">上次服务人员</h2>
+      </div>
+      <div class="staff-push-body">
+        <img class="staff-push-av" src="../assets/nurse.png" alt="" />
+        <div class="staff-push-name">徐测试</div>
+        <div class="staff-push-sub">五级护理员 · 3.6分 · 服务过 3 次</div>
+        <div class="staff-push-date">上次服务 10月21日</div>
+      </div>
+      <div class="staff-push-actions">
+        <button type="button" class="staff-push-btn ghost" id="staffPushLater">稍后再说</button>
+        <a class="staff-push-btn primary" href="reorder-checkout.html?from=home-staff&prefer=1&v=62">再来一单</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="staff-guide" id="staffGuide" hidden>
+    <div class="staff-guide-inner">
+      <p class="staff-guide-txt">再约上次服务人员，可去<a href="order-list-cancelled.html">我的订单</a>或<a href="order-completed.html">订单详情</a>再来一单</p>
+      <button type="button" class="staff-guide-x" id="staffGuideClose" aria-label="关闭">×</button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var push = document.getElementById("staffPush");
+      var guide = document.getElementById("staffGuide");
+      var params = new URLSearchParams(location.search);
+      if (params.get("push") !== "0") push.hidden = false;
+
+      function closePushShowGuide() {
+        push.hidden = true;
+        guide.hidden = false;
+      }
+
+      document.getElementById("staffPushLater").addEventListener("click", closePushShowGuide);
+      push.querySelector(".staff-push-close").addEventListener("click", closePushShowGuide);
+      push.querySelector(".staff-push-mask").addEventListener("click", closePushShowGuide);
+      document.getElementById("staffGuideClose").addEventListener("click", function () {
+        guide.hidden = true;
+      });
+    })();
+  </script>
+</body>
+</html>
