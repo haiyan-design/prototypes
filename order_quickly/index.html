@@ -596,6 +596,7 @@
           </div>
           <button type="button" class="link" id="edit-date">修改日期</button>
         </div>
+        <div class="pick-tip" id="step2-pick-tip">今日日间可约，08:00 开始</div>
         <div class="sync-row" id="sync-stepper">
           <span class="sl" id="sync-stepper-lab">服务天数</span>
           <div class="stepper"><button type="button" data-day="-1">−</button><span class="day-count">3</span><button type="button" data-day="1">+</button></div>
@@ -1088,12 +1089,28 @@
     renderCal("cal-s");
   }
 
+  function syncCutoffTips(){
+    var mode = currentMode();
+    var note = cutoffNotice(mode);
+    var hasPlan = !!currentPlan();
+    $all(".pick-tip").forEach(function(el){
+      var show = true;
+      if (el.id === "step2-pick-tip") show = !!state.dateEditorOpen;
+      else if (el.id === "svc-pick-tip") show = !hasPlan || !!state.svcEditorOpen;
+      el.hidden = !show;
+      if (!show) return;
+      el.textContent = note.text;
+      el.classList.toggle("warn", !!note.warn);
+    });
+  }
+
   function setDateEditorOpen(open){
     state.dateEditorOpen = !!open;
     var ed = $("#date-editor");
     var btn = $("#edit-date");
     if (ed) ed.classList.toggle("open", state.dateEditorOpen);
     if (btn) btn.textContent = state.dateEditorOpen ? "收起" : "修改日期";
+    syncCutoffTips();
     if (state.dateEditorOpen) {
       renderRange();
       renderCal("cal-c");
@@ -1114,6 +1131,7 @@
     if (btn) btn.textContent = state.svcEditorOpen ? "收起" : (plan ? "修改日期" : "选日期");
     var row = $("#svc-sync-row");
     if (row) row.hidden = !plan;
+    syncCutoffTips();
   }
 
   function setSvcEditorOpen(open){
@@ -1258,15 +1276,7 @@
     var qLab = $("#q-stepper-lab");
     if (qLab) qLab.textContent = mode === "24h" ? "服务天数（日夜同步）" : "服务天数";
     $all(".day-count").forEach(function(el){ el.textContent = String(state.start ? state.days : state.minDays); });
-    $all(".pick-tip").forEach(function(el){
-      if (el.closest("[data-screen='step2']")) { el.hidden = true; return; }
-      // 从服务去下单：选完日期后仍保留最早可约提示；问卷页选中后收起
-      if (el.id !== "svc-pick-tip" && complete && plan) { el.hidden = true; return; }
-      var note = cutoffNotice(mode);
-      el.hidden = false;
-      el.textContent = note.text;
-      el.classList.toggle("warn", !!note.warn);
-    });
+    syncCutoffTips();
     $all("[data-plan]").forEach(function(el){ el.innerHTML = planHtml(plan); });
     syncPlanFold();
   }
