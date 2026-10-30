@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>确认支付</title>
-  <link rel="stylesheet" href="../css/common.css?v=63" />
+  <link rel="stylesheet" href="../css/common.css?v=72" />
 </head>
 <body>
   <div class="toast" id="toast" hidden></div>
@@ -51,7 +51,6 @@
         <img class="sku-thumb" src="../assets/service.png" alt="" />
         <div style="flex:1;min-width:0">
           <div class="sku-name" id="skuName">各种陪护项目</div>
-          <span class="goods-tag" id="skuDuration">1次</span>
           <div class="sku-meta">
             <span class="sku-price" id="skuPrice">¥ 148.00</span>
             <div class="stepper">
@@ -63,39 +62,25 @@
         </div>
       </div>
 
-      <div class="selected-row">
-        <span>已选：<em id="selectedText">性别不限/五级护理员</em></span>
-      </div>
-
+      <!-- 时长/次数规格：始终展示；上门费不在商品卡内 -->
       <div class="option-block" id="optionPanel">
-        <h4>性别要求</h4>
-        <div class="chips" id="genderChips">
-          <button class="chip active" type="button" data-v="不限">不限</button>
-          <button class="chip" type="button" data-v="男">男</button>
-          <button class="chip" type="button" data-v="女">女</button>
-        </div>
-        <h4>人员等级</h4>
-        <div class="chips chips-grid" id="levelChips">
-          <button class="chip active" type="button" data-v="五级护理员" data-extra="0">五级护理员 +0.00</button>
-          <button class="chip" type="button" data-v="四级护理员" data-extra="76">四级护理员 +76.00</button>
-          <button class="chip" type="button" data-v="三级护理员" data-extra="114">三级护理员 +114.00</button>
-          <button class="chip" type="button" data-v="二级护理员" data-extra="152">二级护理员 +152.00</button>
-          <button class="chip" type="button" data-v="一级护理员" data-extra="190">一级护理员 +190.00</button>
-        </div>
-        <div class="door-fee">
-          <span>上门费 ¥45.00</span>
-          <span class="qty">x1</span>
+        <h4>服务规格</h4>
+        <div class="chips" id="durationChips">
+          <button class="chip active" type="button" data-v="1次" data-base="103">1次</button>
+          <button class="chip" type="button" data-v="1次3小时" data-base="168">1次3小时</button>
+          <button class="chip" type="button" data-v="1次两天" data-base="296">1次两天</button>
+          <button class="chip" type="button" data-v="12小时" data-base="248">12小时</button>
         </div>
       </div>
     </div>
 
-    <!-- 优先服务人员：默认推荐本单人员，可勾选；多人走「更换」半屏 -->
+    <!-- 优先服务人员：默认勾选；指定人时隐藏下方性别/等级 -->
     <div class="staff-card">
       <div class="staff-card-hd">
         <span class="ttl">优先服务人员</span>
         <button class="chg" type="button" id="staffChangeBtn">更换 ›</button>
       </div>
-      <button class="staff-pick" type="button" id="staffPick" aria-pressed="false">
+      <button class="staff-pick on" type="button" id="staffPick" aria-pressed="true">
         <span class="check" aria-hidden="true"></span>
         <img class="staff-av" id="staffAvatar" src="../assets/nurse.png" alt="" />
         <div class="staff-meta">
@@ -106,10 +91,37 @@
           <div class="sub" id="staffSub">五级护理员 · 3.6分 · 服务过 3 次</div>
         </div>
       </button>
-      <p class="staff-tip" id="staffTip">当前不优先指定，将由平台按您的服务要求安排；可勾选或点「更换」选择历史服务人员。</p>
+      <p class="staff-tip" id="staffTip">优先安排该人员；不可约时，为您安排同等条件其他人</p>
+      <!-- 已勾选：上门费嵌在人员卡底部 -->
+      <div class="door-fee" id="doorFeeInStaff">
+        <span>上门费 ¥45.00</span>
+        <span class="qty">x1</span>
+      </div>
     </div>
 
-    <!-- 特殊补充 / 优惠券：随页面滚动，位于优先服务人员下方 -->
+    <!-- 未勾选：性别/等级 + 上门费嵌在本卡底部；勾选时整块隐藏 -->
+    <div class="filter-card option-block" id="specFilterBlock" hidden>
+      <h4>性别要求</h4>
+      <div class="chips" id="genderChips">
+        <button class="chip active" type="button" data-v="不限">不限</button>
+        <button class="chip" type="button" data-v="男">男</button>
+        <button class="chip" type="button" data-v="女">女</button>
+      </div>
+      <h4>人员等级</h4>
+      <div class="chips chips-grid" id="levelChips">
+        <button class="chip active" type="button" data-v="五级护理员" data-extra="0">五级护理员 +0.00</button>
+        <button class="chip" type="button" data-v="四级护理员" data-extra="76">四级护理员 +76.00</button>
+        <button class="chip" type="button" data-v="三级护理员" data-extra="114">三级护理员 +114.00</button>
+        <button class="chip" type="button" data-v="二级护理员" data-extra="152">二级护理员 +152.00</button>
+        <button class="chip" type="button" data-v="一级护理员" data-extra="190">一级护理员 +190.00</button>
+      </div>
+      <div class="door-fee" id="doorFeeInFilter">
+        <span>上门费 ¥45.00</span>
+        <span class="qty">x1</span>
+      </div>
+    </div>
+
+    <!-- 特殊补充 / 优惠券 -->
     <div class="extra-card">
       <div class="extra-row">
         <div class="extra-left">
@@ -200,7 +212,6 @@
 
   <script>
     (function () {
-      var BASE = 103; // 服务价
       var DOOR = 45;
 
       var params = new URLSearchParams(location.search);
@@ -231,18 +242,24 @@
         { id: "s4", name: "赵护工", gender: "男", level: "五级护理员", score: "4.2", times: 2, last: "最近服务 8月03日", avatar: "../assets/nurse.png", available: true },
         { id: "s5", name: "陈姐", gender: "女", level: "二级护理员", score: "4.7", times: 1, last: "最近服务 7月15日", avatar: "../assets/avatar.png", available: true }
       ];
-      var preferOn = false;
-      /* 卡片展示推荐候选人；默认不勾选；preferOn 只表示是否带上偏好 */
+      /* 默认勾选上次/本单人；preferOn=指定人；不指定时才展示性别/等级 */
+      var preferOn = true;
       var selectedStaffId = "s1";
-      var staffModuleForcedOff = false; /* 品类不支持指定 / 边界：强制不展示 */
-      var toastTimer = null;
+      var staffModuleForcedOff = false;
+      var LEVEL_EXTRA = {
+        "五级护理员": 0,
+        "四级护理员": 76,
+        "三级护理员": 114,
+        "二级护理员": 152,
+        "一级护理员": 190
+      };
 
       var staffCard = document.querySelector(".staff-card");
       var staffPick = document.getElementById("staffPick");
       var staffTip = document.getElementById("staffTip");
-      var toastEl = document.getElementById("toast");
-      var TIP_ON = "将优先安排该人员；若其时间冲突或暂不可接单，将为您安排同等条件的其他人员。";
-      var TIP_OFF = "当前不优先指定，将由平台按您的服务要求安排；可勾选或点「更换」选择历史服务人员。";
+      var specFilterBlock = document.getElementById("specFilterBlock");
+      var TIP_ON = "优先安排该人员；不可约时，为您安排同等条件其他人";
+      var TIP_OFF = "不指定人员，由平台按要求派单";
 
       function findStaff(id) {
         for (var i = 0; i < STAFF_LIST.length; i++) {
@@ -255,13 +272,9 @@
         return STAFF_LIST.filter(function (s) { return s.available !== false; });
       }
 
-      function selectableStaffList(spec) {
-        return availableStaffList().filter(function (s) { return staffMatches(s, spec); });
-      }
-
-      /* 推荐：本单服务人（若可选）→ 否则服务次数最多 */
-      function pickRecommendStaff(spec) {
-        var list = selectableStaffList(spec);
+      /* 推荐：本单服务人（若可用）→ 否则服务次数最多 */
+      function pickRecommendStaff() {
+        var list = availableStaffList();
         if (!list.length) return null;
         var i;
         for (i = 0; i < list.length; i++) {
@@ -272,119 +285,44 @@
       }
 
       /**
-       * 展示条件：有业务可用的历史人（未离职等）。
-       * 规格全都不匹配时仍展示（路径 B：取消勾选但卡片留人），不因改规格把模块藏掉。
-       * 仅「无人可用 / 品类不支持」时整块隐藏、不提醒。
-       * 原人不可用时静默换下一位推荐，不提示「原人不可约」。
+       * 指定人 → 隐藏性别/等级卡，上门费嵌在人员卡底；
+       * 不指定 → 展示性别/等级卡，上门费嵌在该卡底；人员卡内上门费隐藏。
+       */
+      function syncSpecVisibility() {
+        var doorInStaff = document.getElementById("doorFeeInStaff");
+        var doorInFilter = document.getElementById("doorFeeInFilter");
+        if (specFilterBlock) specFilterBlock.hidden = !!preferOn;
+        if (doorInStaff) doorInStaff.hidden = !preferOn || staffCard.hidden;
+        if (doorInFilter) doorInFilter.hidden = !!preferOn;
+      }
+
+      /**
+       * 有业务可用历史人 → 展示模块，默认勾选推荐人。
+       * 无人可用 / 品类不支持 → 整块隐藏，展示性别/等级供派单。
        */
       function syncStaffModule() {
-        var spec = currentSpec();
         var available = availableStaffList();
         if (staffModuleForcedOff || !available.length) {
           preferOn = false;
           staffCard.hidden = true;
           if (typeof openSheet !== "undefined" && openSheet === "staff") closeStaffSheet();
+          syncSpecVisibility();
           return;
         }
         var wasHidden = staffCard.hidden;
         staffCard.hidden = false;
         var cur = findStaff(selectedStaffId);
         if (!cur || cur.available === false || wasHidden) {
-          var rec = pickRecommendStaff(spec) || available.slice().sort(function (a, b) {
-            return b.times - a.times;
-          })[0];
+          var rec = pickRecommendStaff();
           selectedStaffId = rec.id;
-          preferOn = false;
+          preferOn = true;
         }
         renderStaffCard();
-      }
-
-      function currentSpec() {
-        return {
-          gender: document.querySelector("#genderChips .chip.active").dataset.v,
-          level: document.querySelector("#levelChips .chip.active").dataset.v
-        };
-      }
-
-      function getMismatchFlags(staff, spec) {
-        if (!staff) return { gender: true, level: true };
-        return {
-          gender: spec.gender !== "不限" && staff.gender !== spec.gender,
-          level: staff.level !== spec.level
-        };
-      }
-
-      /* prefer: "gender" | "level" | "all"
-         路径A/D：all（几项不符写几项）；路径B：只报本次改动项；路径C：仅行内标注、无Toast */
-      function getMismatchReasons(staff, spec, prefer) {
-        var flags = getMismatchFlags(staff, spec);
-        var reasons = [];
-        if (prefer === "gender") {
-          if (flags.gender) reasons.push("gender");
-          else if (flags.level) reasons.push("level");
-          return reasons;
-        }
-        if (prefer === "level") {
-          if (flags.level) reasons.push("level");
-          else if (flags.gender) reasons.push("gender");
-          return reasons;
-        }
-        if (flags.gender) reasons.push("gender");
-        if (flags.level) reasons.push("level");
-        return reasons;
-      }
-
-      function staffMatches(staff, spec) {
-        return getMismatchReasons(staff, spec, "all").length === 0;
-      }
-
-      function mismatchToast(name, reasons, mode) {
-        var both = reasons.indexOf("gender") >= 0 && reasons.indexOf("level") >= 0;
-        if (mode === "cancel") {
-          if (both) return "因性别要求、人员等级均与「" + name + "」不符，已取消优先指定，将由平台安排";
-          if (reasons[0] === "gender") return "因性别要求与「" + name + "」不符，已取消优先指定，将由平台安排";
-          return "因人员等级要求与「" + name + "」不符，已取消优先指定，将由平台安排";
-        }
-        if (both) return "「" + name + "」与当前性别要求、人员等级均不符，请修改规格或点「更换」选择其他人";
-        if (reasons[0] === "gender") return "「" + name + "」与当前性别要求不符，请修改性别或点「更换」选择其他人";
-        return "「" + name + "」与当前人员等级要求不符，请修改人员等级或点「更换」选择其他人";
-      }
-
-      function mismatchLabel(reasons) {
-        var both = reasons.indexOf("gender") >= 0 && reasons.indexOf("level") >= 0;
-        if (both) return "性别、人员等级不符";
-        if (reasons[0] === "gender") return "性别不符";
-        return "人员等级不符";
-      }
-
-      function showToast(msg) {
-        toastEl.hidden = false;
-        toastEl.textContent = msg;
-        toastEl.classList.add("show");
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(function () {
-          toastEl.classList.remove("show");
-          setTimeout(function () { toastEl.hidden = true; }, 200);
-        }, 2200);
-      }
-
-      /* 路径 B：已勾选 + 改规格 → 取消勾选；未勾选时不弹（避免刷屏） */
-      function resolveStaffConflict(showTip, preferReason) {
-        if (!preferOn) return false;
-        var s = findStaff(selectedStaffId);
-        if (!s) return false;
-        var reasons = getMismatchReasons(s, currentSpec(), preferReason || "all");
-        if (!reasons.length) return false;
-        preferOn = false;
-        renderStaffCard();
-        if (showTip !== false) {
-          showToast(mismatchToast(s.name, reasons, "cancel"));
-        }
-        return true;
+        syncSpecVisibility();
       }
 
       function renderStaffCard() {
-        var s = findStaff(selectedStaffId) || pickRecommendStaff(currentSpec());
+        var s = findStaff(selectedStaffId) || pickRecommendStaff();
         if (!s) return;
         if (preferOn) {
           staffPick.classList.add("on");
@@ -402,25 +340,15 @@
         tag.textContent = s.fromOrder ? "本单服务" : "历史服务";
         document.getElementById("staffSub").textContent =
           s.gender + " · " + s.level + " · " + s.score + "分 · 服务过 " + s.times + " 次";
+        syncSpecVisibility();
       }
 
-      /* 路径 A：先规格后勾选 → 拦截，不写「已取消」 */
+      /* 卡片勾选切换：取消指定 → 展示性别/等级；再勾选 → 隐藏（不再 Toast 拦截） */
       staffPick.addEventListener("click", function () {
         if (staffCard.hidden) return;
-        if (preferOn) {
-          preferOn = false;
-          renderStaffCard();
-          return;
-        }
-        var s = findStaff(selectedStaffId);
-        if (!s) return;
-        var reasons = getMismatchReasons(s, currentSpec(), "all");
-        if (reasons.length) {
-          showToast(mismatchToast(s.name, reasons, "block"));
-          return;
-        }
-        preferOn = true;
+        preferOn = !preferOn;
         renderStaffCard();
+        sync();
       });
 
       var mask = document.getElementById("payMask");
@@ -444,21 +372,12 @@
         }
       }
       function renderStaffList() {
-        var spec = currentSpec();
         var html = "";
-        var noneOn = !preferOn;
-        html +=
-          '<button class="staff-none' + (noneOn ? " on" : "") + '" type="button" data-id="">' +
-          '<span class="check"></span>' +
-          '<span class="txt">不指定，由平台安排<small>按性别、等级等要求派单</small></span>' +
-          "</button>";
         availableStaffList().forEach(function (s) {
-          var reasons = getMismatchReasons(s, spec, "all");
-          var ok = reasons.length === 0;
           var on = preferOn && selectedStaffId === s.id;
           html +=
-            '<button class="staff-item' + (on ? " on" : "") + (ok ? "" : " disabled") +
-            '" type="button" data-id="' + s.id + '"' + (ok ? "" : ' data-mismatch="1"') + ">" +
+            '<button class="staff-item' + (on ? " on" : "") +
+            '" type="button" data-id="' + s.id + '">' +
             '<span class="check"></span>' +
             '<img class="staff-av" src="' + s.avatar + '" alt="" />' +
             '<div class="staff-meta">' +
@@ -467,25 +386,20 @@
             "</div>" +
             '<div class="sub">' + s.gender + " · " + s.level + " · " + s.score + "分 · 服务过 " + s.times + " 次</div>" +
             '<div class="sub">' + s.last + "</div>" +
-            (ok ? "" : '<div class="mismatch">' + mismatchLabel(reasons) + "</div>") +
             "</div></button>";
         });
         document.getElementById("staffList").innerHTML = html;
       }
 
-      /* 路径 C：置灰项已有行内标注，点击无 Toast、不选中 */
       document.getElementById("staffList").addEventListener("click", function (e) {
         var btn = e.target.closest("[data-id]");
         if (!btn) return;
-        if (btn.classList.contains("disabled") || btn.getAttribute("data-mismatch") === "1") return;
         var id = btn.getAttribute("data-id");
-        if (!id) {
-          preferOn = false;
-        } else {
-          preferOn = true;
-          selectedStaffId = id;
-        }
+        if (!id) return;
+        preferOn = true;
+        selectedStaffId = id;
         renderStaffCard();
+        sync();
         closeStaffSheet();
       });
 
@@ -505,23 +419,28 @@
         });
       }
 
-      function sync(changed) {
-        var g = document.querySelector("#genderChips .chip.active").dataset.v;
-        var l = document.querySelector("#levelChips .chip.active");
-        var extra = Number(l.dataset.extra || 0);
-        var genderLabel = g === "不限" ? "性别不限" : "性别" + g;
-        document.getElementById("selectedText").textContent = genderLabel + "/" + l.dataset.v;
-        var total = BASE + extra + DOOR;
+      function sync() {
+        var dur = document.querySelector("#durationChips .chip.active");
+        var base = Number((dur && dur.dataset.base) || 103);
+        var extra;
+        if (preferOn) {
+          var s = findStaff(selectedStaffId);
+          extra = s ? (LEVEL_EXTRA[s.level] || 0) : 0;
+        } else {
+          var l = document.querySelector("#levelChips .chip.active");
+          extra = Number((l && l.dataset.extra) || 0);
+        }
+        var total = base + extra + DOOR;
         var text = "¥ " + total.toFixed(2);
         document.getElementById("skuPrice").textContent = text;
         document.getElementById("totalPrice").textContent = text;
         document.getElementById("sheetTotal").textContent = text;
-        resolveStaffConflict(true, changed);
         syncStaffModule();
       }
 
-      bindChips(document.getElementById("genderChips"), function () { sync("gender"); });
-      bindChips(document.getElementById("levelChips"), function () { sync("level"); });
+      bindChips(document.getElementById("durationChips"), function () { sync(); });
+      bindChips(document.getElementById("genderChips"), function () { sync(); });
+      bindChips(document.getElementById("levelChips"), function () { sync(); });
 
       var agreed = false;
       document.querySelector(".agree").addEventListener("click", function () {
@@ -545,10 +464,8 @@
         }
       }
 
-      /* 路径 D：支付前兜底，报全部不符项 */
       document.getElementById("payBtn").addEventListener("click", function () {
         if (!agreed) { alert("请先阅读并同意《平台服务协议》"); return; }
-        resolveStaffConflict(true, "all");
         openPay();
       });
       document.getElementById("payClose").addEventListener("click", closePay);
@@ -596,15 +513,15 @@
           showEdgeBanner("原被护理人已删除，请重新选择后再支付。");
         }
 
-        /* 原单人不可用，但仍有其他可选历史人：静默换推荐，不提醒 */
+        /* 原单人不可用，但仍有其他可选历史人：静默换推荐并默认勾选 */
         if (edge === "staff-gone") {
           var origin = findStaff("s1");
           if (origin) origin.available = false;
-          preferOn = false;
-          selectedStaffId = "s1"; /* syncStaffModule 会因不可用改推下一位 */
+          selectedStaffId = "s1";
+          preferOn = true;
         }
 
-        /* 无可选历史人 / 品类不支持指定：整块不展示、不提醒 */
+        /* 无可选历史人 / 品类不支持指定：整块不展示，展示性别/等级 */
         if (edge === "staff-none") {
           STAFF_LIST.forEach(function (s) { s.available = false; });
           staffModuleForcedOff = true;
@@ -614,15 +531,6 @@
 
       applyEdge(params.get("edge"));
       sync();
-
-      /* 首页人维度入口：默认勾选上次服务人员 */
-      if (from === "home-staff" && params.get("prefer") === "1" && !staffCard.hidden) {
-        var homeStaff = findStaff(selectedStaffId);
-        if (homeStaff && staffMatches(homeStaff, currentSpec())) {
-          preferOn = true;
-          renderStaffCard();
-        }
-      }
     })();
   </script>
 </body>

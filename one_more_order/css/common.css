@@ -641,6 +641,12 @@ a.tabbar-item { color: inherit; text-decoration: none; }
 .option-block[hidden] { display: none !important; }
 .option-block h4 { font-size: 14px; margin: 0 0 8px; font-weight: 500; }
 .option-block h4 + .chips { margin-bottom: 12px; }
+/* 性别/等级：独立卡片，挂在优先服务人员下方 */
+.filter-card {
+  margin: 10px 12px 0; background: #fff; border-radius: 10px; padding: 14px;
+}
+.filter-card[hidden] { display: none !important; }
+.filter-card.option-block { margin-top: 10px; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chips-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
@@ -653,12 +659,18 @@ a.tabbar-item { color: inherit; text-decoration: none; }
 .chip.active {
   border-color: var(--brand); color: var(--brand); background: #fff;
 }
+/* 上门费：嵌在上一卡片底部，融进白卡，保留米色底 */
 .door-fee {
-  margin-top: 4px; padding: 10px 12px; border-radius: 6px;
+  margin: 12px -14px -14px; padding: 12px 14px;
+  border-radius: 0 0 10px 10px;
   background: #faf6ef; color: #c48a3a; font-size: 13px;
   display: flex; justify-content: space-between; align-items: center;
 }
+.door-fee[hidden] { display: none !important; }
 .door-fee .qty { color: #bbb; }
+.staff-card .door-fee { margin-top: 12px; }
+.filter-card .door-fee { margin-top: 4px; }
+.filter-card .chips-grid { margin-bottom: 0; }
 
 .staff-card[hidden] { display: none !important; }
 
@@ -961,55 +973,52 @@ a.goods-row:active { opacity: 0.85; }
 .staff-push {
   position: fixed; inset: 0; z-index: 1200;
   display: flex; align-items: center; justify-content: center;
-  padding: 24px 28px;
+  padding: 24px 32px;
 }
 .staff-push[hidden] { display: none !important; }
 .staff-push-mask {
   position: absolute; inset: 0; background: rgba(0, 0, 0, 0.45);
 }
 .staff-push-dialog {
-  position: relative; z-index: 1; width: 100%; max-width: 286px;
-  border-radius: 16px; background: #fff; overflow: hidden;
+  position: relative; z-index: 1; width: 100%; max-width: 264px;
+  border-radius: 14px; background: #fff; overflow: hidden;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
   text-align: center;
 }
 .staff-push-close {
-  position: absolute; top: 10px; right: 10px; z-index: 2;
-  width: 28px; height: 28px; border: none; background: transparent;
-  font-size: 22px; line-height: 28px; color: rgba(255, 255, 255, 0.85); cursor: pointer;
+  position: absolute; top: 8px; right: 8px; z-index: 2;
+  width: 26px; height: 26px; border: none; background: transparent;
+  font-size: 20px; line-height: 26px; color: rgba(255, 255, 255, 0.85); cursor: pointer;
 }
 .staff-push-head {
-  padding: 22px 20px 36px;
+  padding: 14px 16px 28px;
   background: linear-gradient(160deg, #1ec9a6 0%, #14ad8f 100%);
 }
 .staff-push-title {
-  margin: 0; font-size: 16px; font-weight: 600; color: #fff;
+  margin: 0; font-size: 15px; font-weight: 600; color: #fff;
   letter-spacing: 0.02em;
 }
 .staff-push-body {
-  margin-top: -28px; padding: 0 20px 4px;
+  margin-top: -22px; padding: 0 16px 0;
 }
 .staff-push-av {
-  width: 68px; height: 68px; margin: 0 auto; border-radius: 50%;
+  width: 54px; height: 54px; margin: 0 auto; border-radius: 50%;
   object-fit: cover; background: #e0e8e7;
-  border: 3px solid #fff;
-  box-shadow: 0 4px 12px rgba(20, 173, 143, 0.18);
+  border: 2px solid #fff;
+  box-shadow: 0 3px 10px rgba(20, 173, 143, 0.18);
 }
 .staff-push-name {
-  margin-top: 10px; font-size: 17px; font-weight: 600; color: var(--text);
+  margin-top: 8px; font-size: 16px; font-weight: 600; color: var(--text);
 }
 .staff-push-sub {
-  margin-top: 4px; font-size: 12px; color: var(--text-2);
-}
-.staff-push-date {
-  margin-top: 2px; font-size: 11px; color: var(--muted);
+  margin-top: 3px; font-size: 12px; color: var(--text-2); line-height: 1.35;
 }
 .staff-push-actions {
-  margin-top: 18px; padding: 0 16px 16px;
-  display: flex; gap: 10px;
+  margin-top: 14px; padding: 0 14px 14px;
+  display: flex; gap: 8px;
 }
 .staff-push-btn {
-  flex: 1; height: 40px; border-radius: 20px; font-size: 15px; font-weight: 500;
+  flex: 1; height: 36px; border-radius: 18px; font-size: 14px; font-weight: 500;
   display: inline-flex; align-items: center; justify-content: center;
   text-decoration: none; border: none; cursor: pointer;
 }
