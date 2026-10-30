@@ -38,6 +38,22 @@
 #ehutong-proto .desk-sub{display:none;flex-direction:column;gap:6px;margin-top:2px;padding-left:10px}
 #ehutong-proto .desk-sub.show{display:flex}
 #ehutong-proto .desk-sub button{padding:8px 10px;font-size:12px}
+#ehutong-proto .desk-clock{
+  margin-top:10px;padding-top:10px;border-top:1px dashed #e5e5e5;
+}
+#ehutong-proto .desk-clock .label{margin-bottom:6px}
+#ehutong-proto .desk-clock .dc-now{
+  font-size:12px;font-weight:500;color:var(--brand-dark);margin-bottom:6px;
+}
+#ehutong-proto .desk-clock input[type="datetime-local"]{
+  width:100%;border:1px solid #e5e5e5;border-radius:8px;padding:8px 10px;
+  font-size:12px;color:#333;background:#fff;font-family:inherit;
+}
+#ehutong-proto .desk-clock .presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#ehutong-proto .desk-clock .presets button{
+  flex:1 1 calc(50% - 6px);padding:7px 8px;font-size:11px;line-height:1.3;
+}
+#ehutong-proto .desk-clock .hint{font-size:11px;color:#999;margin-top:6px;line-height:1.35}
 #ehutong-proto .nurse-svc{display:none}
 #ehutong-proto .phone-wrap{display:flex;justify-content:center;align-items:flex-start;min-height:calc(100vh - 32px)}
 #ehutong-proto .phone{
@@ -149,6 +165,7 @@
 #ehutong-proto .rule-tip{
   margin:0 0 10px;padding:10px 12px;border-radius:10px;background:#f6f7f7;
 }
+#ehutong-proto .date-banner .pick-tip{margin:10px 0 0}
 #ehutong-proto .rule-tip .rt{display:block;font-size:12px;font-weight:600;color:#5c6562;margin:0 0 4px}
 #ehutong-proto .rule-tip .rule-tip-body{display:block;font-size:13px;line-height:1.55;color:#333}
 #ehutong-proto .scene-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -467,11 +484,23 @@
     <button type="button" data-sku="nurse-day">住院日间特护</button>
     <button type="button" data-sku="nurse-night">住院夜间特护</button>
   </div>
+  <div class="desk-clock" aria-label="演示时间">
+    <div class="label">演示时间（模拟「现在」）</div>
+    <div class="dc-now" id="demo-now-label">—</div>
+    <input type="datetime-local" id="desk-now-input" step="60" />
+    <div class="presets">
+      <button type="button" data-demo-preset="1000">10:00 日班可约</button>
+      <button type="button" data-demo-preset="1130">11:30 过日班</button>
+      <button type="button" data-demo-preset="2021">20:21 夜班可约</button>
+      <button type="button" data-demo-preset="2330">23:30 都过线</button>
+    </div>
+    <div class="hint">只在左侧改。状态栏时间和日历、排班都会按这个时间重算。</div>
+  </div>
 </div>
 
 <div class="phone-wrap">
 <div class="phone">
-  <div class="status"><span>09:21</span><span>87%</span></div>
+  <div class="status"><span id="status-time">09:21</span><span>87%</span></div>
 
   <!-- 首页 -->
   <section class="screen active" data-screen="home" id="home-screen">
@@ -702,11 +731,12 @@
         <div class="row">
           <div>
             <div class="lab">上门时间</div>
-            <div class="sub" id="svc-visit-lab">至少 3 天 · 每日 08:00 上门</div>
+            <div class="sub" id="svc-visit-lab">每日 08:00 上门 · 同一人服务</div>
             <div class="val" id="svc-date-val"></div>
           </div>
           <button type="button" class="link" id="svc-visit-toggle">选日期</button>
         </div>
+        <div class="pick-tip" id="svc-pick-tip">今日日间可约，08:00 开始</div>
         <div class="sync-row" id="svc-sync-row" hidden>
           <span class="sl">服务天数</span>
           <div class="stepper">
@@ -827,7 +857,8 @@
     svcEditorOpen: false,
     svcSku: "home-day",
     svcAdd: 0,
-    svcBase: 335
+    svcBase: 335,
+    simNow: new Date(now0.getTime())
   };
   var svcCatalog = {
     "home-day": { scene:"home", mode:"day", staff:"caregiver", name:"居家日间12小时看护", base:335, tag:"08:00–20:00", visit:"每日 08:00 上门" },
@@ -851,10 +882,63 @@
   }
   function addDays(d,n){ var x=new Date(d.getTime()); x.setDate(x.getDate()+n); return x; }
   function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
-  function today(){ return startOfDay(new Date()); }
-  function minutesNow(){ var n=new Date(); return n.getHours()*60+n.getMinutes(); }
+  function now(){ return new Date(state.simNow.getTime()); }
+  function today(){ return startOfDay(now()); }
+  function minutesNow(){ var n=now(); return n.getHours()*60+n.getMinutes(); }
   function dayOpenToday(){ return minutesNow() <= 11*60; }
   function nightOpenToday(){ return minutesNow() <= 23*60; }
+  function toLocalInputValue(d){
+    return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes());
+  }
+  function syncDemoClockUI(){
+    var d = now();
+    var val = toLocalInputValue(d);
+    var hm = pad(d.getHours())+":"+pad(d.getMinutes());
+    var label = (d.getMonth()+1)+"/"+pad(d.getDate())+" "+hm;
+    var st = $("#status-time");
+    var lab = $("#demo-now-label");
+    var inp = $("#desk-now-input");
+    if (st) st.textContent = hm;
+    if (lab) lab.textContent = label;
+    if (inp && inp.value !== val) inp.value = val;
+  }
+  function refreshAfterClockChange(cleared){
+    syncDemoClockUI();
+    renderRange();
+    refreshCals();
+    if (state.screen === "step1b") {
+      if (typeof syncSchemeB === "function") syncSchemeB();
+    }
+    if (state.screen === "step2") renderStep2(false);
+    if (state.screen === "service-order") renderSvcOrder();
+    if (cleared) toast("最早可约日已变化，请重新选择开始日期", "warn");
+  }
+  function setSimNow(date, opts){
+    if (!(date instanceof Date) || isNaN(date.getTime())) return;
+    state.simNow = new Date(date.getTime());
+    state.viewYear = state.simNow.getFullYear();
+    state.viewMonth = state.simNow.getMonth();
+    var cleared = false;
+    var mode = currentMode();
+    if (state.start && mode) {
+      var earliest = earliestStartDate(mode);
+      if (startOfDay(state.start) < earliest) {
+        state.start = null;
+        state.planOpen = false;
+        state.svcPlanOpen = false;
+        cleared = true;
+      }
+    }
+    refreshAfterClockChange(cleared && !(opts && opts.silent));
+  }
+  function setSimPreset(code){
+    var map = { "1000":[10,0], "1130":[11,30], "2021":[20,21], "2330":[23,30] };
+    var hm = map[String(code)];
+    if (!hm) return;
+    var d = now();
+    d.setHours(hm[0], hm[1], 0, 0);
+    setSimNow(d);
+  }
   function svcSku(){ return svcCatalog[state.svcSku] || svcCatalog["home-day"]; }
   function currentMode(){ return state.scheme === "s" ? svcSku().mode : state.mode; }
   function earliestStartDate(mode){
@@ -942,9 +1026,10 @@
   function step1Screen(){ return "step1b"; }
   function ruleTipHtml(){
     var min = "至少连续 "+state.minDays+" 天。";
-    if (state.mode === "day") return "全部日班由同一人服务。"+min;
-    if (state.mode === "night") return "全部夜班由同一人服务。"+min;
-    if (state.mode === "24h") return "全部日班由同一人服务，全部夜班由另一个人服务，共 2 人。"+min;
+    var mode = currentMode();
+    if (mode === "day") return "全部日班由同一人服务。"+min;
+    if (mode === "night") return "全部夜班由同一人服务。"+min;
+    if (mode === "24h") return "全部日班由同一人服务，全部夜班由另一个人服务，共 2 人。"+min;
     return "同一班次的每一天，都由同一人服务。"+min;
   }
   function syncRuleTips(){
@@ -1043,7 +1128,7 @@
   }
 
   function svcVisitLabText(){
-    return "至少 "+state.minDays+" 天 · "+svcSku().visit;
+    return svcSku().visit+" · 同一人服务";
   }
   function renderSvcRanks(){
     var nurse = svcSku().staff === "nurse";
@@ -1126,7 +1211,7 @@
 
   function setScheme(sch){
     state.scheme = sch;
-    $all(".desk-switch button").forEach(function(b){
+    $all(".desk-switch > button[data-scheme]").forEach(function(b){
       var on = b.getAttribute("data-scheme")===sch;
       b.classList.toggle("on", on);
       b.setAttribute("aria-selected", on ? "true" : "false");
@@ -1175,7 +1260,8 @@
     $all(".day-count").forEach(function(el){ el.textContent = String(state.start ? state.days : state.minDays); });
     $all(".pick-tip").forEach(function(el){
       if (el.closest("[data-screen='step2']")) { el.hidden = true; return; }
-      if (complete && plan) { el.hidden = true; return; }
+      // 从服务去下单：选完日期后仍保留最早可约提示；问卷页选中后收起
+      if (el.id !== "svc-pick-tip" && complete && plan) { el.hidden = true; return; }
       var note = cutoffNotice(mode);
       el.hidden = false;
       el.textContent = note.text;
@@ -1374,7 +1460,7 @@
     syncRuleTips();
   }
 
-  $all(".desk-switch button").forEach(function(btn){
+  $all(".desk-switch > button[data-scheme]").forEach(function(btn){
     btn.addEventListener("click", function(){ setScheme(btn.getAttribute("data-scheme")); });
   });
 
@@ -1552,6 +1638,27 @@
     toast("已支付 "+money(c.total)+" · "+(state.mode==="24h"?2:1)+"主单 · "+(state.mode==="24h"?c.n*2:c.n)+"预约", "ok");
   });
 
+  function onDemoNowInput(e){
+    var raw = e.target.value;
+    if (!raw) return;
+    var d = new Date(raw);
+    if (isNaN(d.getTime())) return;
+    setSimNow(d);
+  }
+  (function(){
+    var inp = $("#desk-now-input");
+    if (inp) {
+      inp.addEventListener("change", onDemoNowInput);
+      inp.addEventListener("input", onDemoNowInput);
+    }
+  })();
+  $all("[data-demo-preset]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      setSimPreset(btn.getAttribute("data-demo-preset"));
+    });
+  });
+
+  syncDemoClockUI();
   syncHomeEntry();
 })();
 </script>
