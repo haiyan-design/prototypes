@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>确认支付</title>
-  <link rel="stylesheet" href="../css/common.css?v=44" />
+  <link rel="stylesheet" href="../css/common.css?v=63" />
 </head>
 <body>
   <div class="toast" id="toast" hidden></div>
@@ -65,10 +65,9 @@
 
       <div class="selected-row">
         <span>已选：<em id="selectedText">性别不限/五级护理员</em></span>
-        <button class="mod" type="button" id="modBtn">修改 ›</button>
       </div>
 
-      <div class="option-block" id="optionPanel" hidden>
+      <div class="option-block" id="optionPanel">
         <h4>性别要求</h4>
         <div class="chips" id="genderChips">
           <button class="chip active" type="button" data-v="不限">不限</button>
@@ -495,18 +494,6 @@
         openStaffSheet();
       });
       document.getElementById("staffSheetClose").addEventListener("click", closeStaffSheet);
-
-      var panel = document.getElementById("optionPanel");
-      document.getElementById("modBtn").addEventListener("click", function () {
-        var open = panel.hasAttribute("hidden");
-        if (open) {
-          panel.removeAttribute("hidden");
-          this.textContent = "收起 ›";
-        } else {
-          panel.setAttribute("hidden", "");
-          this.textContent = "修改 ›";
-        }
-      });
 
       function bindChips(root, onChange) {
         root.querySelectorAll(".chip").forEach(function (chip) {
