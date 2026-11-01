@@ -35,8 +35,12 @@
   border-color:var(--brand);background:color-mix(in srgb,var(--brand) 10%,#fff);
   box-shadow:inset 0 0 0 1px var(--brand);color:var(--brand-dark);
 }
-#ehutong-proto .desk-sub{display:none;flex-direction:column;gap:6px;margin-top:2px;padding-left:10px}
-#ehutong-proto .desk-sub.show{display:flex}
+#ehutong-proto .desk-scheme-only{
+  text-align:left;border:1px solid var(--brand);background:#eef8f5;border-radius:10px;padding:10px 12px;
+}
+#ehutong-proto .desk-scheme-only .t{font-weight:500;display:block;color:var(--brand-dark)}
+#ehutong-proto .desk-scheme-only .d{font-size:11px;color:#666;margin-top:2px}
+#ehutong-proto .desk-sub{display:flex;flex-direction:column;gap:6px;margin-top:2px;padding-left:10px}
 #ehutong-proto .desk-sub button{padding:8px 10px;font-size:12px}
 #ehutong-proto .desk-clock{
   margin-top:10px;padding-top:10px;border-top:1px dashed #e5e5e5;
@@ -55,6 +59,45 @@
 }
 #ehutong-proto .desk-clock .hint{font-size:11px;color:#999;margin-top:6px;line-height:1.35}
 #ehutong-proto .nurse-svc{display:none}
+#ehutong-proto .svc-selected-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  margin-top:10px;padding-top:10px;border-top:1px dashed #e6e6e6;
+}
+#ehutong-proto .svc-selected-bar .txt{font-size:13px;color:#666}
+#ehutong-proto .svc-selected-bar em{font-style:normal;color:var(--brand-dark)}
+#ehutong-proto .svc-attrs{display:none;margin-top:10px}
+#ehutong-proto .svc-attrs.open{display:block}
+#ehutong-proto .rec-panel{
+  margin-top:12px;padding:12px;border-radius:10px;
+  background:#f5faf8;border:1px solid #d7ebe5;
+}
+#ehutong-proto .rec-panel[hidden]{display:none!important}
+#ehutong-proto .rec-panel-hd{
+  font-size:15px;font-weight:600;color:#222;line-height:1.3;margin:0 0 10px;
+}
+#ehutong-proto .rec-check-row{
+  display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin:0;
+}
+#ehutong-proto .rec-check-row .rec-thumb{
+  width:64px;height:64px;border-radius:8px;flex-shrink:0;object-fit:cover;display:block;background:#f2f2f2;
+}
+#ehutong-proto .rec-check-row .rec-check-body{flex:1;min-width:0}
+#ehutong-proto .rec-check-row .rec-check-title{
+  font-size:14px;font-weight:500;color:#222;line-height:1.35;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+}
+#ehutong-proto .rec-check-row .rec-check-tag{
+  margin-top:4px;font-size:12px;color:#999;line-height:1.3;
+}
+#ehutong-proto .rec-check-row .rec-check-price{
+  margin-top:6px;font-size:16px;font-weight:600;color:var(--orange);line-height:1.2;
+}
+#ehutong-proto .rec-check-row input{
+  margin:22px 0 0;width:18px;height:18px;flex-shrink:0;accent-color:var(--brand);
+}
+#ehutong-proto .rec-expand{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed #e6e6e6}
+#ehutong-proto .rec-panel.on .rec-expand{display:block}
+#ehutong-proto .rec-expand .svc-selected-bar{margin-top:0;padding-top:0;border-top:0}
 #ehutong-proto .phone-wrap{display:flex;justify-content:center;align-items:flex-start;min-height:calc(100vh - 32px)}
 #ehutong-proto .phone{
   width:min(390px,100%);height:var(--phone-h);background:var(--bg);border-radius:28px;
@@ -432,8 +475,11 @@
 #ehutong-proto .opt-chip.on{border-color:var(--brand);color:var(--brand-dark);box-shadow:inset 0 0 0 1px var(--brand)}
 #ehutong-proto .fee-bar{
   margin-top:12px;padding:10px 12px;border-radius:8px;background:#fff8f0;color:#8a5a2b;
-  font-size:13px;display:flex;justify-content:space-between;
+  border:1px solid #f0e0cc;
+  font-size:13px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
 }
+#ehutong-proto .fee-bar .fee-lab{flex:1;min-width:0;line-height:1.45}
+#ehutong-proto .fee-bar .fee-sum{flex-shrink:0;font-weight:600;color:#c45c12;white-space:nowrap}
 #ehutong-proto .extra-row{
   display:flex;align-items:center;justify-content:space-between;padding:14px 0;
   border-bottom:1px solid var(--line);font-size:14px;
@@ -466,17 +512,13 @@
 @media (prefers-reduced-motion:reduce){#ehutong-proto .toast,#ehutong-proto .date-banner.flash{transition:none;animation:none}}
 </style>
 
-<div class="desk-switch" role="tablist" aria-label="原型方案切换">
-  <div class="label">原型方案（电脑端切换）</div>
-  <button type="button" class="on" data-scheme="a" role="tab" aria-selected="true">
-    <span class="t">方案一</span>
-    <span class="d">首页连陪快约入口下单</span>
-  </button>
-  <button type="button" data-scheme="s" role="tab" aria-selected="false">
-    <span class="t">从服务去下单连陪</span>
-    <span class="d">服务确认页改造 · 上门时间连选</span>
-  </button>
-  <div class="desk-sub" id="svc-subs" role="tablist" aria-label="服务商品">
+<div class="desk-switch" aria-label="推荐服务连陪原型">
+  <div class="label">原型方案</div>
+  <div class="desk-scheme-only">
+    <span class="t">推荐服务连陪</span>
+    <span class="d">单班确认后一对一推荐另一班 · 接受后走日+夜</span>
+  </div>
+  <div class="desk-sub show" id="svc-subs" role="tablist" aria-label="服务商品">
     <button type="button" data-sku="home-day" class="on">居家日间</button>
     <button type="button" data-sku="home-night">居家夜间</button>
     <button type="button" data-sku="hosp-day">住院日间</button>
@@ -502,222 +544,8 @@
 <div class="phone">
   <div class="status"><span id="status-time">09:21</span><span>87%</span></div>
 
-  <!-- 首页 -->
-  <section class="screen active" data-screen="home" id="home-screen">
-    <div class="home-top">
-      <div class="search"><div class="city">上海市 ▾</div><div class="search-box">连续陪护 · 住院24小时</div></div>
-      <div class="banner"><strong>上海拥军优属基金会指定服务商</strong>护理 · 护士到家 · 康复陪护</div>
-    </div>
-    <div class="scroll" style="padding-top:0">
-      <div class="grid" aria-hidden="true">
-        <div><div class="icon">特护</div><span>住院特护</span></div>
-        <div><div class="icon">陪护</div><span>住院陪护</span></div>
-        <div><div class="icon">特护</div><span>居家特护</span></div>
-        <div><div class="icon">看护</div><span>居家看护</span></div>
-        <div><div class="icon">包月</div><span>居家包月</span></div>
-        <div><div class="icon">专项</div><span>居家专项</span></div>
-        <div><div class="icon">上门</div><span>护士上门</span></div>
-        <div><div class="icon">复健</div><span>上门复健</span></div>
-      </div>
-      <div class="mid-banner"><div class="t">告别盲目照护</div><div class="s">3分钟评估，获取专家级照护方案</div></div>
-    </div>
-    <button type="button" class="float-ball" id="entry-float" aria-label="连陪快约">
-      <span class="f1">连陪</span>
-      <span class="f2">快约</span>
-    </button>
-    <button type="button" class="cs-ball" aria-hidden="true">客服</button>
-    <div class="tabbar"><div class="on">首页</div><div>分类</div><div>AI</div><div>购物车</div><div>我的</div></div>
-  </section>
-
-  <!-- 方案一：首页连陪快约 · 一页问卷 -->
-  <section class="screen" data-screen="step1b">
-    <div class="nav">
-      <button type="button" class="back" data-back>‹ 返回</button>
-      <h1>快速问卷</h1>
-    </div>
-    <div class="scroll">
-      <div class="card q-block">
-        <div class="q-ask">1. 服务场景</div>
-        <div class="q-opts row" id="q-scene">
-          <button type="button" class="q-opt" data-scene="hospital"><div class="t">住院</div><div class="d">院内陪护</div></button>
-          <button type="button" class="q-opt" data-scene="home"><div class="t">居家</div><div class="d">上门看护</div></button>
-        </div>
-      </div>
-      <div class="card q-block">
-        <div class="q-ask">2. 服务类型</div>
-        <div class="q-opts row3" id="q-mode">
-          <button type="button" class="q-opt" data-mode="24h"><div class="t">日间+夜间陪护</div><div class="d">08:00–次日08:00</div></button>
-          <button type="button" class="q-opt" data-mode="day"><div class="t">仅日间陪护</div><div class="d">08:00–20:00</div></button>
-          <button type="button" class="q-opt" data-mode="night"><div class="t">仅夜间陪护</div><div class="d">20:00–次日08:00</div></button>
-        </div>
-      </div>
-      <div class="card q-block">
-        <div class="q-ask">3. 开始日期</div>
-        <div class="rule-tip" data-rule-tip>
-          <div class="rt">连陪提醒</div>
-          <div class="rule-tip-body">同一班次的每一天，都由同一人服务。至少连续 3 天。</div>
-        </div>
-        <div class="pick-tip">先选择服务类型，再选开始日期</div>
-        <div class="cal-head">
-          <button type="button" class="cal-prev">‹</button>
-          <div class="m cal-month">2026年10月</div>
-          <button type="button" class="cal-next">›</button>
-        </div>
-        <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
-        <div class="cal-grid" id="cal-b"></div>
-        <div class="q-days" id="q-stepper" hidden>
-          <span class="sl" id="q-stepper-lab">服务天数</span>
-          <div class="stepper"><button type="button" data-day="-1">−</button><span class="day-count">3</span><button type="button" data-day="1">+</button></div>
-        </div>
-        <div class="plan-list" data-plan></div>
-      </div>
-    </div>
-    <div class="bottom">
-      <button type="button" class="btn-next" id="q-next" disabled>下一步</button>
-    </div>
-  </section>
-
-  <!-- 第二页（两方案共用） -->
-  <section class="screen" data-screen="step2">
-    <div class="nav">
-      <button type="button" class="back" data-back>‹ 返回</button>
-      <h1>确认信息</h1>
-    </div>
-    <div class="scroll">
-      <div class="card">
-        <div class="field-row"><span class="k">服务地址</span><span class="v">上海市普陀区金沙江路1340弄8号… 嘿嘿嘿 11111111111<span class="arrow">›</span></span></div>
-        <div class="field-row"><span class="k">被护理人</span><span class="v">测试1 55岁 男<span class="arrow">›</span></span></div>
-      </div>
-      <div class="date-banner" id="date-banner">
-        <div class="row">
-          <div>
-            <div class="lab">服务日期</div>
-            <div class="val" id="date-banner-val">请选择开始日期</div>
-          </div>
-          <button type="button" class="link" id="edit-date">修改日期</button>
-        </div>
-        <div class="pick-tip" id="step2-pick-tip">今日日间可约，08:00 开始</div>
-        <div class="sync-row" id="sync-stepper">
-          <span class="sl" id="sync-stepper-lab">服务天数</span>
-          <div class="stepper"><button type="button" data-day="-1">−</button><span class="day-count">3</span><button type="button" data-day="1">+</button></div>
-        </div>
-        <button type="button" class="plan-toggle" id="plan-toggle" hidden>查看排班</button>
-        <div class="plan-fold" id="plan-fold"><div class="plan-list" data-plan></div></div>
-        <div class="date-editor" id="date-editor">
-          <div class="start-only">
-            <div class="l">开始日期</div>
-            <div class="v ph start-label">请选择</div>
-          </div>
-          <div class="cal-head">
-            <button type="button" class="cal-prev">‹</button>
-            <div class="m cal-month">2026年10月</div>
-            <button type="button" class="cal-next">›</button>
-          </div>
-          <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
-          <div class="cal-grid" id="cal-c"></div>
-        </div>
-      </div>
-      <div class="card">
-        <div style="font-size:13px;color:#666;margin-bottom:10px" id="step2-summary">住院 · 日间+夜间陪护</div>
-        <div class="staff-tabs" id="staff-tabs" role="tablist" aria-label="服务人员">
-          <button type="button" class="on" data-staff="caregiver" role="tab" aria-selected="true">护理员</button>
-          <button type="button" data-staff="nurse" role="tab" aria-selected="false">护士</button>
-        </div>
-        <div class="prod-block" id="prod-day">
-          <div class="prod">
-            <div class="thumb"></div>
-            <div class="prod-main">
-              <div class="prod-name" id="name-day">住院日间12小时陪护</div>
-              <span class="tag">08:00–20:00</span>
-              <div class="price-row">
-                <span class="price" id="price-day">¥ 380.00</span>
-              </div>
-            </div>
-          </div>
-          <div class="selected-bar">
-            <div class="txt">已选：<em id="sel-day">性别不限/五级护理员</em></div>
-            <button type="button" class="mod-btn" data-toggle="attrs-day">修改 ›</button>
-          </div>
-          <div class="attrs" id="attrs-day">
-            <div class="attr-title">性别要求</div>
-            <div class="chips" data-gender="day">
-              <button type="button" class="chip on" data-g="不限">不限</button>
-              <button type="button" class="chip" data-g="男">男</button>
-              <button type="button" class="chip" data-g="女">女</button>
-            </div>
-            <div class="attr-title caregiver-only">人员等级</div>
-            <div class="level-grid caregiver-only" data-level="day" data-rank="caregiver">
-              <button type="button" class="level on" data-level-name="五级护理员" data-add="0">五级护理员<br/>+0.00</button>
-              <button type="button" class="level" data-level-name="四级护理员" data-add="76">四级护理员<br/>+76.00</button>
-              <button type="button" class="level" data-level-name="三级护理员" data-add="114">三级护理员<br/>+114.00</button>
-              <button type="button" class="level" data-level-name="二级护理员" data-add="152">二级护理员<br/>+152.00</button>
-              <button type="button" class="level" data-level-name="一级护理员" data-add="190">一级护理员<br/>+190.00</button>
-            </div>
-            <div class="attr-title nurse-only">人员等级</div>
-            <div class="level-grid nurse-only" data-level="day" data-rank="nurse">
-              <button type="button" class="level on" data-level-name="护士" data-add="0">护士<br/>+0.00</button>
-              <button type="button" class="level" data-level-name="护师" data-add="160">护师<br/>+160.00</button>
-              <button type="button" class="level" data-level-name="主管护师" data-add="240">主管护师<br/>+240.00</button>
-              <button type="button" class="level" data-level-name="副主任护师" data-add="320">副主任护师<br/>+320.00</button>
-              <button type="button" class="level disabled" data-level-name="主任护师" data-add="400" disabled>主任护师<br/>+400.00<span class="unopen">本区域暂未开通</span></button>
-            </div>
-            <div class="fee-note">上门费 ¥45.00 × 1</div>
-          </div>
-        </div>
-        <div class="prod-block" id="prod-night">
-          <div class="prod">
-            <div class="thumb"></div>
-            <div class="prod-main">
-              <div class="prod-name" id="name-night">住院夜间12小时陪护</div>
-              <span class="tag">20:00–次日08:00</span>
-              <div class="price-row">
-                <span class="price" id="price-night">¥ 405.00</span>
-              </div>
-            </div>
-          </div>
-          <div class="selected-bar">
-            <div class="txt">已选：<em id="sel-night">性别不限/五级护理员</em></div>
-            <button type="button" class="mod-btn" data-toggle="attrs-night">修改 ›</button>
-          </div>
-          <div class="attrs" id="attrs-night">
-            <div class="attr-title">性别要求</div>
-            <div class="chips" data-gender="night">
-              <button type="button" class="chip on" data-g="不限">不限</button>
-              <button type="button" class="chip" data-g="男">男</button>
-              <button type="button" class="chip" data-g="女">女</button>
-            </div>
-            <div class="attr-title caregiver-only">人员等级</div>
-            <div class="level-grid caregiver-only" data-level="night" data-rank="caregiver">
-              <button type="button" class="level on" data-level-name="五级护理员" data-add="0">五级护理员<br/>+0.00</button>
-              <button type="button" class="level" data-level-name="四级护理员" data-add="76">四级护理员<br/>+76.00</button>
-              <button type="button" class="level" data-level-name="三级护理员" data-add="114">三级护理员<br/>+114.00</button>
-              <button type="button" class="level" data-level-name="二级护理员" data-add="152">二级护理员<br/>+152.00</button>
-              <button type="button" class="level" data-level-name="一级护理员" data-add="190">一级护理员<br/>+190.00</button>
-            </div>
-            <div class="attr-title nurse-only">人员等级</div>
-            <div class="level-grid nurse-only" data-level="night" data-rank="nurse">
-              <button type="button" class="level on" data-level-name="护士" data-add="0">护士<br/>+0.00</button>
-              <button type="button" class="level" data-level-name="护师" data-add="160">护师<br/>+160.00</button>
-              <button type="button" class="level" data-level-name="主管护师" data-add="240">主管护师<br/>+240.00</button>
-              <button type="button" class="level" data-level-name="副主任护师" data-add="320">副主任护师<br/>+320.00</button>
-              <button type="button" class="level disabled" data-level-name="主任护师" data-add="400" disabled>主任护师<br/>+400.00<span class="unopen">本区域暂未开通</span></button>
-            </div>
-            <div class="fee-note">上门费 ¥45.00 × 1</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="bottom">
-      <label class="agree"><input type="checkbox" id="agree" checked /> 已阅读并同意《平台服务协议》</label>
-      <div class="paybar">
-        <div class="left"><div class="sum" id="total-text">合计 ¥2400.00</div><div class="detail">查看明细 ▾</div></div>
-        <button type="button" class="btn-pay" id="open-pay">确认支付</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- 从服务去下单连陪 -->
-  <section class="screen" data-screen="service-order">
+  <!-- 推荐服务连陪 -->
+  <section class="screen active" data-screen="service-order">
     <div class="nav">
       <button type="button" class="back" data-back>‹</button>
       <h1></h1>
@@ -731,7 +559,7 @@
       <div class="date-banner" id="svc-date-banner">
         <div class="row">
           <div>
-            <div class="lab">上门时间</div>
+            <div class="lab">上门日期</div>
             <div class="sub" id="svc-visit-lab">每日 08:00 上门 · 同一人服务</div>
             <div class="val" id="svc-date-val"></div>
           </div>
@@ -739,7 +567,7 @@
         </div>
         <div class="pick-tip" id="svc-pick-tip">今日日间可约，08:00 开始</div>
         <div class="sync-row" id="svc-sync-row" hidden>
-          <span class="sl">服务天数</span>
+          <span class="sl" id="svc-stepper-lab">服务天数</span>
           <div class="stepper">
             <button type="button" data-day="-1">−</button>
             <span class="day-count" id="svc-day-count">3</span>
@@ -763,41 +591,100 @@
         </div>
       </div>
       <div class="card">
-        <div class="prod">
-          <img class="thumb-img" src="assets/ref-fig2.png" alt="" />
-          <div class="prod-main">
-            <div class="prod-name" id="svc-name">居家日间12小时看护</div>
-            <span class="tag" id="svc-tag">08:00–20:00</span>
-            <div class="price-row">
-              <span class="price" id="svc-unit-price">¥335.00</span>
+        <div class="prod-block" id="svc-main-block">
+          <div class="prod">
+            <img class="thumb-img" src="assets/ref-fig2.png" alt="" />
+            <div class="prod-main">
+              <div class="prod-name" id="svc-name">居家日间12小时看护</div>
+              <span class="tag" id="svc-tag">08:00–20:00</span>
+              <div class="price-row">
+                <span class="price" id="svc-unit-price">¥335.00</span>
+              </div>
+            </div>
+          </div>
+          <div class="svc-selected-bar">
+            <div class="txt">已选：<em id="svc-sel-text">性别不限/五级护理员</em></div>
+            <button type="button" class="mod-btn" id="svc-spec-toggle">修改 ›</button>
+          </div>
+          <div class="svc-attrs" id="svc-attrs">
+            <div class="sec" style="margin-top:4px">服务时长</div>
+            <button type="button" class="opt-chip on">12小时</button>
+            <div class="sec">性别要求</div>
+            <div id="svc-gender">
+              <button type="button" class="opt-chip on" data-g="不限">不限</button>
+              <button type="button" class="opt-chip" data-g="男">男</button>
+              <button type="button" class="opt-chip" data-g="女">女</button>
+            </div>
+            <div class="sec svc-rank caregiver-svc">人员等级</div>
+            <div class="level-grid svc-rank caregiver-svc" id="svc-levels">
+              <button type="button" class="level on" data-add="0" data-level-name="五级护理员">五级护理员<br/>+0.00</button>
+              <button type="button" class="level" data-add="76" data-level-name="四级护理员">四级护理员<br/>+76.00</button>
+              <button type="button" class="level" data-add="114" data-level-name="三级护理员">三级护理员<br/>+114.00</button>
+              <button type="button" class="level" data-add="152" data-level-name="二级护理员">二级护理员<br/>+152.00</button>
+              <button type="button" class="level disabled" data-add="190" data-level-name="一级护理员" disabled>一级护理员<br/>+190.00</button>
+            </div>
+            <div class="sec svc-rank nurse-svc">人员等级</div>
+            <div class="level-grid svc-rank nurse-svc" id="svc-nurse-levels">
+              <button type="button" class="level on" data-add="0" data-level-name="护士">护士<br/>+0.00</button>
+              <button type="button" class="level" data-add="160" data-level-name="护师">护师<br/>+160.00</button>
+              <button type="button" class="level" data-add="240" data-level-name="主管护师">主管护师<br/>+240.00</button>
+              <button type="button" class="level" data-add="320" data-level-name="副主任护师">副主任护师<br/>+320.00</button>
+              <button type="button" class="level disabled" data-add="400" data-level-name="主任护师" disabled>主任护师<br/>+400.00<span class="unopen">本区域暂未开通</span></button>
+            </div>
+            <div class="fee-bar" id="svc-fee-bar">
+              <span class="fee-lab" id="svc-fee-lab">上门费 ¥45/天</span>
+              <span class="fee-sum" id="svc-fee-sum">¥45.00</span>
             </div>
           </div>
         </div>
-        <div class="sec" style="margin-top:12px">服务时长</div>
-        <button type="button" class="opt-chip on">12小时</button>
-        <div class="sec">性别要求</div>
-        <div id="svc-gender">
-          <button type="button" class="opt-chip on" data-g="不限">不限</button>
-          <button type="button" class="opt-chip" data-g="男">男</button>
-          <button type="button" class="opt-chip" data-g="女">女</button>
+        <div class="rec-panel" id="rec-check" hidden>
+        <div class="rec-panel-hd">推荐搭配</div>
+        <label class="rec-check-row">
+          <img class="rec-thumb" src="assets/ref-fig2.png" alt="" />
+          <div class="rec-check-body">
+            <div class="rec-check-title" id="rec-check-title">居家夜间12小时看护</div>
+            <div class="rec-check-tag" id="rec-check-tag">20:00–次日08:00</div>
+            <div class="rec-check-price" id="rec-check-price">¥390.00</div>
+          </div>
+          <input type="checkbox" id="rec-check-input" />
+        </label>
+        <div class="rec-expand" id="rec-expand">
+          <div class="svc-selected-bar">
+            <div class="txt">已选：<em id="rec-sel-text">性别不限/五级护理员</em></div>
+            <button type="button" class="mod-btn" id="rec-spec-toggle">修改 ›</button>
+          </div>
+          <div class="svc-attrs" id="rec-attrs">
+            <div class="sec" style="margin-top:4px">服务时长</div>
+            <button type="button" class="opt-chip on">12小时</button>
+            <div class="sec">性别要求</div>
+            <div id="rec-gender">
+              <button type="button" class="opt-chip on" data-g="不限">不限</button>
+              <button type="button" class="opt-chip" data-g="男">男</button>
+              <button type="button" class="opt-chip" data-g="女">女</button>
+            </div>
+            <div class="sec svc-rank caregiver-svc">人员等级</div>
+            <div class="level-grid svc-rank caregiver-svc" id="rec-levels">
+              <button type="button" class="level on" data-add="0" data-level-name="五级护理员">五级护理员<br/>+0.00</button>
+              <button type="button" class="level" data-add="76" data-level-name="四级护理员">四级护理员<br/>+76.00</button>
+              <button type="button" class="level" data-add="114" data-level-name="三级护理员">三级护理员<br/>+114.00</button>
+              <button type="button" class="level" data-add="152" data-level-name="二级护理员">二级护理员<br/>+152.00</button>
+              <button type="button" class="level disabled" data-add="190" data-level-name="一级护理员" disabled>一级护理员<br/>+190.00</button>
+            </div>
+            <div class="sec svc-rank nurse-svc">人员等级</div>
+            <div class="level-grid svc-rank nurse-svc" id="rec-nurse-levels">
+              <button type="button" class="level on" data-add="0" data-level-name="护士">护士<br/>+0.00</button>
+              <button type="button" class="level" data-add="160" data-level-name="护师">护师<br/>+160.00</button>
+              <button type="button" class="level" data-add="240" data-level-name="主管护师">主管护师<br/>+240.00</button>
+              <button type="button" class="level" data-add="320" data-level-name="副主任护师">副主任护师<br/>+320.00</button>
+              <button type="button" class="level disabled" data-add="400" data-level-name="主任护师" disabled>主任护师<br/>+400.00<span class="unopen">本区域暂未开通</span></button>
+            </div>
+            <div class="fee-bar" id="rec-fee-bar">
+              <span class="fee-lab" id="rec-fee-lab">上门费 ¥45/天</span>
+              <span class="fee-sum" id="rec-fee-sum">¥45.00</span>
+            </div>
+          </div>
         </div>
-        <div class="sec svc-rank caregiver-svc">人员等级</div>
-        <div class="level-grid svc-rank caregiver-svc" id="svc-levels">
-          <button type="button" class="level on" data-add="0">五级护理员<br/>+0.00</button>
-          <button type="button" class="level" data-add="76">四级护理员<br/>+76.00</button>
-          <button type="button" class="level" data-add="114">三级护理员<br/>+114.00</button>
-          <button type="button" class="level" data-add="152">二级护理员<br/>+152.00</button>
-          <button type="button" class="level disabled" data-add="190" disabled>一级护理员<br/>+190.00</button>
         </div>
-        <div class="sec svc-rank nurse-svc">人员等级</div>
-        <div class="level-grid svc-rank nurse-svc" id="svc-nurse-levels">
-          <button type="button" class="level on" data-add="0">护士<br/>+0.00</button>
-          <button type="button" class="level" data-add="160">护师<br/>+160.00</button>
-          <button type="button" class="level" data-add="240">主管护师<br/>+240.00</button>
-          <button type="button" class="level" data-add="320">副主任护师<br/>+320.00</button>
-          <button type="button" class="level disabled" data-add="400" disabled>主任护师<br/>+400.00<span class="unopen">本区域暂未开通</span></button>
-        </div>
-        <div class="fee-bar"><span>上门费 ¥45.00</span><span id="svc-fee-mul">×1</span></div>
       </div>
       <div class="card">
         <div class="extra-row"><span>特殊补充 <span style="color:#999;font-size:12px">(选填)</span></span><span class="r">请选择或填写 ›</span></div>
@@ -840,8 +727,8 @@
 
   var now0 = new Date();
   var state = {
-    scheme: "a",
-    screen: "home",
+    scheme: "r",
+    screen: "service-order",
     scene: null,
     mode: null,
     start: null,
@@ -859,7 +746,16 @@
     svcSku: "home-day",
     svcAdd: 0,
     svcBase: 335,
-    simNow: new Date(now0.getTime())
+    svcGender: "不限",
+    svcLevelName: "五级护理员",
+    svcSpecOpen: false,
+    pairGender: "不限",
+    pairLevelName: "五级护理员",
+    pairAdd: 0,
+    pairSpecOpen: false,
+    simNow: new Date(now0.getTime()),
+    recAccepted: false,
+    recPending: false
   };
   var svcCatalog = {
     "home-day": { scene:"home", mode:"day", staff:"caregiver", name:"居家日间12小时看护", base:335, tag:"08:00–20:00", visit:"每日 08:00 上门" },
@@ -868,6 +764,14 @@
     "hosp-night": { scene:"hospital", mode:"night", staff:"caregiver", name:"住院夜间12小时陪护", base:405, tag:"20:00–次日08:00", visit:"每日 20:00 上门" },
     "nurse-day": { scene:"hospital", mode:"day", staff:"nurse", name:"护士住院日间12小时特护", base:800, tag:"08:00–20:00", visit:"每日 08:00 上门" },
     "nurse-night": { scene:"hospital", mode:"night", staff:"nurse", name:"护士住院夜间12小时特护", base:800, tag:"20:00–次日08:00", visit:"每日 20:00 上门" }
+  };
+  var recPairMap = {
+    "home-day": "home-night",
+    "home-night": "home-day",
+    "hosp-day": "hosp-night",
+    "hosp-night": "hosp-day",
+    "nurse-day": "nurse-night",
+    "nurse-night": "nurse-day"
   };
   var prices = { hospital: { day: 380, night: 405 }, home: { day: 360, night: 390 }, nurse: { day: 800, night: 800 } };
   var visitFee = 45;
@@ -941,7 +845,15 @@
     setSimNow(d);
   }
   function svcSku(){ return svcCatalog[state.svcSku] || svcCatalog["home-day"]; }
-  function currentMode(){ return state.scheme === "s" ? svcSku().mode : state.mode; }
+  function pairSkuId(){ return recPairMap[state.svcSku] || null; }
+  function pairSku(){ var id = pairSkuId(); return id ? svcCatalog[id] : null; }
+  function isSvcScheme(){ return state.scheme === "s" || state.scheme === "r"; }
+  function isRecScheme(){ return state.scheme === "r"; }
+  function currentMode(){
+    if (isRecScheme() && state.recAccepted) return "24h";
+    if (isSvcScheme()) return svcSku().mode;
+    return state.mode;
+  }
   function earliestStartDate(mode){
     var t = today();
     if (mode === "day") return dayOpenToday() ? t : addDays(t, 1);
@@ -1039,11 +951,11 @@
   }
 
   function syncHomeEntry(){
-    var isSvc = state.scheme === "s";
+    var hideBall = isSvcScheme();
     var ball = $("#entry-float");
     if (ball) {
-      ball.style.display = isSvc ? "none" : "flex";
-      ball.classList.toggle("show", !isSvc);
+      ball.style.display = hideBall ? "none" : "flex";
+      ball.classList.toggle("show", !hideBall);
     }
   }
 
@@ -1146,6 +1058,7 @@
   }
 
   function svcVisitLabText(){
+    if (isRecScheme() && state.recAccepted) return "日班+夜班 · 各同一人服务";
     return svcSku().visit+" · 同一人服务";
   }
   function renderSvcRanks(){
@@ -1156,6 +1069,29 @@
       el.style.display = el.classList.contains("level-grid") ? "grid" : "";
     });
   }
+  function syncSvcSubs(){
+    $all("#svc-subs button").forEach(function(b){
+      b.classList.toggle("on", b.getAttribute("data-sku") === state.svcSku);
+    });
+  }
+  function defaultLevelName(staff){
+    return staff === "nurse" ? "护士" : "五级护理员";
+  }
+
+  function resetPairSpec(){
+    var staff = (pairSku() || svcSku()).staff;
+    state.pairGender = "不限";
+    state.pairLevelName = defaultLevelName(staff);
+    state.pairAdd = 0;
+    state.pairSpecOpen = false;
+    $all("#rec-gender .opt-chip").forEach(function(c){
+      c.classList.toggle("on", c.getAttribute("data-g") === "不限");
+    });
+    $all("#rec-levels .level, #rec-nurse-levels .level").forEach(function(lv){
+      lv.classList.toggle("on", Number(lv.getAttribute("data-add")||0) === 0 && !lv.disabled);
+    });
+  }
+
   function applySvcSku(id){
     state.svcSku = svcCatalog[id] ? id : "home-day";
     var sku = svcSku();
@@ -1164,26 +1100,171 @@
     state.staff = sku.staff;
     state.svcBase = sku.base;
     state.svcAdd = 0;
+    state.svcGender = "不限";
+    state.svcLevelName = defaultLevelName(sku.staff);
+    state.svcSpecOpen = false;
     state.start = null;
     state.days = state.minDays;
     state.svcPlanOpen = false;
+    state.recAccepted = false;
+    state.recPending = false;
+    resetPairSpec();
     setSvcEditorOpen(false);
-    $all("#svc-subs button").forEach(function(b){
-      var on = b.getAttribute("data-sku") === state.svcSku;
-      b.classList.toggle("on", on);
+    $all("#svc-gender .opt-chip").forEach(function(c){
+      c.classList.toggle("on", c.getAttribute("data-g") === "不限");
     });
     $all("#svc-levels .level, #svc-nurse-levels .level").forEach(function(lv){
       lv.classList.toggle("on", Number(lv.getAttribute("data-add")||0) === 0 && !lv.disabled);
     });
-    var subs = $("#svc-subs");
-    if (subs) subs.classList.toggle("show", state.scheme === "s");
+    syncSvcSubs();
+  }
+
+  function pairShiftLabel(){
+    var cur = svcSku();
+    return cur.mode === "day" ? "夜间" : "日间";
+  }
+
+  function pairCareNoun(){
+    var p = pairSku() || svcSku();
+    if (p.staff === "nurse") return "特护";
+    if (p.scene === "home") return "看护";
+    return "陪护";
+  }
+
+  function specText(gender, levelName){
+    return (gender === "不限" ? "性别不限" : gender)+"/"+levelName;
+  }
+
+  function syncSvcSpecBar(){
+    var attrs = $("#svc-attrs");
+    var btn = $("#svc-spec-toggle");
+    var sel = $("#svc-sel-text");
+    if (attrs) attrs.classList.toggle("open", !!state.svcSpecOpen);
+    if (btn) btn.textContent = state.svcSpecOpen ? "收起 ›" : "修改 ›";
+    if (sel) sel.textContent = specText(state.svcGender, state.svcLevelName);
+    var pairAttrs = $("#rec-attrs");
+    var pairBtn = $("#rec-spec-toggle");
+    var pairSel = $("#rec-sel-text");
+    if (pairAttrs) pairAttrs.classList.toggle("open", !!state.pairSpecOpen);
+    if (pairBtn) pairBtn.textContent = state.pairSpecOpen ? "收起 ›" : "修改 ›";
+    if (pairSel) pairSel.textContent = specText(state.pairGender, state.pairLevelName);
+  }
+
+  function recChecked(){
+    return !!(state.recAccepted || state.recPending);
+  }
+
+  function syncRecOffer(){
+    var panel = $("#rec-check");
+    var input = $("#rec-check-input");
+    var pair = pairSku();
+    var onRec = isRecScheme() && !!pair;
+    var checked = onRec && recChecked();
+    if (panel) {
+      panel.hidden = !onRec;
+      panel.classList.toggle("on", checked);
+    }
+    if (!pair) return;
+    var title = $("#rec-check-title");
+    var tag = $("#rec-check-tag");
+    var price = $("#rec-check-price");
+    var showPrice = "¥"+(pair.base + (checked ? state.pairAdd : 0)).toFixed(2);
+    if (title) title.textContent = pair.name;
+    if (tag) tag.textContent = pair.tag;
+    if (price) price.textContent = showPrice;
+    if (input) input.checked = checked;
+  }
+
+  function acceptRecOffer(opts){
+    opts = opts || {};
+    if (!isRecScheme() || !pairSku()) return false;
+    if (!hasDateRange()) {
+      // 先记下勾选并展示另一班规格；选好日期后再切日+夜排班
+      var first = !state.recPending && !state.recAccepted;
+      state.recPending = true;
+      state.recAccepted = false;
+      if (first) {
+        resetPairSpec();
+        if (!opts.silent) toast("已选中"+pairShiftLabel()+pairCareNoun()+"，请选择上门日期", "ok");
+      }
+      renderSvcOrder();
+      return false;
+    }
+    state.mode = "24h";
+    var earliest = earliestStartDate("24h");
+    if (state.start && startOfDay(state.start) < earliest) {
+      state.start = null;
+      state.recAccepted = false;
+      state.recPending = true;
+      state.mode = svcSku().mode;
+      toast("最早可约日已变化，请重新选择开始日期", "warn");
+      renderRange();
+      refreshCals();
+      renderSvcOrder();
+      return false;
+    }
+    var first = !state.recAccepted;
+    state.recAccepted = true;
+    state.recPending = false;
+    if (first) {
+      resetPairSpec();
+      state.svcPlanOpen = true;
+      if (!opts.silent) toast("已加上"+pairShiftLabel()+pairCareNoun(), "ok");
+    }
+    renderRange();
+    refreshCals();
+    renderSvcOrder();
+    return true;
+  }
+
+  function cancelRecOffer(opts){
+    opts = opts || {};
+    var wasAccepted = state.recAccepted;
+    var wasChecked = recChecked();
+    var toastLab = pairShiftLabel()+pairCareNoun();
+    state.recAccepted = false;
+    state.recPending = false;
+    state.pairSpecOpen = false;
+    state.mode = svcSku().mode;
+    if (wasAccepted) state.svcPlanOpen = true;
+    if (wasChecked && !opts.silent) toast("已取消"+toastLab, "ok");
+    renderRange();
+    refreshCals();
+    renderSvcOrder();
+  }
+
+  function onRecCheckChange(){
+    var input = $("#rec-check-input");
+    if (!input) return;
+    if (input.checked) acceptRecOffer();
+    else cancelRecOffer();
+  }
+
+  function visitFeeOne(days, dated){
+    if (dated) {
+      return {
+        lab: "上门费 ¥"+visitFee+"/天 × "+days+"天",
+        sum: visitFee * days
+      };
+    }
+    return {
+      lab: "上门费 ¥"+visitFee+"/天",
+      sum: visitFee
+    };
   }
 
   function renderSvcOrder(){
-    var n = hasDateRange() ? dayCount() : 0;
+    var dated = hasDateRange();
+    var n = dated ? dayCount() : 0;
     var unit = state.svcBase + state.svcAdd;
-    var days = n > 0 ? n : 1;
-    var total = unit * days + visitFee;
+    // 未选日期：服务与上门费都按 1 天估；选好日期后按实际天数
+    var days = dated ? n : 1;
+    var pair = pairSku();
+    var withPair = isRecScheme() && recChecked() && !!pair;
+    var mainFee = visitFeeOne(days, dated);
+    var pairFee = visitFeeOne(days, dated);
+    var total = unit * days + mainFee.sum;
+    if (withPair) total += (pair.base + state.pairAdd) * days + pairFee.sum;
     var sku = svcSku();
     var name = $("#svc-name");
     var tag = $("#svc-tag");
@@ -1191,16 +1272,26 @@
     if (tag) tag.textContent = sku.tag;
     renderSvcRanks();
     var uv = $("#svc-unit-price");
-    var fm = $("#svc-fee-mul");
+    var feeLab = $("#svc-fee-lab");
+    var feeSumEl = $("#svc-fee-sum");
+    var recFeeLab = $("#rec-fee-lab");
+    var recFeeSum = $("#rec-fee-sum");
     var tot = $("#svc-total");
     var dc = $("#svc-day-count");
     var lab = $("#svc-visit-lab");
+    var stepLab = $("#svc-stepper-lab");
     if (uv) uv.textContent = "¥"+unit.toFixed(2);
-    if (fm) fm.textContent = "×"+(n > 0 ? n : 1);
+    if (feeLab) feeLab.textContent = mainFee.lab;
+    if (feeSumEl) feeSumEl.textContent = "¥"+mainFee.sum.toFixed(2);
+    if (recFeeLab) recFeeLab.textContent = pairFee.lab;
+    if (recFeeSum) recFeeSum.textContent = "¥"+pairFee.sum.toFixed(2);
     if (tot) tot.textContent = moneySum(total);
     if (dc) dc.textContent = String(n > 0 ? n : state.minDays);
     if (lab) lab.textContent = svcVisitLabText();
+    if (stepLab) stepLab.textContent = (isRecScheme() && state.recAccepted) ? "服务天数（日夜同步）" : "服务天数";
+    syncSvcSpecBar();
     syncSvcDateBanner();
+    syncRecOffer();
   }
 
   function go(name){
@@ -1221,32 +1312,20 @@
   }
 
   function goBack(){
-    if (state.scheme === "s" && state.screen === "service-order") return;
-    if (state.screen==="step2") go(step1Screen());
-    else if (state.screen==="step1b") go("home");
-    else go("home");
+    if (state.screen === "service-order") return;
   }
 
   function setScheme(sch){
-    state.scheme = sch;
-    $all(".desk-switch > button[data-scheme]").forEach(function(b){
-      var on = b.getAttribute("data-scheme")===sch;
-      b.classList.toggle("on", on);
-      b.setAttribute("aria-selected", on ? "true" : "false");
-    });
+    state.scheme = "r";
     state.scene = null;
     clearModeAndDate();
     state.svcAdd = 0;
+    state.recAccepted = false;
+    state.recPending = false;
     closePay();
-    syncHomeEntry();
-    var subs = $("#svc-subs");
-    if (subs) subs.classList.toggle("show", sch === "s");
-    if (sch === "s") {
-      applySvcSku(state.svcSku || "home-day");
-      go("service-order");
-    } else {
-      go("home");
-    }
+    syncSvcSubs();
+    applySvcSku(state.svcSku || "home-day");
+    go("service-order");
   }
 
   function clearModeAndDate(){
@@ -1254,6 +1333,8 @@
     state.staff = "caregiver";
     state.start = null;
     state.days = state.minDays;
+    state.recAccepted = false;
+    state.recPending = false;
     setDateEditorOpen(false);
     setSvcEditorOpen(false);
   }
@@ -1384,9 +1465,12 @@
     renderRange();
     refreshCals();
     syncRuleTips();
-    if (state.screen==="step1b") $("#q-next").disabled = !canGoStep2();
+    if (state.screen==="step1b") { var qn=$("#q-next"); if (qn) qn.disabled = !canGoStep2(); }
     if (state.screen==="step2") renderStep2(false);
-    if (state.screen==="service-order") renderSvcOrder();
+    if (state.screen==="service-order") {
+      if (isRecScheme() && state.recPending) acceptRecOffer({ silent: false });
+      else renderSvcOrder();
+    }
   }
 
   function syncSchemeB(){
@@ -1399,11 +1483,13 @@
     renderRange();
     refreshCals();
     syncRuleTips();
-    $("#q-next").disabled = !canGoStep2();
+    var qNext = $("#q-next"); if (qNext) qNext.disabled = !canGoStep2();
   }
 
   function flashDateBanner(){
-    var el=$("#date-banner"); el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+    var el=$("#date-banner");
+    if (!el) return;
+    el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
   }
 
   function setDaysByDelta(delta){
@@ -1479,7 +1565,8 @@
     clearModeAndDate();
     go(step1Screen());
   }
-  $("#entry-float").addEventListener("click", startFlow);
+  var entryFloat = $("#entry-float");
+  if (entryFloat) entryFloat.addEventListener("click", startFlow);
   $all("[data-back]").forEach(function(b){ b.addEventListener("click", goBack); });
 
   $all(".cal-prev").forEach(function(b){
@@ -1512,7 +1599,8 @@
       syncSchemeB();
     });
   });
-  $("#q-next").addEventListener("click", function(){
+  var qNextBtn = $("#q-next");
+  if (qNextBtn) qNextBtn.addEventListener("click", function(){
     if(!canGoStep2()){
       if(!state.scene) toast("请先选择服务场景", "warn");
       else if(!state.mode) toast("请选择服务类型", "warn");
@@ -1522,7 +1610,8 @@
     go("step2");
   });
 
-  $("#edit-date").addEventListener("click", function(){
+  var editDateBtn = $("#edit-date");
+  if (editDateBtn) editDateBtn.addEventListener("click", function(){
     if (state.dateEditorOpen) {
       if (!state.start) { toast("请先选择开始日期", "warn"); return; }
       setDateEditorOpen(false);
@@ -1546,6 +1635,16 @@
     chip.addEventListener("click", function(){
       $all("#svc-gender .opt-chip").forEach(function(c){ c.classList.remove("on"); });
       chip.classList.add("on");
+      state.svcGender = chip.getAttribute("data-g") || "不限";
+      syncSvcSpecBar();
+    });
+  });
+  $all("#rec-gender .opt-chip").forEach(function(chip){
+    chip.addEventListener("click", function(){
+      $all("#rec-gender .opt-chip").forEach(function(c){ c.classList.remove("on"); });
+      chip.classList.add("on");
+      state.pairGender = chip.getAttribute("data-g") || "不限";
+      syncSvcSpecBar();
     });
   });
   $all("#svc-levels .level:not(.disabled), #svc-nurse-levels .level:not(.disabled)").forEach(function(lv){
@@ -1554,23 +1653,58 @@
       $all("#"+box.id+" .level").forEach(function(c){ c.classList.remove("on"); });
       lv.classList.add("on");
       state.svcAdd = Number(lv.getAttribute("data-add") || 0);
+      state.svcLevelName = lv.getAttribute("data-level-name") || state.svcLevelName;
       renderSvcOrder();
     });
   });
+  $all("#rec-levels .level:not(.disabled), #rec-nurse-levels .level:not(.disabled)").forEach(function(lv){
+    lv.addEventListener("click", function(){
+      var box = lv.closest(".level-grid");
+      $all("#"+box.id+" .level").forEach(function(c){ c.classList.remove("on"); });
+      lv.classList.add("on");
+      state.pairAdd = Number(lv.getAttribute("data-add") || 0);
+      state.pairLevelName = lv.getAttribute("data-level-name") || state.pairLevelName;
+      renderSvcOrder();
+    });
+  });
+  (function(){
+    var btn = $("#svc-spec-toggle");
+    if (!btn) return;
+    btn.addEventListener("click", function(){
+      state.svcSpecOpen = !state.svcSpecOpen;
+      if (state.svcSpecOpen) state.pairSpecOpen = false;
+      syncSvcSpecBar();
+    });
+  })();
+  (function(){
+    var btn = $("#rec-spec-toggle");
+    if (!btn) return;
+    btn.addEventListener("click", function(){
+      state.pairSpecOpen = !state.pairSpecOpen;
+      if (state.pairSpecOpen) state.svcSpecOpen = false;
+      syncSvcSpecBar();
+    });
+  })();
   $all("#svc-subs button").forEach(function(btn){
     btn.addEventListener("click", function(){
-      if (state.scheme !== "s") setScheme("s");
       applySvcSku(btn.getAttribute("data-sku"));
       go("service-order");
     });
   });
+  var recCheckInput = $("#rec-check-input");
+  if (recCheckInput) recCheckInput.addEventListener("change", onRecCheckChange);
   $("#svc-pay").addEventListener("click", function(){
     if (!hasDateRange()) {
-      toast("请先选择上门时间（至少"+state.minDays+"天）", "warn");
+      toast("请先选择上门日期（至少"+state.minDays+"天）", "warn");
       setSvcEditorOpen(true);
       return;
     }
     if (!$("#svc-agree").checked) { toast("请先勾选平台服务协议", "warn"); return; }
+    if (isRecScheme() && state.recAccepted) {
+      var n = dayCount();
+      toast("已支付连陪组合 · 2主单 · "+(n*2)+"预约 · "+dateLabel(), "ok");
+      return;
+    }
     toast("已提交连陪下单 · "+dateLabel(), "ok");
   });
   $all("#staff-tabs button").forEach(function(btn){
@@ -1619,7 +1753,8 @@
       });
     });
   });
-  $("#plan-toggle").addEventListener("click", function(){
+  var planToggleBtn = $("#plan-toggle");
+  if (planToggleBtn) planToggleBtn.addEventListener("click", function(){
     state.planOpen = !state.planOpen;
     syncPlanFold();
   });
@@ -1628,7 +1763,8 @@
     syncPlanFold();
   });
 
-  $("#open-pay").addEventListener("click", function(){
+  var openPayBtn = $("#open-pay");
+  if (openPayBtn) openPayBtn.addEventListener("click", function(){
     if(!$("#agree").checked){ toast("请先勾选平台服务协议", "warn"); return; }
     renderStep2(false);
     $("#pay-sheet").classList.add("open");
@@ -1669,7 +1805,8 @@
   });
 
   syncDemoClockUI();
-  syncHomeEntry();
+  applySvcSku(state.svcSku || "home-day");
+  go("service-order");
 })();
 </script>
 </div>
