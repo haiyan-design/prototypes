@@ -509,14 +509,40 @@
   display:none;margin-top:10px;padding-top:10px;border-top:1px dashed #e5e5e5;
 }
 #ehutong-proto .visit-block .date-editor.open{display:block}
+#ehutong-proto .date-sheet{
+  display:none;position:absolute;inset:0;z-index:40;
+  flex-direction:column;justify-content:flex-end;
+  background:rgba(20,28,26,.42);
+}
+#ehutong-proto .date-sheet.open{display:flex}
+#ehutong-proto .date-sheet-panel{
+  background:#fff;border-radius:16px 16px 0 0;padding:10px 14px 16px;
+  box-shadow:0 -8px 28px rgba(0,0,0,.12);max-height:78%;overflow:auto;
+}
+#ehutong-proto .date-sheet-handle{
+  width:36px;height:4px;border-radius:99px;background:#d8dedc;margin:2px auto 10px;
+}
+#ehutong-proto .date-sheet-title{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;
+}
+#ehutong-proto .date-sheet-title b{font-size:16px;font-weight:600}
+#ehutong-proto .date-sheet-title .close-x{
+  border:0;background:transparent;font-size:22px;line-height:1;color:#999;cursor:pointer;padding:4px 6px;
+}
+#ehutong-proto .date-sheet .pick-tip{margin:0 0 10px}
+#ehutong-proto .date-sheet-btn{
+  margin-top:12px;width:100%;border:0;border-radius:10px;padding:12px;
+  background:var(--brand);color:#fff;font-size:15px;font-weight:600;cursor:pointer;
+}
+#ehutong-proto .date-sheet-btn:disabled{opacity:.4;cursor:not-allowed}
 @media (prefers-reduced-motion:reduce){#ehutong-proto .toast,#ehutong-proto .date-banner.flash{transition:none;animation:none}}
 </style>
 
 <div class="desk-switch" aria-label="推荐服务连陪原型">
   <div class="label">原型方案</div>
   <div class="desk-scheme-only">
-    <span class="t">推荐服务连陪</span>
-    <span class="d">单班确认后一对一推荐另一班 · 接受后走日+夜</span>
+    <span class="t">从服务立即预约</span>
+    <span class="d">确认页推荐另一班 · 上门日期用底部抽屉选择</span>
   </div>
   <div class="desk-sub show" id="svc-subs" role="tablist" aria-label="服务商品">
     <button type="button" data-sku="home-day" class="on">居家日间</button>
@@ -576,19 +602,6 @@
         </div>
         <button type="button" class="plan-toggle" id="svc-plan-toggle" hidden>查看排班</button>
         <div class="plan-fold" id="svc-plan-fold"><div class="plan-list" data-plan></div></div>
-        <div class="date-editor" id="svc-date-editor">
-          <div class="start-only">
-            <div class="l">开始日期</div>
-            <div class="v ph start-label">请选择</div>
-          </div>
-          <div class="cal-head">
-            <button type="button" class="cal-prev">‹</button>
-            <div class="m cal-month">2026年10月</div>
-            <button type="button" class="cal-next">›</button>
-          </div>
-          <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
-          <div class="cal-grid" id="cal-s"></div>
-        </div>
       </div>
       <div class="card">
         <div class="prod-block" id="svc-main-block">
@@ -716,6 +729,24 @@
       </div>
     </div>
   </div>
+  <div class="date-sheet" id="date-sheet" aria-hidden="true">
+    <div class="date-sheet-panel" role="dialog" aria-label="选择开始日期">
+      <div class="date-sheet-handle"></div>
+      <div class="date-sheet-title">
+        <b>选择开始日期</b>
+        <button type="button" class="close-x" id="date-sheet-close" aria-label="关闭">×</button>
+      </div>
+      <div class="pick-tip" id="date-sheet-tip">今日日间可约，08:00 开始</div>
+      <div class="cal-head">
+        <button type="button" class="cal-prev">‹</button>
+        <div class="m cal-month">2026年11月</div>
+        <button type="button" class="cal-next">›</button>
+      </div>
+      <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+      <div class="cal-grid" id="cal-s-sheet"></div>
+      <button type="button" class="date-sheet-btn" id="date-sheet-confirm">确认</button>
+    </div>
+  </div>
   <div class="toast" id="toast" role="status"></div>
 </div>
 </div>
@@ -728,6 +759,7 @@
   var now0 = new Date();
   var state = {
     scheme: "r",
+    dateSheetOpen: false,
     screen: "service-order",
     scene: null,
     mode: null,
@@ -999,7 +1031,7 @@
   function refreshCals(){
     renderCal("cal-b");
     renderCal("cal-c");
-    renderCal("cal-s");
+    renderCal("cal-s-sheet");
   }
 
   function syncCutoffTips(){
@@ -1009,12 +1041,46 @@
     $all(".pick-tip").forEach(function(el){
       var show = true;
       if (el.id === "step2-pick-tip") show = !!state.dateEditorOpen;
-      else if (el.id === "svc-pick-tip") show = !hasPlan || !!state.svcEditorOpen;
+      else if (el.id === "svc-pick-tip") show = !hasPlan && !state.dateSheetOpen;
+      else if (el.id === "date-sheet-tip") show = !!state.dateSheetOpen;
       el.hidden = !show;
       if (!show) return;
       el.textContent = note.text;
       el.classList.toggle("warn", !!note.warn);
     });
+  }
+
+  function syncDateSheet(){
+    var sheet = $("#date-sheet");
+    var btn = $("#date-sheet-confirm");
+    if (sheet) {
+      var open = !!state.dateSheetOpen;
+      sheet.classList.toggle("open", open);
+      sheet.setAttribute("aria-hidden", open ? "false" : "true");
+    }
+    if (btn) btn.disabled = !state.start;
+    syncCutoffTips();
+  }
+
+  function openSvcDatePicker(){
+    state.dateSheetOpen = true;
+    syncDateSheet();
+    renderRange();
+    renderCal("cal-s-sheet");
+    syncSvcDateBanner();
+  }
+
+  function closeSvcDatePicker(opts){
+    opts = opts || {};
+    if (!opts.force && !state.start) {
+      toast("请先选择开始日期", "warn");
+      return false;
+    }
+    state.dateSheetOpen = false;
+    syncDateSheet();
+    syncSvcDateBanner();
+    renderSvcOrder();
+    return true;
   }
 
   function setDateEditorOpen(open){
@@ -1041,21 +1107,16 @@
         val.innerHTML = "";
       }
     }
-    if (btn) btn.textContent = state.svcEditorOpen ? "收起" : (plan ? "修改日期" : "选日期");
+    if (btn) btn.textContent = plan ? "修改日期" : "选日期";
     var row = $("#svc-sync-row");
     if (row) row.hidden = !plan;
+    syncDateSheet();
     syncCutoffTips();
   }
 
   function setSvcEditorOpen(open){
-    state.svcEditorOpen = !!open;
-    var ed = $("#svc-date-editor");
-    if (ed) ed.classList.toggle("open", state.svcEditorOpen);
-    syncSvcDateBanner();
-    if (state.svcEditorOpen) {
-      renderRange();
-      renderCal("cal-s");
-    }
+    if (open) openSvcDatePicker();
+    else closeSvcDatePicker({ force: true });
   }
 
   function svcVisitLabText(){
@@ -1307,7 +1368,7 @@
     if (name==="service-order") {
       setSvcEditorOpen(false);
       renderRange();
-      renderCal("cal-s");
+      renderCal("cal-s-sheet");
       renderSvcOrder();
     }
   }
@@ -1471,6 +1532,11 @@
     if (state.screen==="service-order") {
       if (isRecScheme() && state.recPending) acceptRecOffer({ silent: false });
       else renderSvcOrder();
+      if (state.dateSheetOpen) {
+        var confirmBtn = $("#date-sheet-confirm");
+        if (confirmBtn) confirmBtn.disabled = !state.start;
+        renderCal("cal-s-sheet");
+      }
     }
   }
 
@@ -1627,13 +1693,26 @@
   });
 
   $("#svc-visit-toggle").addEventListener("click", function(){
-    if (state.svcEditorOpen) {
-      if (!state.start) { toast("请先选择开始日期", "warn"); return; }
-      setSvcEditorOpen(false);
-      renderSvcOrder();
+    if (state.dateSheetOpen) {
+      closeSvcDatePicker({ force: true });
       return;
     }
-    setSvcEditorOpen(true);
+    openSvcDatePicker();
+  });
+  var dateSheet = $("#date-sheet");
+  if (dateSheet) {
+    dateSheet.addEventListener("click", function(e){
+      if (e.target !== dateSheet) return;
+      closeSvcDatePicker({ force: true });
+    });
+  }
+  var dateSheetClose = $("#date-sheet-close");
+  if (dateSheetClose) dateSheetClose.addEventListener("click", function(){
+    closeSvcDatePicker({ force: true });
+  });
+  var dateSheetConfirm = $("#date-sheet-confirm");
+  if (dateSheetConfirm) dateSheetConfirm.addEventListener("click", function(){
+    closeSvcDatePicker();
   });
 
   $all("#svc-gender .opt-chip").forEach(function(chip){
@@ -1701,7 +1780,7 @@
   $("#svc-pay").addEventListener("click", function(){
     if (!hasDateRange()) {
       toast("请先选择上门日期（至少"+state.minDays+"天）", "warn");
-      setSvcEditorOpen(true);
+      openSvcDatePicker();
       return;
     }
     if (!$("#svc-agree").checked) { toast("请先勾选平台服务协议", "warn"); return; }
@@ -1810,6 +1889,7 @@
   });
 
   syncDemoClockUI();
+  syncDateSheet();
   applySvcSku(state.svcSku || "home-day");
   go("service-order");
 })();
