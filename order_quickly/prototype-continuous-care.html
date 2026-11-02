@@ -741,6 +741,7 @@
     day: { gender: "不限", level: "五级护理员", add: 0, nurseLevel: "护士", nurseAdd: 0 },
     night: { gender: "不限", level: "五级护理员", add: 0, nurseLevel: "护士", nurseAdd: 0 },
     minDays: 3,
+    maxDays: 30,
     dateEditorOpen: false,
     svcEditorOpen: false,
     svcSku: "home-day",
@@ -938,12 +939,12 @@
   }
   function step1Screen(){ return "step1b"; }
   function ruleTipHtml(){
-    var min = "至少连续 "+state.minDays+" 天。";
+    var span = "至少连续 "+state.minDays+" 天，最多 "+state.maxDays+" 天。";
     var mode = currentMode();
-    if (mode === "day") return "全部日班由同一人服务。"+min;
-    if (mode === "night") return "全部夜班由同一人服务。"+min;
-    if (mode === "24h") return "全部日班由同一人服务，全部夜班由另一个人服务，共 2 人。"+min;
-    return "同一班次的每一天，都由同一人服务。"+min;
+    if (mode === "day") return "全部日班由同一人服务。"+span;
+    if (mode === "night") return "全部夜班由同一人服务。"+span;
+    if (mode === "24h") return "全部日班由同一人服务，全部夜班由另一个人服务，共 2 人。"+span;
+    return "同一班次的每一天，都由同一人服务。"+span;
   }
   function syncRuleTips(){
     var html = ruleTipHtml();
@@ -1497,6 +1498,10 @@
     var next=state.days+delta;
     if (next < state.minDays){
       toast("连续陪护至少"+state.minDays+"天，无法再减少", "warn", "mid");
+      return;
+    }
+    if (next > state.maxDays){
+      toast("连续陪护最多"+state.maxDays+"天，无法再增加", "warn", "mid");
       return;
     }
     state.days = next;
