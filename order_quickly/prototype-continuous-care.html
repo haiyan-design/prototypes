@@ -61,14 +61,17 @@
 #ehutong-proto .nurse-svc{display:none}
 #ehutong-proto .svc-selected-bar{
   display:flex;align-items:center;justify-content:space-between;gap:8px;
-  margin-top:10px;padding-top:10px;border-top:1px dashed #e6e6e6;
+  margin-top:10px;
 }
 #ehutong-proto .svc-selected-bar .txt{font-size:13px;color:#666}
 #ehutong-proto .svc-selected-bar em{font-style:normal;color:var(--brand-dark)}
 #ehutong-proto .svc-attrs{display:none;margin-top:10px}
 #ehutong-proto .svc-attrs.open{display:block}
+#ehutong-proto #svc-main-block:has(+ .rec-panel:not([hidden])){
+  padding-bottom:14px;border-bottom:1px dashed #e6e6e6;
+}
 #ehutong-proto .rec-panel{
-  margin-top:12px;padding:12px;border-radius:10px;
+  margin-top:14px;padding:12px;border-radius:10px;
   background:#f5faf8;border:1px solid #d7ebe5;
 }
 #ehutong-proto .rec-panel[hidden]{display:none!important}
@@ -98,6 +101,7 @@
 #ehutong-proto .rec-expand{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed #e6e6e6}
 #ehutong-proto .rec-panel.on .rec-expand{display:block}
 #ehutong-proto .rec-expand .svc-selected-bar{margin-top:0;padding-top:0;border-top:0}
+#ehutong-proto .rec-expand .svc-spec{margin-top:10px;padding-top:10px}
 #ehutong-proto .phone-wrap{display:flex;justify-content:center;align-items:flex-start;min-height:calc(100vh - 32px)}
 #ehutong-proto .phone{
   width:min(390px,100%);height:var(--phone-h);background:var(--bg);border-radius:28px;
@@ -534,6 +538,110 @@
 }
 #ehutong-proto .date-sheet-btn:disabled{opacity:.4;cursor:not-allowed}
 @media (prefers-reduced-motion:reduce){#ehutong-proto .toast,#ehutong-proto .date-banner.flash{transition:none;animation:none}}
+
+/* 优先服务人员：挂在每个服务下；取消勾选后仍走连陪「已选/修改」缩进展开 */
+#ehutong-proto .prefer-slot[hidden],
+#ehutong-proto .prefer-slot .door-fee[hidden]{display:none!important}
+#ehutong-proto .svc-spec{
+  margin-top:12px;padding-top:12px;border-top:1px dashed #e6e6e6;
+}
+#ehutong-proto .svc-spec .sec{margin:0 0 8px;font-size:14px;font-weight:500}
+#ehutong-proto .svc-spec .sec-hd{
+  display:flex;align-items:center;gap:10px;margin:12px 0 8px;font-size:14px;font-weight:500;
+}
+#ehutong-proto .svc-spec .sec-hd .sec-link{
+  border:0;background:transparent;padding:0;font-size:13px;font-weight:400;
+  color:#d4a017;cursor:pointer;line-height:1;
+}
+#ehutong-proto .opt-chip.disabled,
+#ehutong-proto .opt-chip:disabled{
+  color:#bbb;background:#f5f5f5;border-color:#ececec;cursor:not-allowed;box-shadow:none;
+}
+#ehutong-proto .prefer-slot{margin-top:12px}
+#ehutong-proto .prefer-hd{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;
+}
+#ehutong-proto .prefer-hd .ttl{font-size:14px;font-weight:600;color:#333}
+#ehutong-proto .prefer-row{display:flex;align-items:stretch;gap:0}
+#ehutong-proto .prefer-pick{
+  display:flex;align-items:center;gap:10px;flex:1;min-width:0;text-align:left;
+  padding:10px 12px;border:1px solid #e8e8e8;border-radius:8px;background:#fff;cursor:pointer;
+}
+#ehutong-proto .prefer-pick.on{border-color:var(--brand);background:#f7fffc}
+#ehutong-proto .prefer-pick:not(.on){background:#fafafa;border-color:#ececec}
+#ehutong-proto .prefer-pick .check{
+  width:18px;height:18px;border:1.5px solid #ccc;border-radius:50%;flex-shrink:0;position:relative;
+}
+#ehutong-proto .prefer-pick.on .check{border-color:var(--brand);background:var(--brand)}
+#ehutong-proto .prefer-pick.on .check::after{
+  content:"";position:absolute;left:5px;top:2px;width:5px;height:9px;
+  border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);
+}
+#ehutong-proto .prefer-av{
+  width:40px;height:40px;border-radius:50%;object-fit:cover;background:#e8f0ef;flex-shrink:0;
+}
+#ehutong-proto .prefer-meta{flex:1;min-width:0}
+#ehutong-proto .prefer-meta .name{
+  font-size:14px;font-weight:500;color:#333;display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+}
+#ehutong-proto .prefer-pick:not(.on) .name{color:#666}
+#ehutong-proto .prefer-meta .name .tag{
+  font-size:11px;font-weight:400;padding:1px 6px;border-radius:3px;
+  color:var(--brand-dark);background:color-mix(in srgb,var(--brand) 12%,#fff);
+}
+#ehutong-proto .prefer-meta .sub{font-size:12px;color:#999;margin-top:3px}
+#ehutong-proto .prefer-row .chg{
+  flex-shrink:0;align-self:center;margin-left:8px;border:0;background:transparent;
+  font-size:13px;color:var(--brand-dark);cursor:pointer;padding:4px 0;white-space:nowrap;
+}
+#ehutong-proto .prefer-tip{margin:8px 0 0;font-size:12px;color:#999;line-height:1.5}
+#ehutong-proto .prefer-slot .door-fee{
+  margin-top:12px;padding:10px 12px;border-radius:8px;
+  background:#faf6ef;color:#c48a3a;font-size:13px;
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+}
+#ehutong-proto .prefer-slot .door-fee .qty{color:#bbb;flex-shrink:0}
+#ehutong-proto .svc-selected-bar[hidden]{display:none!important}
+#ehutong-proto .fee-bar[hidden]{display:none!important}
+#ehutong-proto .staff-sheet{
+  display:none;position:absolute;inset:0;z-index:42;
+  flex-direction:column;justify-content:flex-end;background:rgba(20,28,26,.42);
+}
+#ehutong-proto .staff-sheet.open{display:flex}
+#ehutong-proto .staff-sheet-panel{
+  background:#fff;border-radius:16px 16px 0 0;max-height:72%;
+  display:flex;flex-direction:column;box-shadow:0 -8px 28px rgba(0,0,0,.12);
+}
+#ehutong-proto .staff-sheet-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 16px 10px;flex-shrink:0;
+}
+#ehutong-proto .staff-sheet-hd .ttl{font-size:16px;font-weight:600}
+#ehutong-proto .staff-sheet-hd .close{
+  width:28px;height:28px;border-radius:50%;border:0;background:#f2f2f2;
+  color:#666;font-size:18px;line-height:28px;text-align:center;cursor:pointer;
+}
+#ehutong-proto .staff-sheet-list{overflow:auto;padding:0 16px 16px;-webkit-overflow-scrolling:touch}
+#ehutong-proto .staff-item{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  padding:12px 0;border:0;border-bottom:1px solid #f5f5f5;background:#fff;cursor:pointer;
+}
+#ehutong-proto .staff-item:last-child{border-bottom:0}
+#ehutong-proto .staff-item .check{
+  width:18px;height:18px;border:1.5px solid #ddd;border-radius:50%;flex-shrink:0;position:relative;
+}
+#ehutong-proto .staff-item.on .check{border-color:var(--brand);background:var(--brand)}
+#ehutong-proto .staff-item.on .check::after{
+  content:"";position:absolute;left:5px;top:2px;width:5px;height:9px;
+  border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);
+}
+#ehutong-proto .desk-switch button[data-view].on{
+  border-color:var(--brand);background:color-mix(in srgb,var(--brand) 10%,#fff);
+  box-shadow:inset 0 0 0 1px var(--brand);color:var(--brand-dark);
+}
+#ehutong-proto .desk-switch button[data-view] .t{font-weight:500;display:block}
+#ehutong-proto .desk-switch button[data-view] .d{font-size:11px;color:#999;margin-top:2px}
+#ehutong-proto #prefer-edges[hidden]{display:none!important}
 </style>
 
 <div class="desk-switch" aria-label="推荐服务连陪原型">
@@ -561,6 +669,18 @@
       <button type="button" data-demo-preset="2330">23:30 都过线</button>
     </div>
     <div class="hint">只在左侧改。状态栏时间和日历、排班都会按这个时间重算。</div>
+  </div>
+  <div class="desk-clock" aria-label="优先服务人员">
+    <div class="label">优先服务人员</div>
+    <button type="button" data-view="prefer-staff" id="desk-prefer-staff">
+      <span class="t">连陪确认页 · 优先人员</span>
+      <span class="d">勾选推荐搭配时可有日间+夜间两人</span>
+    </button>
+    <div class="desk-sub" id="prefer-edges" hidden>
+      <button type="button" data-prefer-edge="ok" class="on">有可用历史人</button>
+      <button type="button" data-prefer-edge="staff-gone">原人不可用</button>
+      <button type="button" data-prefer-edge="staff-none">无可选历史人</button>
+    </div>
   </div>
 </div>
 
@@ -612,13 +732,43 @@
               </div>
             </div>
           </div>
-          <div class="svc-selected-bar">
+          <div class="svc-spec" id="svc-spec">
+            <div class="sec">服务时长</div>
+            <button type="button" class="opt-chip on">12小时</button>
+            <div class="sec-hd">耗材包 <button type="button" class="sec-link" data-consumable-detail="main">耗材明细</button></div>
+            <div class="consumable-row" data-consumable="main">
+              <button type="button" class="opt-chip on" data-pack="pack1">耗材包1 ¥ 100.00</button>
+              <button type="button" class="opt-chip disabled" data-pack="forced" disabled>强制耗材包 ¥ 100.00</button>
+            </div>
+          </div>
+          <!-- 主服务：优先人 → 连陪「已选/修改」缩进展开 -->
+          <div class="prefer-slot" data-prefer-slot="main" id="prefer-slot-main" hidden>
+            <div class="prefer-hd"><span class="ttl">优先服务人员</span></div>
+            <div class="prefer-row" id="prefer-row-main">
+              <button class="prefer-pick on" type="button" data-prefer-pick="main" aria-pressed="true">
+                <span class="check" aria-hidden="true"></span>
+                <img class="prefer-av" data-prefer-avatar="main" src="assets/nurse.png" alt="" />
+                <div class="prefer-meta">
+                  <div class="name">
+                    <span data-prefer-name="main">徐测试</span>
+                    <span class="tag" data-prefer-tag="main">本单服务</span>
+                  </div>
+                  <div class="sub" data-prefer-sub="main">男 · 五级护理员 · 3.6分 · 服务过 3 次</div>
+                </div>
+              </button>
+              <button class="chg" type="button" data-prefer-change="main">更换 ›</button>
+            </div>
+            <p class="prefer-tip" data-prefer-tip="main">优先安排该人员，不可约时同等条件改派。取消勾选则由平台派单</p>
+            <div class="door-fee" data-prefer-door="main">
+              <span data-prefer-door-lab="main">上门费 ¥45/天</span>
+              <span class="qty" data-prefer-door-sum="main">¥45.00</span>
+            </div>
+          </div>
+          <div class="svc-selected-bar" id="svc-selected-bar">
             <div class="txt">已选：<em id="svc-sel-text">性别不限/五级护理员</em></div>
             <button type="button" class="mod-btn" id="svc-spec-toggle">修改 ›</button>
           </div>
           <div class="svc-attrs" id="svc-attrs">
-            <div class="sec" style="margin-top:4px">服务时长</div>
-            <button type="button" class="opt-chip on">12小时</button>
             <div class="sec">性别要求</div>
             <div id="svc-gender">
               <button type="button" class="opt-chip on" data-g="不限">不限</button>
@@ -659,13 +809,43 @@
           <input type="checkbox" id="rec-check-input" />
         </label>
         <div class="rec-expand" id="rec-expand">
-          <div class="svc-selected-bar">
+          <div class="svc-spec" id="rec-spec">
+            <div class="sec">服务时长</div>
+            <button type="button" class="opt-chip on">12小时</button>
+            <div class="sec-hd">耗材包 <button type="button" class="sec-link" data-consumable-detail="pair">耗材明细</button></div>
+            <div class="consumable-row" data-consumable="pair">
+              <button type="button" class="opt-chip on" data-pack="pack1">耗材包1 ¥ 100.00</button>
+              <button type="button" class="opt-chip disabled" data-pack="forced" disabled>强制耗材包 ¥ 100.00</button>
+            </div>
+          </div>
+          <!-- 推荐服务：优先人 → 连陪「已选/修改」缩进展开 -->
+          <div class="prefer-slot" data-prefer-slot="pair" id="prefer-slot-pair" hidden>
+            <div class="prefer-hd"><span class="ttl">优先服务人员</span></div>
+            <div class="prefer-row" id="prefer-row-pair">
+              <button class="prefer-pick on" type="button" data-prefer-pick="pair" aria-pressed="true">
+                <span class="check" aria-hidden="true"></span>
+                <img class="prefer-av" data-prefer-avatar="pair" src="assets/nurse.png" alt="" />
+                <div class="prefer-meta">
+                  <div class="name">
+                    <span data-prefer-name="pair">李护理</span>
+                    <span class="tag" data-prefer-tag="pair">历史人员</span>
+                  </div>
+                  <div class="sub" data-prefer-sub="pair">女 · 四级护理员 · 4.8分 · 服务过 5 次</div>
+                </div>
+              </button>
+              <button class="chg" type="button" data-prefer-change="pair">更换 ›</button>
+            </div>
+            <p class="prefer-tip" data-prefer-tip="pair">优先安排该人员，不可约时同等条件改派。取消勾选则由平台派单</p>
+            <div class="door-fee" data-prefer-door="pair">
+              <span data-prefer-door-lab="pair">上门费 ¥45/天</span>
+              <span class="qty" data-prefer-door-sum="pair">¥45.00</span>
+            </div>
+          </div>
+          <div class="svc-selected-bar" id="rec-selected-bar">
             <div class="txt">已选：<em id="rec-sel-text">性别不限/五级护理员</em></div>
             <button type="button" class="mod-btn" id="rec-spec-toggle">修改 ›</button>
           </div>
           <div class="svc-attrs" id="rec-attrs">
-            <div class="sec" style="margin-top:4px">服务时长</div>
-            <button type="button" class="opt-chip on">12小时</button>
             <div class="sec">性别要求</div>
             <div id="rec-gender">
               <button type="button" class="opt-chip on" data-g="不限">不限</button>
@@ -696,9 +876,9 @@
         </div>
         </div>
       </div>
+
       <div class="card">
         <div class="extra-row"><span>特殊补充 <span style="color:#999;font-size:12px">(选填)</span></span><span class="r">请选择或填写 ›</span></div>
-        <div class="extra-row"><span>优惠券</span><span class="r">请选择 ›</span></div>
       </div>
     </div>
     <div class="bottom">
@@ -744,6 +924,15 @@
       <button type="button" class="date-sheet-btn" id="date-sheet-confirm">确认</button>
     </div>
   </div>
+  <div class="staff-sheet" id="staff-sheet" aria-hidden="true">
+    <div class="staff-sheet-panel" role="dialog" aria-label="选择优先服务人员">
+      <div class="staff-sheet-hd">
+        <span class="ttl">选择优先服务人员</span>
+        <button class="close" type="button" id="staff-sheet-close" aria-label="关闭">×</button>
+      </div>
+      <div class="staff-sheet-list" id="staff-list"></div>
+    </div>
+  </div>
   <div class="toast" id="toast" role="status"></div>
 </div>
 </div>
@@ -785,8 +974,29 @@
     pairSpecOpen: false,
     simNow: new Date(now0.getTime()),
     recAccepted: false,
-    recPending: false
+    recPending: false,
+    preferStaffDemo: false,
+    preferMainOn: true,
+    preferMainId: "s1",
+    preferPairOn: true,
+    preferPairId: "s2",
+    preferSheetSlot: "main",
+    preferEdge: "ok",
+    staffModuleForcedOff: false
   };
+  var STAFF_LIST = [
+    { id:"s1", name:"徐测试", gender:"男", level:"五级护理员", score:"3.6", times:3, last:"本单服务", avatar:"assets/nurse.png", fromOrder:true, slot:"main", available:true },
+    { id:"s2", name:"李护理", gender:"女", level:"四级护理员", score:"4.8", times:5, last:"该服务最近服务", avatar:"assets/nurse.png", fromOrder:false, slot:"pair", available:true },
+    { id:"s3", name:"王阿姨", gender:"女", level:"三级护理员", score:"4.9", times:8, last:"最近服务 9月28日", avatar:"assets/avatar.png", fromOrder:false, slot:"main", available:true },
+    { id:"s4", name:"赵护工", gender:"男", level:"五级护理员", score:"4.2", times:2, last:"最近服务 8月03日", avatar:"assets/nurse.png", fromOrder:false, slot:"pair", available:true },
+    { id:"s5", name:"陈姐", gender:"女", level:"二级护理员", score:"4.7", times:1, last:"最近服务 7月15日", avatar:"assets/avatar.png", fromOrder:false, slot:"pair", available:true }
+  ];
+  var STAFF_LEVEL_ADD = {
+    "五级护理员":0, "四级护理员":76, "三级护理员":114, "二级护理员":152, "一级护理员":190,
+    "护士":0, "护师":160, "主管护师":240, "副主任护师":320, "主任护师":400
+  };
+  var PREFER_TIP_ON = "优先安排该人员，不可约时同等条件改派。取消勾选则由平台派单";
+  var PREFER_TIP_OFF = "不指定人员，由平台按要求派单";
   var svcCatalog = {
     "home-day": { scene:"home", mode:"day", staff:"caregiver", name:"居家日间12小时看护", base:335, tag:"08:00–20:00", visit:"每日 08:00 上门" },
     "home-night": { scene:"home", mode:"night", staff:"caregiver", name:"居家夜间12小时看护", base:390, tag:"20:00–次日08:00", visit:"每日 20:00 上门" },
@@ -1194,19 +1404,296 @@
     return (gender === "不限" ? "性别不限" : gender)+"/"+levelName;
   }
 
+  function findStaff(id){
+    for (var i=0;i<STAFF_LIST.length;i++) if (STAFF_LIST[i].id===id) return STAFF_LIST[i];
+    return null;
+  }
+  function availableStaffList(){
+    return STAFF_LIST.filter(function(s){ return s.available !== false; });
+  }
+  function staffListForSlot(preferSlot){
+    preferSlot = preferSlot || "main";
+    return availableStaffList().filter(function(s){
+      if (preferSlot === "pair") return s.slot === "pair";
+      return s.slot === "main" || !!s.fromOrder;
+    });
+  }
+  function pickRecommendStaff(preferSlot){
+    var list = preferSlot ? staffListForSlot(preferSlot) : availableStaffList();
+    if (!list.length) return null;
+    var i;
+    if (preferSlot === "main") {
+      for (i=0;i<list.length;i++) if (list[i].fromOrder) return list[i];
+    }
+    if (preferSlot) {
+      for (i=0;i<list.length;i++) if (list[i].slot === preferSlot) return list[i];
+    }
+    return list.slice().sort(function(a,b){ return b.times - a.times; })[0];
+  }
+  function preferDual(){
+    return !!(state.preferStaffDemo && recChecked() && pairSku());
+  }
+  function preferSlotOn(slot){
+    return slot === "pair" ? !!state.preferPairOn : !!state.preferMainOn;
+  }
+  function preferSlotId(slot){
+    return slot === "pair" ? state.preferPairId : state.preferMainId;
+  }
+  function setPreferSlotOn(slot, on){
+    if (slot === "pair") state.preferPairOn = on;
+    else state.preferMainOn = on;
+  }
+  function setPreferSlotId(slot, id){
+    if (slot === "pair") state.preferPairId = id;
+    else state.preferMainId = id;
+  }
+  function preferLocked(slot){
+    slot = slot || "main";
+    if (!state.preferStaffDemo || state.staffModuleForcedOff || !availableStaffList().length) return false;
+    if (slot === "pair" && !preferDual()) return false;
+    return preferSlotOn(slot);
+  }
+  function shiftLabelForSku(sku){
+    if (!sku) return "";
+    return sku.mode === "night" ? "夜间" : "日间";
+  }
+  function restoreLevelFromChips(which){
+    if (which === "pair") {
+      var pairNurse = (pairSku() || {}).staff === "nurse";
+      var pon = $(pairNurse ? "#rec-nurse-levels .level.on" : "#rec-levels .level.on");
+      if (pon) {
+        state.pairAdd = Number(pon.getAttribute("data-add") || 0);
+        state.pairLevelName = pon.getAttribute("data-level-name") || state.pairLevelName;
+      }
+      var pg = $("#rec-gender .opt-chip.on");
+      if (pg) state.pairGender = pg.getAttribute("data-g") || "不限";
+      return;
+    }
+    var nurse = svcSku().staff === "nurse";
+    var on = $(nurse ? "#svc-nurse-levels .level.on" : "#svc-levels .level.on");
+    if (!on) return;
+    state.svcAdd = Number(on.getAttribute("data-add") || 0);
+    state.svcLevelName = on.getAttribute("data-level-name") || state.svcLevelName;
+    var g = $("#svc-gender .opt-chip.on");
+    if (g) state.svcGender = g.getAttribute("data-g") || "不限";
+  }
+  function applyPreferLevelToPrice(){
+    if (preferLocked("main")) {
+      var ms = findStaff(state.preferMainId) || pickRecommendStaff("main");
+      if (ms) {
+        state.svcAdd = STAFF_LEVEL_ADD[ms.level] || 0;
+        state.svcLevelName = ms.level;
+        if (ms.gender === "男" || ms.gender === "女") state.svcGender = ms.gender;
+      }
+    } else if (state.preferStaffDemo) {
+      restoreLevelFromChips("main");
+    }
+    if (preferLocked("pair")) {
+      var ps = findStaff(state.preferPairId) || pickRecommendStaff("pair");
+      if (ps) {
+        state.pairAdd = STAFF_LEVEL_ADD[ps.level] || 0;
+        state.pairLevelName = ps.level;
+        if (ps.gender === "男" || ps.gender === "女") state.pairGender = ps.gender;
+      }
+    } else if (state.preferStaffDemo && preferDual()) {
+      restoreLevelFromChips("pair");
+    }
+  }
+  function paintPreferSlot(slot){
+    var box = $("#prefer-slot-"+slot);
+    var row = $("#prefer-row-"+slot);
+    if (!box) return;
+    var slotStaff = staffListForSlot(slot);
+    var showStaff = state.preferStaffDemo && !state.staffModuleForcedOff && slotStaff.length && (slot === "main" || preferDual());
+    box.hidden = !showStaff;
+    if (!showStaff) return;
+    var preferOn = preferSlotOn(slot);
+    var cur = findStaff(preferSlotId(slot));
+    if (cur && cur.available !== false && (cur.slot === slot || (slot === "main" && cur.fromOrder))) {
+      /* keep */
+    } else {
+      cur = null;
+    }
+    var s = cur || pickRecommendStaff(slot);
+    if (!s) { box.hidden = true; return; }
+    setPreferSlotId(slot, s.id);
+    var pick = box.querySelector("[data-prefer-pick='"+slot+"']");
+    var tip = box.querySelector("[data-prefer-tip='"+slot+"']");
+    var door = box.querySelector("[data-prefer-door='"+slot+"']");
+    var av = box.querySelector("[data-prefer-avatar='"+slot+"']");
+    var nm = box.querySelector("[data-prefer-name='"+slot+"']");
+    var tag = box.querySelector("[data-prefer-tag='"+slot+"']");
+    var sub = box.querySelector("[data-prefer-sub='"+slot+"']");
+    var ttl = box.querySelector(".prefer-hd .ttl");
+    var sku = slot === "pair" ? pairSku() : svcSku();
+    if (ttl) {
+      var shiftLab = preferDual() ? shiftLabelForSku(sku) : "";
+      ttl.textContent = shiftLab ? ("优先服务人员（"+shiftLab+"）") : "优先服务人员";
+    }
+    if (pick) {
+      pick.classList.toggle("on", preferOn);
+      pick.setAttribute("aria-pressed", preferOn ? "true" : "false");
+    }
+    if (tip) tip.textContent = preferOn ? PREFER_TIP_ON : PREFER_TIP_OFF;
+    if (av) av.src = s.avatar;
+    if (nm) nm.textContent = s.name;
+    if (tag) {
+      var isMainOrder = !!s.fromOrder && slot === "main";
+      tag.hidden = false;
+      tag.textContent = isMainOrder ? "本单服务" : "历史人员";
+    }
+    if (sub) sub.textContent = s.gender+" · "+s.level+" · "+s.score+"分 · 服务过 "+s.times+" 次";
+    if (door) door.hidden = !preferOn;
+    if (row) row.hidden = false;
+  }
+  function renderPreferCards(){
+    paintPreferSlot("main");
+    paintPreferSlot("pair");
+  }
+  function ensurePreferStaffIds(){
+    var mainList = staffListForSlot("main");
+    var pairList = staffListForSlot("pair");
+    var main = findStaff(state.preferMainId);
+    if (!main || main.available === false || (main.slot !== "main" && !main.fromOrder)) {
+      var recM = pickRecommendStaff("main");
+      if (recM) { state.preferMainId = recM.id; state.preferMainOn = true; }
+      else if (!mainList.length) state.preferMainOn = false;
+    }
+    var pair = findStaff(state.preferPairId);
+    if (!pair || pair.available === false || pair.slot !== "pair" || pair.id === state.preferMainId) {
+      var recP = pickRecommendStaff("pair");
+      if (recP && recP.id === state.preferMainId) {
+        recP = pairList.filter(function(s){ return s.id !== state.preferMainId; })[0] || null;
+      }
+      if (recP) { state.preferPairId = recP.id; state.preferPairOn = true; }
+      else if (!pairList.length) state.preferPairOn = false;
+    }
+  }
+  function syncPreferModule(){
+    var edges = $("#prefer-edges");
+    var deskBtn = $("#desk-prefer-staff");
+    if (deskBtn) deskBtn.classList.toggle("on", !!state.preferStaffDemo);
+    if (edges) edges.hidden = !state.preferStaffDemo;
+    if (!state.preferStaffDemo) {
+      var mainOff = $("#prefer-slot-main");
+      var pairOff = $("#prefer-slot-pair");
+      if (mainOff) mainOff.hidden = true;
+      if (pairOff) pairOff.hidden = true;
+      return;
+    }
+    var available = availableStaffList();
+    if (state.staffModuleForcedOff || !available.length) {
+      state.preferMainOn = false;
+      state.preferPairOn = false;
+      renderPreferCards();
+      return;
+    }
+    ensurePreferStaffIds();
+    renderPreferCards();
+  }
+  function applyPreferEdge(edge){
+    state.preferEdge = edge || "ok";
+    STAFF_LIST.forEach(function(s){ s.available = true; });
+    state.staffModuleForcedOff = false;
+    if (edge === "staff-gone") {
+      var origin = findStaff("s1");
+      if (origin) origin.available = false;
+      state.preferMainId = "s1";
+      state.preferPairId = "s2";
+      state.preferMainOn = true;
+      state.preferPairOn = true;
+    } else if (edge === "staff-none") {
+      STAFF_LIST.forEach(function(s){ s.available = false; });
+      state.staffModuleForcedOff = true;
+      state.preferMainOn = false;
+      state.preferPairOn = false;
+    } else {
+      state.preferMainId = "s1";
+      state.preferPairId = "s2";
+      state.preferMainOn = true;
+      state.preferPairOn = true;
+    }
+    $all("#prefer-edges button").forEach(function(b){
+      b.classList.toggle("on", b.getAttribute("data-prefer-edge") === state.preferEdge);
+    });
+    syncPreferModule();
+    renderSvcOrder();
+  }
+  function renderStaffList(){
+    var box = $("#staff-list");
+    if (!box) return;
+    var slot = state.preferSheetSlot || "main";
+    var curId = preferSlotId(slot);
+    var preferOn = preferSlotOn(slot);
+    var html = "";
+    staffListForSlot(slot).forEach(function(s){
+      var on = preferOn && curId === s.id;
+      var showOrderTag = slot === "main" && !!s.fromOrder;
+      html +=
+        '<button class="staff-item'+(on?" on":"")+'" type="button" data-staff-id="'+s.id+'">'+
+        '<span class="check"></span>'+
+        '<img class="prefer-av" src="'+s.avatar+'" alt="" />'+
+        '<div class="prefer-meta">'+
+        '<div class="name"><span>'+s.name+"</span>"+(showOrderTag?'<span class="tag">本单服务</span>':'<span class="tag">历史人员</span>')+"</div>"+
+        '<div class="sub">'+s.gender+" · "+s.level+" · "+s.score+"分 · 服务过 "+s.times+" 次</div>"+
+        '<div class="sub">'+s.last+"</div>"+
+        "</div></button>";
+    });
+    box.innerHTML = html || '<div class="prefer-tip">暂无可用历史人员</div>';
+    var title = $("#staff-sheet .ttl");
+    if (title) {
+      var sku = slot === "pair" ? pairSku() : svcSku();
+      var lab = shiftLabelForSku(sku);
+      title.textContent = lab ? ("选择优先服务人员（"+lab+"）") : "选择优先服务人员";
+    }
+  }
+  function openStaffSheet(slot){
+    if (!state.preferStaffDemo) return;
+    slot = slot || "main";
+    var box = $("#prefer-slot-"+slot);
+    if (box && box.hidden) return;
+    state.preferSheetSlot = slot;
+    renderStaffList();
+    var sheet = $("#staff-sheet");
+    if (sheet) {
+      sheet.classList.add("open");
+      sheet.setAttribute("aria-hidden", "false");
+    }
+  }
+  function closeStaffSheet(){
+    var sheet = $("#staff-sheet");
+    if (sheet) {
+      sheet.classList.remove("open");
+      sheet.setAttribute("aria-hidden", "true");
+    }
+  }
+
   function syncSvcSpecBar(){
+    // 勾选优先人 → 隐藏该服务「已选/修改」；取消勾选 → 恢复连陪缩进展开
+    var mainLocked = preferLocked("main");
+    var pairLocked = preferLocked("pair");
+    if (mainLocked) state.svcSpecOpen = false;
+    if (pairLocked) state.pairSpecOpen = false;
+    var bar = $("#svc-selected-bar");
+    if (bar) bar.hidden = mainLocked;
     var attrs = $("#svc-attrs");
     var btn = $("#svc-spec-toggle");
     var sel = $("#svc-sel-text");
-    if (attrs) attrs.classList.toggle("open", !!state.svcSpecOpen);
+    if (attrs) attrs.classList.toggle("open", !mainLocked && !!state.svcSpecOpen);
     if (btn) btn.textContent = state.svcSpecOpen ? "收起 ›" : "修改 ›";
     if (sel) sel.textContent = specText(state.svcGender, state.svcLevelName);
+    var mainFeeBar = $("#svc-fee-bar");
+    if (mainFeeBar) mainFeeBar.hidden = mainLocked;
+    var pairBar = $("#rec-selected-bar");
+    if (pairBar) pairBar.hidden = pairLocked;
     var pairAttrs = $("#rec-attrs");
     var pairBtn = $("#rec-spec-toggle");
     var pairSel = $("#rec-sel-text");
-    if (pairAttrs) pairAttrs.classList.toggle("open", !!state.pairSpecOpen);
+    if (pairAttrs) pairAttrs.classList.toggle("open", !pairLocked && !!state.pairSpecOpen);
     if (pairBtn) pairBtn.textContent = state.pairSpecOpen ? "收起 ›" : "修改 ›";
     if (pairSel) pairSel.textContent = specText(state.pairGender, state.pairLevelName);
+    var pairFeeBar = $("#rec-fee-bar");
+    if (pairFeeBar) pairFeeBar.hidden = pairLocked;
   }
 
   function recChecked(){
@@ -1313,6 +1800,8 @@
   }
 
   function renderSvcOrder(){
+    syncPreferModule();
+    applyPreferLevelToPrice();
     var dated = hasDateRange();
     var n = dated ? dayCount() : 0;
     var unit = state.svcBase + state.svcAdd;
@@ -1346,9 +1835,20 @@
     if (tot) tot.textContent = moneySum(total);
     if (dc) dc.textContent = String(n > 0 ? n : state.minDays);
     if (lab) lab.textContent = svcVisitLabText();
+    (function syncDoorFees(){
+      var setDoor = function(labSel, sumSel, lab, sum){
+        var labEl = root.querySelector(labSel);
+        var sumEl = root.querySelector(sumSel);
+        if (labEl) labEl.textContent = lab;
+        if (sumEl) sumEl.textContent = "¥"+sum.toFixed(2);
+      };
+      setDoor("[data-prefer-door-lab='main']", "[data-prefer-door-sum='main']", mainFee.lab, mainFee.sum);
+      setDoor("[data-prefer-door-lab='pair']", "[data-prefer-door-sum='pair']", pairFee.lab, pairFee.sum);
+    })();
     syncSvcSpecBar();
     syncSvcDateBanner();
     syncRecOffer();
+    if (state.preferStaffDemo) renderPreferCards();
   }
 
   function go(name){
@@ -1710,6 +2210,19 @@
     closeSvcDatePicker();
   });
 
+  $all("[data-consumable-detail]").forEach(function(btn){
+    btn.addEventListener("click", function(){ toast("耗材明细（原型示意）", "ok"); });
+  });
+  $all(".consumable-row .opt-chip:not(.disabled):not(:disabled)").forEach(function(chip){
+    chip.addEventListener("click", function(){
+      var row = chip.closest(".consumable-row");
+      if (!row) return;
+      $all(".consumable-row[data-consumable='"+row.getAttribute("data-consumable")+"'] .opt-chip:not(.disabled):not(:disabled)").forEach(function(c){
+        c.classList.remove("on");
+      });
+      chip.classList.add("on");
+    });
+  });
   $all("#svc-gender .opt-chip").forEach(function(chip){
     chip.addEventListener("click", function(){
       $all("#svc-gender .opt-chip").forEach(function(c){ c.classList.remove("on"); });
@@ -1750,6 +2263,7 @@
     var btn = $("#svc-spec-toggle");
     if (!btn) return;
     btn.addEventListener("click", function(){
+      if (preferLocked("main")) return;
       state.svcSpecOpen = !state.svcSpecOpen;
       if (state.svcSpecOpen) state.pairSpecOpen = false;
       syncSvcSpecBar();
@@ -1759,6 +2273,7 @@
     var btn = $("#rec-spec-toggle");
     if (!btn) return;
     btn.addEventListener("click", function(){
+      if (preferLocked("pair")) return;
       state.pairSpecOpen = !state.pairSpecOpen;
       if (state.pairSpecOpen) state.svcSpecOpen = false;
       syncSvcSpecBar();
@@ -1768,8 +2283,70 @@
     btn.addEventListener("click", function(){
       applySvcSku(btn.getAttribute("data-sku"));
       go("service-order");
+      if (state.preferStaffDemo) renderSvcOrder();
     });
   });
+  var deskPrefer = $("#desk-prefer-staff");
+  if (deskPrefer) {
+    deskPrefer.addEventListener("click", function(){
+      state.preferStaffDemo = !state.preferStaffDemo;
+      if (state.preferStaffDemo) {
+        applyPreferEdge(state.preferEdge || "ok");
+      } else {
+        closeStaffSheet();
+        state.staffModuleForcedOff = false;
+        STAFF_LIST.forEach(function(s){ s.available = true; });
+        restoreLevelFromChips("main");
+        restoreLevelFromChips("pair");
+        syncPreferModule();
+        renderSvcOrder();
+      }
+      go("service-order");
+    });
+  }
+  $all("#prefer-edges button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      if (!state.preferStaffDemo) return;
+      applyPreferEdge(btn.getAttribute("data-prefer-edge") || "ok");
+    });
+  });
+  $all("[data-prefer-pick]").forEach(function(pick){
+    pick.addEventListener("click", function(){
+      if (!state.preferStaffDemo) return;
+      var slot = pick.getAttribute("data-prefer-pick") || "main";
+      var box = $("#prefer-slot-"+slot);
+      if (box && box.hidden) return;
+      var next = !preferSlotOn(slot);
+      setPreferSlotOn(slot, next);
+      if (!next) restoreLevelFromChips(slot);
+      renderSvcOrder();
+    });
+  });
+  $all("[data-prefer-change]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      openStaffSheet(btn.getAttribute("data-prefer-change") || "main");
+    });
+  });
+  var staffSheetClose = $("#staff-sheet-close");
+  if (staffSheetClose) staffSheetClose.addEventListener("click", closeStaffSheet);
+  var staffSheet = $("#staff-sheet");
+  if (staffSheet) {
+    staffSheet.addEventListener("click", function(e){
+      if (e.target === staffSheet) closeStaffSheet();
+    });
+  }
+  var staffList = $("#staff-list");
+  if (staffList) {
+    staffList.addEventListener("click", function(e){
+      var btn = e.target.closest("[data-staff-id]");
+      if (!btn) return;
+      var slot = state.preferSheetSlot || "main";
+      setPreferSlotOn(slot, true);
+      setPreferSlotId(slot, btn.getAttribute("data-staff-id"));
+      renderSvcOrder();
+      closeStaffSheet();
+    });
+  }
   var recCheckInput = $("#rec-check-input");
   if (recCheckInput) recCheckInput.addEventListener("change", onRecCheckChange);
   $("#svc-pay").addEventListener("click", function(){
@@ -1779,12 +2356,25 @@
       return;
     }
     if (!$("#svc-agree").checked) { toast("请先勾选平台服务协议", "warn"); return; }
+    var preferText = "";
+    if (state.preferStaffDemo) {
+      var bits = [];
+      if (preferLocked("main")) {
+        var ms = findStaff(state.preferMainId);
+        bits.push(shiftLabelForSku(svcSku())+"「"+(ms ? ms.name : "")+"」");
+      }
+      if (preferLocked("pair")) {
+        var ps = findStaff(state.preferPairId);
+        bits.push(shiftLabelForSku(pairSku())+"「"+(ps ? ps.name : "")+"」");
+      }
+      preferText = bits.length ? (" · 优先 "+bits.join(" + ")) : " · 不指定人员";
+    }
     if (isRecScheme() && state.recAccepted) {
       var n = dayCount();
-      toast("已支付连陪组合 · 2主单 · "+(n*2)+"预约 · "+dateLabel(), "ok");
+      toast("已支付连陪组合 · 2主单 · "+(n*2)+"预约 · "+dateLabel()+preferText, "ok");
       return;
     }
-    toast("已提交连陪下单 · "+dateLabel(), "ok");
+    toast("已提交连陪下单 · "+dateLabel()+preferText, "ok");
   });
   $all("#staff-tabs button").forEach(function(btn){
     btn.addEventListener("click", function(){
