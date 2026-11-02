@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>确认支付</title>
-  <link rel="stylesheet" href="../css/common.css?v=72" />
+  <link rel="stylesheet" href="../css/common.css?v=73" />
 </head>
 <body>
   <div class="toast" id="toast" hidden></div>
@@ -91,7 +91,7 @@
           <div class="sub" id="staffSub">五级护理员 · 3.6分 · 服务过 3 次</div>
         </div>
       </button>
-      <p class="staff-tip" id="staffTip">优先安排该人员；不可约时，为您安排同等条件其他人</p>
+      <p class="staff-tip" id="staffTip">优先安排该人员，不可约时同等条件改派。取消勾选则由平台派单</p>
       <!-- 已勾选：上门费嵌在人员卡底部 -->
       <div class="door-fee" id="doorFeeInStaff">
         <span>上门费 ¥45.00</span>
@@ -258,7 +258,7 @@
       var staffPick = document.getElementById("staffPick");
       var staffTip = document.getElementById("staffTip");
       var specFilterBlock = document.getElementById("specFilterBlock");
-      var TIP_ON = "优先安排该人员；不可约时，为您安排同等条件其他人";
+      var TIP_ON = "优先安排该人员，不可约时同等条件改派。取消勾选则由平台派单";
       var TIP_OFF = "不指定人员，由平台按要求派单";
 
       function findStaff(id) {
