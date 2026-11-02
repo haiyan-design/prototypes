@@ -287,16 +287,14 @@
 }
 #ehutong-proto .date-banner .range span{display:block;font-size:10px;font-weight:400;color:#8aa39c}
 #ehutong-proto .date-banner .range b{display:block;margin-top:2px;font-size:14px;font-weight:600;color:#145e50}
-#ehutong-proto .date-banner .range i{
-  font-style:normal;font-size:11px;font-weight:500;color:var(--brand-dark);
-  background:#e7f6f2;border-radius:999px;padding:4px 8px;white-space:nowrap;
+#ehutong-proto .date-banner .range i.to{
+  font-style:normal;font-size:13px;font-weight:500;color:#8aa39c;flex-shrink:0;padding-top:12px;
 }
 #ehutong-proto .date-banner .link{border:0;background:transparent;color:var(--brand-dark);font-size:13px;cursor:pointer;padding:0;white-space:nowrap;flex-shrink:0}
 #ehutong-proto .date-banner .sync-row{
-  display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed #dce8e5;
+  display:flex;align-items:center;justify-content:flex-end;margin-top:10px;padding-top:10px;border-top:1px dashed #dce8e5;
 }
 #ehutong-proto .date-banner .sync-row[hidden]{display:none!important}
-#ehutong-proto .date-banner .sync-row .sl{font-size:13px;color:#666}
 #ehutong-proto .date-editor{
   display:none;margin-top:12px;padding-top:12px;border-top:1px dashed #dce8e5;
 }
@@ -593,7 +591,6 @@
         </div>
         <div class="pick-tip" id="svc-pick-tip">今日日间可约，08:00 开始</div>
         <div class="sync-row" id="svc-sync-row" hidden>
-          <span class="sl" id="svc-stepper-lab">服务天数</span>
           <div class="stepper">
             <button type="button" data-day="-1">−</button>
             <span class="day-count" id="svc-day-count">3</span>
@@ -1102,7 +1099,7 @@
     var plan = hasDateRange() ? currentPlan() : null;
     if (val) {
       if (plan) {
-        val.innerHTML = "<div class='range'><div><span>开始</span><b>"+plan.startText+"</b></div><i>"+state.days+"天</i><div style='text-align:right'><span>结束</span><b>"+plan.endText+"</b></div></div>";
+        val.innerHTML = "<div class='range'><div><span>开始</span><b>"+plan.startText+"</b></div><i class='to'>到</i><div style='text-align:right'><span>结束</span><b>"+plan.endText+"</b></div></div>";
       } else {
         val.innerHTML = "";
       }
@@ -1341,7 +1338,6 @@
     var tot = $("#svc-total");
     var dc = $("#svc-day-count");
     var lab = $("#svc-visit-lab");
-    var stepLab = $("#svc-stepper-lab");
     if (uv) uv.textContent = "¥"+unit.toFixed(2);
     if (feeLab) feeLab.textContent = mainFee.lab;
     if (feeSumEl) feeSumEl.textContent = "¥"+mainFee.sum.toFixed(2);
@@ -1350,7 +1346,6 @@
     if (tot) tot.textContent = moneySum(total);
     if (dc) dc.textContent = String(n > 0 ? n : state.minDays);
     if (lab) lab.textContent = svcVisitLabText();
-    if (stepLab) stepLab.textContent = (isRecScheme() && state.recAccepted) ? "服务天数（日夜同步）" : "服务天数";
     syncSvcSpecBar();
     syncSvcDateBanner();
     syncRecOffer();
@@ -1587,7 +1582,7 @@
     var bannerPlan = currentPlan();
     var bannerVal = $("#date-banner-val");
     if (bannerPlan) {
-      bannerVal.innerHTML = "<div class='range'><div><span>开始</span><b>"+bannerPlan.startText+"</b></div><i>"+state.days+"天</i><div style='text-align:right'><span>结束</span><b>"+bannerPlan.endText+"</b></div></div>";
+      bannerVal.innerHTML = "<div class='range'><div><span>开始</span><b>"+bannerPlan.startText+"</b></div><i class='to'>到</i><div style='text-align:right'><span>结束</span><b>"+bannerPlan.endText+"</b></div></div>";
     } else {
       bannerVal.textContent = "请选择开始日期";
     }
