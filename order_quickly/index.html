@@ -664,9 +664,9 @@
     <input type="datetime-local" id="desk-now-input" step="60" />
     <div class="presets">
       <button type="button" data-demo-preset="1000">10:00 日班可约</button>
-      <button type="button" data-demo-preset="1130">11:30 过日班</button>
+      <button type="button" data-demo-preset="1930">19:30 过日班</button>
       <button type="button" data-demo-preset="2021">20:21 夜班可约</button>
-      <button type="button" data-demo-preset="2330">23:30 都过线</button>
+      <button type="button" data-demo-preset="0730">07:30</button>
     </div>
     <div class="hint">只在左侧改。状态栏时间和日历、排班都会按这个时间重算。</div>
   </div>
@@ -1030,8 +1030,15 @@
   function now(){ return new Date(state.simNow.getTime()); }
   function today(){ return startOfDay(now()); }
   function minutesNow(){ var n=now(); return n.getHours()*60+n.getMinutes(); }
-  function dayOpenToday(){ return minutesNow() <= 11*60; }
-  function nightOpenToday(){ return minutesNow() <= 23*60; }
+  // 截止 = 服务结束前 1 小时：日班 08:00–20:00 → 19:00；夜班 20:00–次日08:00 → 次日 07:00
+  function dayOpenToday(){ return minutesNow() <= 19*60; }
+  function nightCutoffOn(startDate){
+    var c = addDays(startOfDay(startDate), 1);
+    c.setHours(7, 0, 0, 0);
+    return c;
+  }
+  function nightOpenOn(startDate){ return now().getTime() <= nightCutoffOn(startDate).getTime(); }
+  function nightOpenToday(){ return nightOpenOn(today()); }
   function toLocalInputValue(d){
     return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes());
   }
@@ -1077,7 +1084,7 @@
     refreshAfterClockChange(cleared && !(opts && opts.silent));
   }
   function setSimPreset(code){
-    var map = { "1000":[10,0], "1130":[11,30], "2021":[20,21], "2330":[23,30] };
+    var map = { "1000":[10,0], "1930":[19,30], "2021":[20,21], "0730":[7,30] };
     var hm = map[String(code)];
     if (!hm) return;
     var d = now();
@@ -1161,12 +1168,12 @@
     if (mode === "day") {
       return dayOpenToday()
         ? { text:"今日日间可约，08:00 开始", warn:false }
-        : { text:"今日日间已过 11:00，最早 "+fmt(e)+" 08:00", warn:true };
+        : { text:"今日日间已过 19:00，最早 "+fmt(e)+" 08:00", warn:true };
     }
     if (mode === "night") {
       return nightOpenToday()
         ? { text:"今日夜间可约，20:00 开始", warn:false }
-        : { text:"今日夜间已过 23:00，最早 "+fmt(e)+" 20:00", warn:true };
+        : { text:"夜间已过次日 07:00，最早 "+fmt(e)+" 20:00", warn:true };
     }
     if (!dayOpenToday() && nightOpenToday()) {
       return { text:"今天从 20:00 夜班开始；之后的日期从 08:00 日班开始", warn:true };
