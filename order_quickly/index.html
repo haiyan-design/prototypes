@@ -435,7 +435,7 @@
   transition:opacity .2s;
 }
 #ehutong-proto .toast.mid.show{opacity:1;transform:translate(-50%,-50%)}
-#ehutong-proto .sheet-mask{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:10;display:none;align-items:flex-end}
+#ehutong-proto .sheet-mask{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:47;display:none;align-items:flex-end}
 #ehutong-proto .sheet-mask.open{display:flex}
 #ehutong-proto .sheet{width:100%;background:#fff;border-radius:16px 16px 0 0;padding:14px 14px 18px;max-height:78%;overflow:auto}
 #ehutong-proto .sheet-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:14px}
@@ -642,6 +642,219 @@
 #ehutong-proto .desk-switch button[data-view] .t{font-weight:500;display:block}
 #ehutong-proto .desk-switch button[data-view] .d{font-size:11px;color:#999;margin-top:2px}
 #ehutong-proto #prefer-edges[hidden]{display:none!important}
+
+/* —— 续单演示：订单列表 / 详情 / 天数弹窗 —— */
+#ehutong-proto .screen[data-screen="renew-list"] .scroll,
+#ehutong-proto .screen[data-screen="renew-detail"] .scroll{background:#f2f3f5;padding:0 0 12px}
+#ehutong-proto .renew-nav{
+  height:46px;flex:0 0 46px;background:var(--brand);color:#fff;
+  display:flex;align-items:center;padding:0 8px;position:relative;
+}
+#ehutong-proto .renew-nav .back{
+  border:0;background:transparent;color:#fff;font-size:15px;padding:8px 10px;cursor:pointer;z-index:1;
+}
+#ehutong-proto .renew-nav h1{
+  margin:0;position:absolute;left:0;right:0;text-align:center;font-size:17px;font-weight:500;color:#fff;pointer-events:none;
+}
+#ehutong-proto .renew-nav .tools{margin-left:auto;font-size:16px;opacity:.95;z-index:1}
+#ehutong-proto .renew-search-wrap{background:var(--brand);padding:0 12px 10px}
+#ehutong-proto .renew-search{
+  background:rgba(255,255,255,.95);border-radius:999px;padding:8px 14px;font-size:13px;color:#999;
+}
+#ehutong-proto .renew-cal-entry{
+  margin:10px 12px 0;background:#fff;border-radius:10px;padding:12px 14px;
+  display:flex;align-items:center;gap:10px;
+}
+#ehutong-proto .renew-cal-entry .ico{
+  width:36px;height:36px;border-radius:8px;background:#e8f7f5;color:var(--brand-dark);
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+}
+#ehutong-proto .renew-cal-entry .t{font-size:15px;font-weight:500;color:#222}
+#ehutong-proto .renew-cal-entry .d{font-size:12px;color:#999;margin-top:2px}
+#ehutong-proto .renew-cal-entry .arrow{margin-left:auto;color:#ccc}
+#ehutong-proto .renew-tabs{
+  display:flex;gap:18px;padding:12px 14px 0;overflow-x:auto;background:#fff;margin-top:10px;
+  border-bottom:1px solid #f0f0f0;font-size:14px;color:#666;white-space:nowrap;
+}
+#ehutong-proto .renew-tabs .on{color:var(--brand-dark);font-weight:500;padding-bottom:10px;border-bottom:2px solid var(--brand)}
+#ehutong-proto .renew-order-card{
+  margin:10px 12px 0;background:#fff;border-radius:10px;padding:12px 14px;
+}
+#ehutong-proto .renew-order-card .hd{
+  display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#999;margin-bottom:10px;
+}
+#ehutong-proto .renew-order-card .st{color:#e6a23c;font-size:13px}
+#ehutong-proto .renew-order-card .prod{
+  display:flex;gap:10px;align-items:flex-start;
+}
+#ehutong-proto .renew-order-card .thumb{
+  width:64px;height:64px;border-radius:8px;object-fit:cover;background:#f2f2f2;flex-shrink:0;
+}
+#ehutong-proto .renew-order-card .pname{font-size:14px;font-weight:500;color:#222;line-height:1.35}
+#ehutong-proto .renew-order-card .ptag{
+  display:inline-block;margin-top:6px;font-size:11px;color:#888;background:#f3f3f3;border-radius:4px;padding:2px 6px;
+}
+#ehutong-proto .renew-order-card .hint{
+  margin-top:10px;background:#f0faf7;border-radius:6px;padding:8px 10px;font-size:12px;color:#5a7a72;line-height:1.4;
+}
+#ehutong-proto .renew-order-card .payline{
+  margin-top:10px;text-align:right;font-size:13px;color:#666;
+}
+#ehutong-proto .renew-order-card .payline em{font-style:normal;font-weight:600;color:#333}
+#ehutong-proto .renew-order-card .acts{
+  margin-top:12px;display:flex;justify-content:flex-end;gap:8px;
+}
+#ehutong-proto .renew-btn{
+  border:1px solid #ddd;background:#fff;color:#666;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;
+}
+#ehutong-proto .renew-btn.primary{
+  border-color:var(--brand);color:var(--brand-dark);background:#fff;
+}
+#ehutong-proto .renew-detail-hero{
+  background:var(--brand);color:#fff;padding:8px 16px 18px;
+}
+#ehutong-proto .renew-detail-hero .big{font-size:22px;font-weight:500}
+#ehutong-proto .renew-detail-card{
+  margin:-8px 12px 0;background:#fff;border-radius:10px;padding:14px;position:relative;z-index:1;
+}
+#ehutong-proto .renew-detail-card .prod{display:flex;gap:10px}
+#ehutong-proto .renew-detail-card .prod .mid{flex:1;min-width:0}
+#ehutong-proto .renew-detail-card .pname{font-size:15px;font-weight:500}
+#ehutong-proto .renew-detail-card .ptag{
+  display:inline-block;margin-top:6px;font-size:11px;color:#888;background:#f3f3f3;border-radius:4px;padding:2px 6px;
+}
+#ehutong-proto .renew-detail-card .price{color:var(--orange);font-size:16px;font-weight:500;flex-shrink:0}
+#ehutong-proto .renew-detail-card .leftn{margin-top:8px;font-size:12px;color:#999}
+#ehutong-proto .renew-appt-list{margin-top:12px;border-top:1px solid #f0f0f0;padding-top:4px}
+#ehutong-proto .renew-appt{
+  display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid #f5f5f5;
+}
+#ehutong-proto .renew-appt:last-of-type{border-bottom:0}
+#ehutong-proto .renew-appt .rail{
+  width:8px;align-self:stretch;border-radius:99px;background:#e8f7f5;flex-shrink:0;margin-top:2px;
+}
+#ehutong-proto .renew-appt .rail.on{background:var(--brand)}
+#ehutong-proto .renew-appt .body{flex:1;min-width:0}
+#ehutong-proto .renew-appt .when{font-size:14px;font-weight:500;color:#222}
+#ehutong-proto .renew-appt .meta{margin-top:4px;font-size:12px;color:#999;display:flex;justify-content:space-between;gap:8px}
+#ehutong-proto .renew-appt .meta .st{color:var(--brand-dark)}
+#ehutong-proto .renew-appt .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+#ehutong-proto .renew-fold{
+  text-align:center;font-size:13px;color:var(--brand-dark);padding:8px 0 0;cursor:pointer;
+}
+#ehutong-proto .renew-addr{
+  margin:10px 12px 0;background:#fff;border-radius:10px;padding:14px;
+}
+#ehutong-proto .renew-addr .k{font-size:14px;font-weight:500;margin-bottom:8px}
+#ehutong-proto .renew-addr .v{font-size:13px;color:#666;line-height:1.45}
+#ehutong-proto .renew-bottom{
+  flex:0 0 auto;background:#fff;border-top:1px solid #eee;
+  display:flex;align-items:center;justify-content:space-between;padding:8px 14px 12px;gap:12px;
+}
+#ehutong-proto .renew-bottom .cs{
+  border:0;background:transparent;font-size:11px;color:#666;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;
+}
+#ehutong-proto .renew-bottom .cs .ico{font-size:18px;line-height:1}
+#ehutong-proto .renew-bottom .renew-cta{
+  border:0;background:var(--brand);color:#fff;border-radius:999px;padding:10px 28px;font-size:15px;font-weight:500;cursor:pointer;
+}
+#ehutong-proto .renew-sheet{
+  display:none;position:absolute;inset:0;z-index:45;
+  flex-direction:column;justify-content:flex-end;background:rgba(20,28,26,.42);
+}
+#ehutong-proto .renew-sheet.open{display:flex}
+#ehutong-proto .renew-sheet-panel{
+  background:#fff;border-radius:16px 16px 0 0;padding:12px 16px 18px;
+  box-shadow:0 -8px 28px rgba(0,0,0,.12);
+}
+#ehutong-proto .renew-sheet-panel .handle{
+  width:36px;height:4px;border-radius:99px;background:#d8dedc;margin:2px auto 12px;
+}
+#ehutong-proto .renew-sheet-panel .ttl{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;
+}
+#ehutong-proto .renew-sheet-panel .ttl b{font-size:16px;font-weight:600}
+#ehutong-proto .renew-sheet-panel .ttl .x{
+  border:0;background:transparent;font-size:22px;line-height:1;color:#999;cursor:pointer;padding:4px 6px;
+}
+#ehutong-proto .renew-sheet-panel .ttl b{font-size:15px;font-weight:600;max-width:85%;line-height:1.35}
+#ehutong-proto .renew-sheet-panel .ttl b .sku{font-weight:600}
+#ehutong-proto .renew-sheet-panel .bridge{
+  font-size:13px;color:#666;line-height:1.55;background:#f7faf9;border-radius:8px;padding:10px 12px;margin-bottom:12px;
+}
+#ehutong-proto .renew-sheet-panel .bridge .staff-note{display:block;margin-top:6px;font-size:12px;color:#999;line-height:1.45}
+#ehutong-proto .renew-picks{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+#ehutong-proto .renew-picks[hidden]{display:none!important}
+#ehutong-proto .renew-pick{
+  display:flex;flex-direction:column;gap:10px;margin:0;padding:10px 12px;
+  border:1px solid #e8e8e8;border-radius:10px;background:#fff;
+}
+#ehutong-proto .renew-pick.on{border-color:var(--brand);background:#f7fffc}
+#ehutong-proto .renew-pick[hidden]{display:none!important}
+#ehutong-proto .renew-pick-hd{
+  display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin:0;
+}
+#ehutong-proto .renew-pick input{margin-top:3px;accent-color:var(--brand);flex-shrink:0}
+#ehutong-proto .renew-pick .n{font-size:14px;font-weight:500;color:#222}
+#ehutong-proto .renew-pick .s{font-size:12px;color:#999;margin-top:3px;line-height:1.4}
+#ehutong-proto .renew-pick-extra[hidden]{display:none!important}
+#ehutong-proto .renew-days-solo[hidden]{display:none!important}
+#ehutong-proto .renew-date-block{
+  background:#f7faf9;border:1px solid color-mix(in srgb,var(--brand) 25%,#e8e8e8);
+  border-radius:10px;padding:12px;margin-top:2px;
+}
+#ehutong-proto .renew-date-block .range{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--text);
+}
+#ehutong-proto .renew-date-block .range span{display:block;font-size:10px;font-weight:400;color:#8aa39c}
+#ehutong-proto .renew-date-block .range b{display:block;margin-top:2px;font-size:14px;font-weight:600;color:#145e50}
+#ehutong-proto .renew-date-block .range i.to{
+  font-style:normal;font-size:13px;font-weight:500;color:#8aa39c;flex-shrink:0;padding-top:12px;
+}
+#ehutong-proto .renew-date-block .sync-row{
+  display:flex;align-items:center;justify-content:flex-end;margin-top:10px;padding-top:10px;border-top:1px dashed #dce8e5;
+}
+#ehutong-proto .renew-plan-stack{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+#ehutong-proto .renew-plan-stack .renew-date-block{margin-top:0}
+#ehutong-proto .renew-sheet-panel .renew-agree{
+  display:flex;align-items:center;gap:6px;font-size:12px;color:#666;margin:0 0 12px;
+}
+#ehutong-proto .renew-sheet-panel .renew-agree a{color:var(--brand-dark);text-decoration:none}
+#ehutong-proto .renew-paybar{
+  display:flex;align-items:center;gap:10px;padding-top:4px;
+}
+#ehutong-proto .renew-paybar .left{flex:1;min-width:0}
+#ehutong-proto .renew-paybar .sum{color:var(--orange);font-size:18px;font-weight:500}
+#ehutong-proto .renew-paybar .detail{
+  border:0;background:transparent;padding:0;margin-top:2px;font-size:12px;color:#999;cursor:pointer;
+}
+#ehutong-proto .renew-paybar .confirm{
+  border:0;border-radius:999px;padding:12px 22px;background:var(--brand);color:#fff;
+  font-size:15px;font-weight:600;cursor:pointer;flex-shrink:0;
+}
+#ehutong-proto .renew-fee-sheet{
+  display:none;position:absolute;inset:0;z-index:46;
+  flex-direction:column;justify-content:flex-end;background:rgba(20,28,26,.35);
+}
+#ehutong-proto .renew-fee-sheet.open{display:flex}
+#ehutong-proto .renew-fee-panel{
+  background:#fff;border-radius:16px 16px 0 0;padding:14px 16px 20px;
+  box-shadow:0 -8px 28px rgba(0,0,0,.12);
+}
+#ehutong-proto .renew-fee-panel .fee-hd{
+  display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:14px;
+}
+#ehutong-proto .renew-fee-panel .fee-hd b{font-size:16px;font-weight:600}
+#ehutong-proto .renew-fee-panel .fee-hd .x{
+  position:absolute;right:0;top:50%;transform:translateY(-50%);
+  border:0;background:transparent;font-size:22px;line-height:1;color:#999;cursor:pointer;padding:4px 6px;
+}
+#ehutong-proto .renew-fee-row{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:14px;color:#333;padding:10px 0;border-bottom:1px solid #f3f3f3;
+}
+#ehutong-proto .renew-fee-row.total{border-bottom:0;padding-top:14px;font-weight:500}
+#ehutong-proto .renew-fee-row.total .money{color:var(--orange);font-size:18px;font-weight:600}
 </style>
 
 <div class="desk-switch" aria-label="推荐服务连陪原型">
@@ -666,6 +879,7 @@
       <button type="button" data-demo-preset="1000">10:00 日班可约</button>
       <button type="button" data-demo-preset="1930">19:30 过日班</button>
       <button type="button" data-demo-preset="2021">20:21 夜班可约</button>
+      <button type="button" data-demo-preset="0630">06:30 夜间即将过</button>
       <button type="button" data-demo-preset="0730">07:30</button>
     </div>
     <div class="hint">只在左侧改。状态栏时间和日历、排班都会按这个时间重算。</div>
@@ -680,6 +894,18 @@
       <button type="button" data-prefer-edge="ok" class="on">有可用历史人</button>
       <button type="button" data-prefer-edge="staff-gone">原人不可用</button>
       <button type="button" data-prefer-edge="staff-none">无可选历史人</button>
+    </div>
+  </div>
+  <div class="desk-clock" aria-label="续单">
+    <div class="label">续单</div>
+    <button type="button" data-view="renew" id="desk-renew">
+      <span class="t">订单列表 / 详情 · 续单</span>
+      <span class="d">弹窗续天数 · 日夜可分主单</span>
+    </button>
+    <div class="desk-sub" id="renew-cases" hidden>
+      <button type="button" data-renew-case="dual" class="on">原单日+夜</button>
+      <button type="button" data-renew-case="day">原单仅日间</button>
+      <button type="button" data-renew-case="night">原单仅夜间</button>
     </div>
   </div>
 </div>
@@ -933,6 +1159,158 @@
       <div class="staff-sheet-list" id="staff-list"></div>
     </div>
   </div>
+
+  <!-- 续单：订单列表 -->
+  <section class="screen" data-screen="renew-list">
+    <div class="renew-nav">
+      <button type="button" class="back" data-renew-back>‹</button>
+      <h1>订单</h1>
+      <div class="tools">⌂ ···</div>
+    </div>
+    <div class="renew-search-wrap"><div class="renew-search">搜索订单</div></div>
+    <div class="scroll">
+      <div class="renew-cal-entry">
+        <div class="ico">📅</div>
+        <div>
+          <div class="t">服务日历</div>
+          <div class="d">查看待服务 / 服务中的安排</div>
+        </div>
+        <span class="arrow">›</span>
+      </div>
+      <div class="renew-tabs">
+        <span class="on">全部</span><span>待支付</span><span>待预约</span><span>待服务</span><span>服务中</span><span>待评价</span>
+      </div>
+      <div id="renew-list-cards"></div>
+    </div>
+    <div class="tabbar">
+      <div>首页</div><div>分类</div><div>·</div><div class="on">订单</div><div>我的</div>
+    </div>
+  </section>
+
+  <!-- 续单：订单详情 -->
+  <section class="screen" data-screen="renew-detail">
+    <div class="renew-nav">
+      <button type="button" class="back" id="renew-detail-back">‹</button>
+      <h1>订单详情</h1>
+      <div class="tools">⌂ ···</div>
+    </div>
+    <div class="renew-detail-hero"><div class="big">待完成</div></div>
+    <div class="scroll">
+      <div class="renew-detail-card" id="renew-detail-card">
+        <div class="prod">
+          <img class="thumb" src="assets/ref-fig2.png" alt="" style="width:64px;height:64px;border-radius:8px;object-fit:cover" />
+          <div class="mid">
+            <div class="pname" id="renew-detail-name">居家日间12小时看护</div>
+            <span class="ptag">3次</span>
+            <div class="leftn" id="renew-detail-leftn">剩余3次 · 11/2–11/4</div>
+          </div>
+          <div class="price" id="renew-detail-price">¥1140.00</div>
+        </div>
+        <div class="renew-appt-list" id="renew-detail-appts"></div>
+        <div class="renew-fold">收起 ∧</div>
+      </div>
+      <div class="renew-addr">
+        <div class="k">服务地址</div>
+        <div class="v">上海市上海市普陀区金沙江路1340弄8号 新曹杨中南大厦</div>
+      </div>
+    </div>
+    <div class="renew-bottom">
+      <button type="button" class="cs" data-renew-cs><span class="ico">🎧</span>联系客服</button>
+      <button type="button" class="renew-cta" id="renew-detail-cta" data-open-renew-sheet data-renew-entry="day">续单</button>
+    </div>
+  </section>
+
+  <div class="renew-sheet" id="renew-sheet" aria-hidden="true">
+    <div class="renew-sheet-panel" role="dialog" aria-label="续单">
+      <div class="handle"></div>
+      <div class="ttl">
+        <b>续单</b>
+        <button type="button" class="x" id="renew-sheet-close" aria-label="关闭">×</button>
+      </div>
+      <div class="bridge" id="renew-bridge">
+        <span class="staff-note" style="margin-top:0">优先安排原服务人员；原人无档时安排其他人员</span>
+      </div>
+      <div class="renew-picks" id="renew-picks">
+        <div class="renew-pick" id="renew-pick-day-wrap" data-renew-pick="day">
+          <label class="renew-pick-hd" for="renew-pick-day">
+            <input type="checkbox" id="renew-pick-day" />
+            <div>
+              <div class="n">居家日间12小时看护</div>
+              <div class="s">接在 11/4 日班之后</div>
+            </div>
+          </label>
+          <div class="renew-pick-extra" id="renew-pick-day-extra" hidden>
+            <div class="renew-date-block">
+              <div id="renew-plan-day"></div>
+              <div class="sync-row">
+                <div class="stepper">
+                  <button type="button" id="renew-day-minus-day" data-renew-days-side="day" data-renew-days-dir="-1">−</button>
+                  <span class="renew-day-count" id="renew-day-count-day">1</span>
+                  <button type="button" id="renew-day-plus-day" data-renew-days-side="day" data-renew-days-dir="1">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="renew-pick" id="renew-pick-night-wrap" data-renew-pick="night">
+          <label class="renew-pick-hd" for="renew-pick-night">
+            <input type="checkbox" id="renew-pick-night" />
+            <div>
+              <div class="n">居家夜间12小时看护</div>
+              <div class="s">接在 11/4 夜班之后</div>
+            </div>
+          </label>
+          <div class="renew-pick-extra" id="renew-pick-night-extra" hidden>
+            <div class="renew-date-block">
+              <div id="renew-plan-night"></div>
+              <div class="sync-row">
+                <div class="stepper">
+                  <button type="button" id="renew-day-minus-night" data-renew-days-side="night" data-renew-days-dir="-1">−</button>
+                  <span class="renew-day-count" id="renew-day-count-night">1</span>
+                  <button type="button" id="renew-day-plus-night" data-renew-days-side="night" data-renew-days-dir="1">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="renew-plan-stack renew-days-solo" id="renew-days-solo">
+        <div class="renew-date-block">
+          <div id="renew-plan-solo"></div>
+          <div class="sync-row">
+            <div class="stepper">
+              <button type="button" id="renew-day-minus" data-renew-days-side="solo" data-renew-days-dir="-1">−</button>
+              <span class="renew-day-count" id="renew-day-count">1</span>
+              <button type="button" id="renew-day-plus" data-renew-days-side="solo" data-renew-days-dir="1">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <label class="renew-agree"><input type="checkbox" id="renew-agree" /> 已阅读并同意<a href="javascript:;" id="renew-agree-link">《平台服务协议》</a></label>
+      <div class="renew-paybar">
+        <div class="left">
+          <div class="sum" id="renew-sum">合计 ¥380.00</div>
+          <button type="button" class="detail" id="renew-fee-toggle">查看明细 ▾</button>
+        </div>
+        <button type="button" class="confirm" id="renew-confirm">立即支付</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="renew-fee-sheet" id="renew-fee-sheet" aria-hidden="true">
+    <div class="renew-fee-panel" role="dialog" aria-label="明细">
+      <div class="fee-hd">
+        <b>明细</b>
+        <button type="button" class="x" id="renew-fee-close" aria-label="关闭">×</button>
+      </div>
+      <div class="renew-fee-row"><span>服务费</span><span id="renew-fee-svc">¥335.00</span></div>
+      <div class="renew-fee-row"><span>等级费用</span><span id="renew-fee-level">¥0.00</span></div>
+      <div class="renew-fee-row"><span>耗材费用</span><span id="renew-fee-pack">¥0.00</span></div>
+      <div class="renew-fee-row"><span>上门费</span><span id="renew-fee-visit">¥45.00</span></div>
+      <div class="renew-fee-row total"><span>合计</span><span class="money" id="renew-fee-total">¥380.00</span></div>
+    </div>
+  </div>
+
   <div class="toast" id="toast" role="status"></div>
 </div>
 </div>
@@ -982,7 +1360,19 @@
     preferPairId: "s2",
     preferSheetSlot: "main",
     preferEdge: "ok",
-    staffModuleForcedOff: false
+    staffModuleForcedOff: false,
+    renewDaysDay: 1,
+    renewDaysNight: 1,
+    renewVisit: 45,
+    renewDayUnit: 335,
+    renewNightUnit: 390,
+    renewSkuDay: "居家日间12小时看护",
+    renewSkuNight: "居家夜间12小时看护",
+    renewCase: "dual",
+    renewEntry: "day",
+    renewPickDay: true,
+    renewPickNight: false,
+    payContext: null
   };
   var STAFF_LIST = [
     { id:"s1", name:"徐测试", gender:"男", level:"五级护理员", score:"3.6", times:3, last:"本单服务", avatar:"assets/nurse.png", fromOrder:true, slot:"main", available:true },
@@ -1084,10 +1474,12 @@
     refreshAfterClockChange(cleared && !(opts && opts.silent));
   }
   function setSimPreset(code){
-    var map = { "1000":[10,0], "1930":[19,30], "2021":[20,21], "0730":[7,30] };
+    var map = { "1000":[10,0], "1930":[19,30], "2021":[20,21], "0630":[6,30], "0730":[7,30] };
     var hm = map[String(code)];
     if (!hm) return;
     var d = now();
+    // 06:30 夜间即将过：若当前已过早晨，跳到次日 06:30，便于接在夜班演示后点
+    if (String(code) === "0630" && minutesNow() > 7*60) d = addDays(startOfDay(d), 1);
     d.setHours(hm[0], hm[1], 0, 0);
     setSimNow(d);
   }
@@ -1316,7 +1708,7 @@
     var plan = hasDateRange() ? currentPlan() : null;
     if (val) {
       if (plan) {
-        val.innerHTML = "<div class='range'><div><span>开始</span><b>"+plan.startText+"</b></div><i class='to'>到</i><div style='text-align:right'><span>结束</span><b>"+plan.endText+"</b></div></div>";
+        val.innerHTML = "<div class='range'><div><span>开始</span><b>"+plan.startText+"</b></div><i class='to'>-</i><div style='text-align:right'><span>结束</span><b>"+plan.endText+"</b></div></div>";
       } else {
         val.innerHTML = "";
       }
@@ -1346,8 +1738,9 @@
     });
   }
   function syncSvcSubs(){
+    var onSvc = deskRoot() === "svc";
     $all("#svc-subs button").forEach(function(b){
-      b.classList.toggle("on", b.getAttribute("data-sku") === state.svcSku);
+      b.classList.toggle("on", onSvc && b.getAttribute("data-sku") === state.svcSku);
     });
   }
   function defaultLevelName(staff){
@@ -1577,10 +1970,7 @@
     }
   }
   function syncPreferModule(){
-    var edges = $("#prefer-edges");
-    var deskBtn = $("#desk-prefer-staff");
-    if (deskBtn) deskBtn.classList.toggle("on", !!state.preferStaffDemo);
-    if (edges) edges.hidden = !state.preferStaffDemo;
+    syncDeskNav();
     if (!state.preferStaffDemo) {
       var mainOff = $("#prefer-slot-main");
       var pairOff = $("#prefer-slot-pair");
@@ -1858,10 +2248,41 @@
     if (state.preferStaffDemo) renderPreferCards();
   }
 
+  function deskRoot(){
+    if (state.screen === "renew-list" || state.screen === "renew-detail") return "renew";
+    if (state.preferStaffDemo) return "prefer";
+    return "svc";
+  }
+  function syncDeskNav(){
+    var root = deskRoot();
+    var preferBtn = $("#desk-prefer-staff");
+    var renewBtn = $("#desk-renew");
+    var preferEdges = $("#prefer-edges");
+    var renewCases = $("#renew-cases");
+    if (preferBtn) preferBtn.classList.toggle("on", root === "prefer");
+    if (renewBtn) renewBtn.classList.toggle("on", root === "renew");
+    if (preferEdges) preferEdges.hidden = root !== "prefer";
+    if (renewCases) renewCases.hidden = root !== "renew";
+    // 商品子 tab：仅在「从服务下单」根下展示选中
+    $all("#svc-subs button").forEach(function(b){
+      b.classList.toggle("on", root === "svc" && b.getAttribute("data-sku") === state.svcSku);
+    });
+    if (root === "prefer") {
+      $all("#prefer-edges button").forEach(function(b){
+        b.classList.toggle("on", b.getAttribute("data-prefer-edge") === state.preferEdge);
+      });
+    }
+    if (root === "renew") {
+      $all("#renew-cases button").forEach(function(b){
+        b.classList.toggle("on", b.getAttribute("data-renew-case") === state.renewCase);
+      });
+    }
+  }
   function go(name){
     state.screen = name;
     $all(".screen").forEach(function(s){ s.classList.toggle("active", s.getAttribute("data-screen")===name); });
     closePay();
+    closeRenewSheet();
     if (name==="step1b") syncSchemeB();
     if (name==="step2") {
       setDateEditorOpen(false);
@@ -1873,10 +2294,287 @@
       renderCal("cal-s-sheet");
       renderSvcOrder();
     }
+    if (name==="renew-list" || name==="renew-detail") {
+      paintRenewScreens();
+      syncRenewSheetUI();
+    }
+    syncDeskNav();
   }
 
   function goBack(){
-    if (state.screen === "service-order") return;
+    if (state.screen === "renew-detail") { go("renew-list"); return; }
+    if (state.screen === "renew-list" || state.screen === "service-order") return;
+  }
+
+  function renewSelectedCount(){
+    return (state.renewPickDay ? 1 : 0) + (state.renewPickNight ? 1 : 0);
+  }
+  function renewDaysFor(side){
+    return side === "night" ? state.renewDaysNight : state.renewDaysDay;
+  }
+  function setRenewDaysFor(side, n){
+    if (side === "night") state.renewDaysNight = n;
+    else state.renewDaysDay = n;
+  }
+  function renewSvcFee(){
+    return (state.renewPickDay ? state.renewDayUnit * state.renewDaysDay : 0) +
+      (state.renewPickNight ? state.renewNightUnit * state.renewDaysNight : 0);
+  }
+  function renewVisitFee(){
+    return state.renewVisit * (
+      (state.renewPickDay ? state.renewDaysDay : 0) +
+      (state.renewPickNight ? state.renewDaysNight : 0)
+    );
+  }
+  function renewFee(){ return renewSvcFee() + renewVisitFee(); }
+  function renewDayEndLabel(){ return "11/"+(4 + state.renewDaysDay)+" 20:00"; }
+  function renewNightEndLabel(){ return "11/"+(5 + state.renewDaysNight)+" 08:00"; }
+  function renewPlanRangeHtml(startLab, endLab){
+    return "<div class='range'><div><span>开始</span><b>"+startLab+"</b></div><i class='to'>-</i><div style='text-align:right'><span>结束</span><b>"+endLab+"</b></div></div>";
+  }
+  function bumpRenewDays(side, dir){
+    var key = side === "night" ? "night" : "day";
+    if (side === "solo") key = state.renewPickNight && !state.renewPickDay ? "night" : "day";
+    var cur = renewDaysFor(key);
+    if (dir < 0) {
+      if (cur <= 1) { toast("续单至少1天，无法再减少", "warn"); return; }
+      setRenewDaysFor(key, cur - 1);
+    } else {
+      if (cur >= 30) { toast("续单最多30天", "warn"); return; }
+      setRenewDaysFor(key, cur + 1);
+    }
+    if (side === "solo") {
+      state.renewDaysDay = renewDaysFor(key);
+      state.renewDaysNight = renewDaysFor(key);
+    }
+    syncRenewSheetUI();
+  }
+  function renewDayStartLabel(){ return "11/5 08:00"; }
+  function renewNightStartLabel(){ return "11/5 20:00"; }
+  function applyRenewCaseDefaults(){
+    if (state.renewCase === "day") {
+      state.renewEntry = "day";
+      state.renewPickDay = true;
+      state.renewPickNight = false;
+    } else if (state.renewCase === "night") {
+      state.renewEntry = "night";
+      state.renewPickDay = false;
+      state.renewPickNight = true;
+    } else {
+      state.renewEntry = state.renewEntry === "night" ? "night" : "day";
+      state.renewPickDay = state.renewEntry === "day";
+      state.renewPickNight = state.renewEntry === "night";
+    }
+  }
+  function renewListCardHtml(opt){
+    return '<div class="renew-order-card" data-open-renew-detail data-renew-entry="'+opt.entry+'">'+
+      '<div class="hd"><span>订单号: '+opt.no+'</span><span class="st">待完成</span></div>'+
+      '<div class="prod"><img class="thumb" src="assets/ref-fig2.png" alt="" /><div>'+
+      '<div class="pname">'+opt.name+'</div><span class="ptag">3次</span></div></div>'+
+      '<div class="hint">'+opt.hint+'</div>'+
+      '<div class="payline">实付款 <em>'+opt.pay+'</em></div>'+
+      '<div class="acts">'+
+      '<button type="button" class="renew-btn" data-renew-cs>联系客服</button>'+
+      '<button type="button" class="renew-btn primary" data-open-renew-sheet data-renew-entry="'+opt.entry+'">续单</button>'+
+      "</div></div>";
+  }
+  function paintRenewScreens(){
+    var dual = state.renewCase === "dual";
+    var onlyNight = state.renewCase === "night";
+    var list = $("#renew-list-cards");
+    if (list) {
+      var html = "";
+      if (dual || state.renewCase === "day") {
+        html += renewListCardHtml({
+          entry:"day", no:"2611021347484499642", name:state.renewSkuDay, pay:"¥1140.00",
+          hint:"待服务 | 服务人员将在上门前2小时内联系您"
+        });
+      }
+      if (dual || onlyNight) {
+        html += renewListCardHtml({
+          entry:"night", no:"2611021347484499643", name:state.renewSkuNight, pay:"¥1305.00",
+          hint:"待服务 | 服务人员将在上门前2小时内联系您"
+        });
+      }
+      list.innerHTML = html;
+      bindRenewListCards(list);
+    }
+    paintRenewDetail(state.renewEntry === "night" ? "night" : "day");
+    syncDeskNav();
+  }
+  function paintRenewDetail(entry){
+    entry = entry === "night" ? "night" : "day";
+    state.renewEntry = entry;
+    var isNight = entry === "night";
+    var nameEl = $("#renew-detail-name");
+    var leftn = $("#renew-detail-leftn");
+    var price = $("#renew-detail-price");
+    var appts = $("#renew-detail-appts");
+    var cta = $("#renew-detail-cta");
+    if (nameEl) nameEl.textContent = isNight ? state.renewSkuNight : state.renewSkuDay;
+    if (leftn) leftn.textContent = "剩余3次 · 11/2–11/4";
+    if (price) price.textContent = isNight ? "¥1305.00" : "¥1140.00";
+    if (cta) cta.setAttribute("data-renew-entry", entry);
+    if (appts) {
+      var times = isNight
+        ? [["11/2 20:00 – 次日08:00","待派单"],["11/3 20:00 – 次日08:00","待派单"],["11/4 20:00 – 次日08:00","李护理"]]
+        : [["11/2 08:00 – 20:00","待派单"],["11/3 08:00 – 20:00","待派单"],["11/4 08:00 – 20:00","陶舒测试"]];
+      appts.innerHTML = times.map(function(t){
+        return '<div class="renew-appt"><div class="rail on"></div><div class="body">'+
+          '<div class="when">'+t[0]+'</div>'+
+          '<div class="meta"><span>服务人员：'+t[1]+'</span><span class="st">待服务 ›</span></div>'+
+          '<div class="acts"><button type="button" class="renew-btn">取消订单</button>'+
+          '<button type="button" class="renew-btn" data-renew-cs>联系客服</button></div></div></div>';
+      }).join("");
+      bindRenewEntryButtons(appts);
+    }
+    if (cta) {
+      cta.onclick = function(e){
+        e.stopPropagation();
+        openRenewSheet(entry);
+      };
+    }
+    var bottom = $(".renew-bottom");
+    if (bottom) bindRenewEntryButtons(bottom);
+  }
+  function bindRenewListCards(scope){
+    if (!scope) return;
+    Array.prototype.forEach.call(scope.querySelectorAll("[data-open-renew-detail]"), function(card){
+      card.addEventListener("click", function(e){
+        if (e.target.closest("button")) return;
+        paintRenewDetail(card.getAttribute("data-renew-entry") || "day");
+        go("renew-detail");
+      });
+    });
+    bindRenewEntryButtons(scope);
+  }
+  function bindRenewEntryButtons(scope){
+    if (!scope) return;
+    Array.prototype.forEach.call(scope.querySelectorAll("[data-open-renew-sheet]"), function(btn){
+      btn.addEventListener("click", function(e){
+        e.stopPropagation();
+        openRenewSheet(btn.getAttribute("data-renew-entry") || "day");
+      });
+    });
+    Array.prototype.forEach.call(scope.querySelectorAll("[data-renew-cs]"), function(btn){
+      btn.addEventListener("click", function(e){
+        e.stopPropagation();
+        toast("联系客服（原型示意）", "ok");
+      });
+    });
+  }
+  function syncRenewSheetUI(){
+    var dual = state.renewCase === "dual";
+    var dayWrap = $("#renew-pick-day-wrap");
+    var nightWrap = $("#renew-pick-night-wrap");
+    var dayInput = $("#renew-pick-day");
+    var nightInput = $("#renew-pick-night");
+    var dayExtra = $("#renew-pick-day-extra");
+    var nightExtra = $("#renew-pick-night-extra");
+    var dayPlan = $("#renew-plan-day");
+    var nightPlan = $("#renew-plan-night");
+    var soloPlan = $("#renew-plan-solo");
+    var cnt = $("#renew-day-count");
+    var cntDay = $("#renew-day-count-day");
+    var cntNight = $("#renew-day-count-night");
+    var soloDays = $("#renew-days-solo");
+    var sum = $("#renew-sum");
+    var feeSvc = $("#renew-fee-svc");
+    var feeLevel = $("#renew-fee-level");
+    var feePack = $("#renew-fee-pack");
+    var feeVisit = $("#renew-fee-visit");
+    var feeTotal = $("#renew-fee-total");
+    var picksBox = $("#renew-picks");
+    if (picksBox) picksBox.hidden = !dual;
+    if (dayWrap) dayWrap.hidden = !dual;
+    if (nightWrap) nightWrap.hidden = !dual;
+    if (soloDays) soloDays.hidden = dual;
+    if (!dual) {
+      state.renewPickDay = state.renewCase === "day";
+      state.renewPickNight = state.renewCase === "night";
+    }
+    if (dayInput) dayInput.checked = !!state.renewPickDay;
+    if (nightInput) nightInput.checked = !!state.renewPickNight;
+    if (dayWrap) dayWrap.classList.toggle("on", !!state.renewPickDay);
+    if (nightWrap) nightWrap.classList.toggle("on", !!state.renewPickNight);
+    if (dayExtra) dayExtra.hidden = !(dual && state.renewPickDay);
+    if (nightExtra) nightExtra.hidden = !(dual && state.renewPickNight);
+    if (cntDay) cntDay.textContent = String(state.renewDaysDay);
+    if (cntNight) cntNight.textContent = String(state.renewDaysNight);
+    if (cnt) {
+      cnt.textContent = String(state.renewPickNight && !state.renewPickDay ? state.renewDaysNight : state.renewDaysDay);
+    }
+    if (dayPlan) dayPlan.innerHTML = renewPlanRangeHtml(renewDayStartLabel(), renewDayEndLabel());
+    if (nightPlan) nightPlan.innerHTML = renewPlanRangeHtml(renewNightStartLabel(), renewNightEndLabel());
+    if (soloPlan) {
+      soloPlan.innerHTML = state.renewPickNight && !state.renewPickDay
+        ? renewPlanRangeHtml(renewNightStartLabel(), renewNightEndLabel())
+        : renewPlanRangeHtml(renewDayStartLabel(), renewDayEndLabel());
+    }
+    var total = renewFee();
+    if (sum) sum.textContent = "合计 ¥"+total.toFixed(2);
+    if (feeSvc) feeSvc.textContent = "¥"+renewSvcFee().toFixed(2);
+    if (feeLevel) feeLevel.textContent = "¥0.00";
+    if (feePack) feePack.textContent = "¥0.00";
+    if (feeVisit) feeVisit.textContent = "¥"+renewVisitFee().toFixed(2);
+    if (feeTotal) feeTotal.textContent = "¥"+total.toFixed(2);
+  }
+  function openRenewSheet(entry){
+    state.renewEntry = entry === "night" ? "night" : "day";
+    state.renewDaysDay = 1;
+    state.renewDaysNight = 1;
+    if (state.renewCase === "dual") {
+      state.renewPickDay = state.renewEntry === "day";
+      state.renewPickNight = state.renewEntry === "night";
+    } else {
+      applyRenewCaseDefaults();
+    }
+    var ag = $("#renew-agree");
+    if (ag) ag.checked = false;
+    closeRenewFeeSheet();
+    syncRenewSheetUI();
+    var sheet = $("#renew-sheet");
+    if (sheet) {
+      sheet.classList.add("open");
+      sheet.setAttribute("aria-hidden", "false");
+    }
+  }
+  function closeRenewSheet(){
+    closeRenewFeeSheet();
+    var sheet = $("#renew-sheet");
+    if (sheet) {
+      sheet.classList.remove("open");
+      sheet.setAttribute("aria-hidden", "true");
+    }
+  }
+  function openRenewFeeSheet(){
+    syncRenewSheetUI();
+    var sheet = $("#renew-fee-sheet");
+    if (sheet) {
+      sheet.classList.add("open");
+      sheet.setAttribute("aria-hidden", "false");
+    }
+    var tog = $("#renew-fee-toggle");
+    if (tog) tog.textContent = "查看明细 ▴";
+  }
+  function closeRenewFeeSheet(){
+    var sheet = $("#renew-fee-sheet");
+    if (sheet) {
+      sheet.classList.remove("open");
+      sheet.setAttribute("aria-hidden", "true");
+    }
+    var tog = $("#renew-fee-toggle");
+    if (tog) tog.textContent = "查看明细 ▾";
+  }
+  function openPaySheet(totalText, context){
+    state.payContext = context || null;
+    var total = $("#sheet-total");
+    if (total) total.textContent = totalText;
+    var sheet = $("#pay-sheet");
+    if (sheet) {
+      sheet.classList.add("open");
+      sheet.setAttribute("aria-hidden", "false");
+    }
   }
 
   function setScheme(sch){
@@ -2089,7 +2787,7 @@
     var bannerPlan = currentPlan();
     var bannerVal = $("#date-banner-val");
     if (bannerPlan) {
-      bannerVal.innerHTML = "<div class='range'><div><span>开始</span><b>"+bannerPlan.startText+"</b></div><i class='to'>到</i><div style='text-align:right'><span>结束</span><b>"+bannerPlan.endText+"</b></div></div>";
+      bannerVal.innerHTML = "<div class='range'><div><span>开始</span><b>"+bannerPlan.startText+"</b></div><i class='to'>-</i><div style='text-align:right'><span>结束</span><b>"+bannerPlan.endText+"</b></div></div>";
     } else {
       bannerVal.textContent = "请选择开始日期";
     }
@@ -2288,33 +2986,153 @@
   })();
   $all("#svc-subs button").forEach(function(btn){
     btn.addEventListener("click", function(){
-      applySvcSku(btn.getAttribute("data-sku"));
-      go("service-order");
-      if (state.preferStaffDemo) renderSvcOrder();
-    });
-  });
-  var deskPrefer = $("#desk-prefer-staff");
-  if (deskPrefer) {
-    deskPrefer.addEventListener("click", function(){
-      state.preferStaffDemo = !state.preferStaffDemo;
+      // 切换到「从服务下单」根
       if (state.preferStaffDemo) {
-        applyPreferEdge(state.preferEdge || "ok");
-      } else {
+        state.preferStaffDemo = false;
         closeStaffSheet();
         state.staffModuleForcedOff = false;
         STAFF_LIST.forEach(function(s){ s.available = true; });
         restoreLevelFromChips("main");
         restoreLevelFromChips("pair");
-        syncPreferModule();
-        renderSvcOrder();
       }
+      closeRenewSheet();
+      applySvcSku(btn.getAttribute("data-sku"));
       go("service-order");
+    });
+  });
+  var deskPrefer = $("#desk-prefer-staff");
+  if (deskPrefer) {
+    deskPrefer.addEventListener("click", function(){
+      // 切换到「优先人员」根：关掉续单根
+      closeRenewSheet();
+      state.preferStaffDemo = true;
+      applyPreferEdge(state.preferEdge || "ok");
+      go("service-order");
+    });
+  }
+  var deskRenew = $("#desk-renew");
+  if (deskRenew) {
+    deskRenew.addEventListener("click", function(){
+      // 切换到「续单」根：关掉优先人员根
+      state.preferStaffDemo = false;
+      closeStaffSheet();
+      closeRenewSheet();
+      state.staffModuleForcedOff = false;
+      STAFF_LIST.forEach(function(s){ s.available = true; });
+      applyRenewCaseDefaults();
+      go("renew-list");
+    });
+  }
+  $all("#renew-cases button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      if (deskRoot() !== "renew") {
+        state.preferStaffDemo = false;
+        closeStaffSheet();
+        go("renew-list");
+      }
+      state.renewCase = btn.getAttribute("data-renew-case") || "dual";
+      applyRenewCaseDefaults();
+      closeRenewSheet();
+      paintRenewScreens();
+      syncDeskNav();
+    });
+  });
+  $all("[data-open-renew-detail]").forEach(function(card){
+    card.addEventListener("click", function(e){
+      if (e.target.closest("button")) return;
+      go("renew-detail");
+    });
+  });
+  var renewDetailBack = $("#renew-detail-back");
+  if (renewDetailBack) renewDetailBack.addEventListener("click", function(){ go("renew-list"); });
+  $all("[data-renew-back]").forEach(function(btn){
+    btn.addEventListener("click", function(){ go("service-order"); });
+  });
+  var renewSheetClose = $("#renew-sheet-close");
+  if (renewSheetClose) renewSheetClose.addEventListener("click", closeRenewSheet);
+  var renewSheet = $("#renew-sheet");
+  if (renewSheet) {
+    renewSheet.addEventListener("click", function(e){
+      if (e.target === renewSheet) closeRenewSheet();
+    });
+  }
+  var renewPickDay = $("#renew-pick-day");
+  var renewPickNight = $("#renew-pick-night");
+  if (renewPickDay) {
+    renewPickDay.addEventListener("change", function(){
+      if (state.renewCase !== "dual") return;
+      state.renewPickDay = !!renewPickDay.checked;
+      if (!state.renewPickDay && !state.renewPickNight) {
+        state.renewPickDay = true;
+        renewPickDay.checked = true;
+        toast("请至少保留一个已有主单", "warn");
+      }
+      syncRenewSheetUI();
+    });
+  }
+  if (renewPickNight) {
+    renewPickNight.addEventListener("change", function(){
+      if (state.renewCase !== "dual") return;
+      state.renewPickNight = !!renewPickNight.checked;
+      if (!state.renewPickDay && !state.renewPickNight) {
+        state.renewPickNight = true;
+        renewPickNight.checked = true;
+        toast("请至少保留一个已有主单", "warn");
+      }
+      syncRenewSheetUI();
+    });
+  }
+  $all("[data-renew-days-side]").forEach(function(btn){
+    btn.addEventListener("click", function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      bumpRenewDays(btn.getAttribute("data-renew-days-side") || "solo", Number(btn.getAttribute("data-renew-days-dir") || 1));
+    });
+  });
+  var renewFeeToggle = $("#renew-fee-toggle");
+  if (renewFeeToggle) {
+    renewFeeToggle.addEventListener("click", function(){
+      var feeSheet = $("#renew-fee-sheet");
+      if (feeSheet && feeSheet.classList.contains("open")) closeRenewFeeSheet();
+      else openRenewFeeSheet();
+    });
+  }
+  var renewFeeClose = $("#renew-fee-close");
+  if (renewFeeClose) renewFeeClose.addEventListener("click", closeRenewFeeSheet);
+  var renewFeeSheet = $("#renew-fee-sheet");
+  if (renewFeeSheet) {
+    renewFeeSheet.addEventListener("click", function(e){
+      if (e.target === renewFeeSheet) closeRenewFeeSheet();
+    });
+  }
+  var renewAgreeLink = $("#renew-agree-link");
+  if (renewAgreeLink) {
+    renewAgreeLink.addEventListener("click", function(e){
+      e.preventDefault();
+      toast("平台服务协议（原型示意）", "ok");
+    });
+  }
+  var renewConfirm = $("#renew-confirm");
+  if (renewConfirm) {
+    renewConfirm.addEventListener("click", function(){
+      var ag = $("#renew-agree");
+      if (ag && !ag.checked) { toast("请先勾选平台服务协议", "warn"); return; }
+      if (!state.renewPickDay && !state.renewPickNight) {
+        toast("请至少勾选一个已有主单", "warn");
+        return;
+      }
+      var fee = renewFee();
+      closeRenewFeeSheet();
+      openPaySheet("合计 ¥"+fee.toFixed(2), "renew");
     });
   }
   $all("#prefer-edges button").forEach(function(btn){
     btn.addEventListener("click", function(){
-      if (!state.preferStaffDemo) return;
+      closeRenewSheet();
+      state.preferStaffDemo = true;
       applyPreferEdge(btn.getAttribute("data-prefer-edge") || "ok");
+      if (state.screen !== "service-order") go("service-order");
+      else syncDeskNav();
     });
   });
   $all("[data-prefer-pick]").forEach(function(pick){
@@ -2443,11 +3261,13 @@
   if (openPayBtn) openPayBtn.addEventListener("click", function(){
     if(!$("#agree").checked){ toast("请先勾选平台服务协议", "warn"); return; }
     renderStep2(false);
-    $("#pay-sheet").classList.add("open");
-    $("#pay-sheet").setAttribute("aria-hidden","false");
+    var c = calc();
+    openPaySheet(moneySum(c.total), "step2");
   });
-  $("#close-pay").addEventListener("click", closePay);
-  $("#pay-sheet").addEventListener("click", function(e){ if(e.target===$("#pay-sheet")) closePay(); });
+  $("#close-pay").addEventListener("click", function(){ state.payContext = null; closePay(); });
+  $("#pay-sheet").addEventListener("click", function(e){
+    if(e.target===$("#pay-sheet")){ state.payContext = null; closePay(); }
+  });
   $all(".pay-opt").forEach(function(opt){
     opt.addEventListener("click", function(){
       $all(".pay-opt").forEach(function(o){ o.classList.remove("on"); o.querySelector(".radio").textContent=""; });
@@ -2455,8 +3275,16 @@
     });
   });
   $("#pay-now").addEventListener("click", function(){
-    var c=calc();
+    var ctx = state.payContext;
     closePay();
+    if (ctx === "renew") {
+      state.payContext = null;
+      closeRenewSheet();
+      toast("支付成功", "ok");
+      return;
+    }
+    state.payContext = null;
+    var c=calc();
     toast("已支付 "+money(c.total)+" · "+(state.mode==="24h"?2:1)+"主单 · "+(state.mode==="24h"?c.n*2:c.n)+"预约", "ok");
   });
 
