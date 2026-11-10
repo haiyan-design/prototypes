@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>连陪需求优化 · 购物车</title>
+  <style>html,body{margin:0;height:100%;background:#e8eaed;overflow:hidden}</style>
+</head>
+<body>
+<div id="lp-opt" aria-label="连陪需求优化·购物车">
+<style>
+#lp-opt{
+  --brand:#1ab394;--brand-dark:#14967c;--orange:#ff7a2e;--bg:#f2f3f5;--card:#fff;
+  --text:#222;--sub:#999;--line:#eee;
+  --phone-h:min(820px, calc(100vh - 40px));
+  font-family:"PingFang SC","Helvetica Neue",Arial,sans-serif;color:var(--text);
+  min-height:100vh;padding:16px;position:relative;
+}
+#lp-opt *{box-sizing:border-box}
+#lp-opt .desk{
+  position:fixed;top:16px;left:16px;z-index:50;width:220px;
+  background:#fff;border:1px solid #d8d8d8;border-radius:12px;padding:12px;
+  box-shadow:0 4px 16px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:8px;
+}
+#lp-opt .desk .label{font-size:12px;color:#888}
+#lp-opt .desk button{
+  border:1px solid #e5e5e5;background:#fff;border-radius:8px;padding:10px 12px;
+  text-align:left;cursor:pointer;font-size:13px;color:#444;line-height:1.35;
+}
+#lp-opt .desk button .t{font-weight:500;display:block}
+#lp-opt .desk button .d{font-size:11px;color:#999;margin-top:2px}
+#lp-opt .desk button.on{
+  border-color:var(--brand);background:#eef8f5;color:var(--brand-dark);
+  box-shadow:inset 0 0 0 1px var(--brand);
+}
+#lp-opt .desk button:disabled{opacity:.45;cursor:not-allowed}
+#lp-opt .desk .sub{
+  display:flex;flex-direction:column;gap:6px;padding-left:8px;margin-top:-2px;
+}
+#lp-opt .desk .sub button{padding:8px 10px;font-size:12px}
+#lp-opt .stage{
+  margin-left:248px;display:flex;justify-content:center;padding:4px 12px;
+}
+#lp-opt .phone{
+  width:390px;height:var(--phone-h);background:var(--bg);border-radius:28px;
+  border:1px solid #cfd3d8;box-shadow:0 12px 40px rgba(0,0,0,.12);
+  overflow:hidden;display:flex;flex-direction:column;position:relative;
+}
+#lp-opt .topbar{
+  flex:0 0 auto;background:var(--brand);color:#fff;
+  padding:12px 12px 10px;display:flex;align-items:center;justify-content:space-between;
+}
+#lp-opt .topbar .home{
+  width:28px;height:28px;border:0;background:transparent;color:#fff;cursor:pointer;
+  font-size:20px;line-height:1;padding:0;
+}
+#lp-opt .topbar .title{font-size:17px;font-weight:600;letter-spacing:.5px}
+#lp-opt .topbar .capsule{
+  width:78px;height:28px;border-radius:14px;border:1px solid rgba(255,255,255,.45);
+  display:flex;align-items:center;justify-content:space-evenly;background:rgba(0,0,0,.08);
+  font-size:12px;
+}
+#lp-opt .manage-row{
+  flex:0 0 auto;background:#fff;padding:10px 16px;display:flex;justify-content:flex-end;
+  border-bottom:1px solid #f0f0f0;
+}
+#lp-opt .manage-row button{
+  border:0;background:transparent;color:#333;font-size:15px;cursor:pointer;padding:0;
+}
+#lp-opt .scroll{
+  flex:1;overflow-y:auto;padding:10px 12px 8px;-webkit-overflow-scrolling:touch;
+}
+#lp-opt .card{
+  background:#fff;border-radius:10px;padding:14px 12px;margin-bottom:10px;
+  display:flex;gap:10px;align-items:flex-start;
+  box-shadow:0 1px 0 rgba(0,0,0,.02);
+}
+#lp-opt .card.mutex{background:#f5f5f5}
+#lp-opt .card.invalid{background:#fff}
+#lp-opt .chk{
+  flex:0 0 20px;width:20px;height:20px;margin-top:22px;border-radius:50%;
+  border:1.5px solid #c8c8c8;background:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;user-select:none;
+}
+#lp-opt .chk.on{background:var(--brand);border-color:var(--brand)}
+#lp-opt .chk.on::after{content:"";width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);margin-top:-2px}
+#lp-opt .chk.mutex-disabled{
+  background:#e8e8e8;border-color:#d2d2d2;cursor:not-allowed;
+}
+#lp-opt .chk.invalid-disabled{
+  background:#fff;border-color:#ddd;cursor:not-allowed;opacity:.55;
+}
+#lp-opt .thumb{
+  flex:0 0 72px;width:72px;height:72px;border-radius:6px;overflow:hidden;
+  position:relative;background:#dfeee9;
+}
+#lp-opt .thumb .img{
+  width:100%;height:100%;
+  background:
+    linear-gradient(180deg, transparent 55%, rgba(26,179,148,.92) 55%),
+    radial-gradient(circle at 50% 38%, #b8ddd4 0 28%, #8ec9bb 29% 48%, #dfeee9 49%);
+}
+#lp-opt .thumb .cap{
+  position:absolute;left:0;right:0;bottom:0;height:45%;
+  display:flex;align-items:flex-end;justify-content:center;padding:0 4px 5px;
+  color:#fff;font-size:9px;font-weight:600;text-align:center;line-height:1.15;
+  text-shadow:0 1px 1px rgba(0,0,0,.15);
+}
+#lp-opt .card.invalid .thumb{filter:grayscale(.7);opacity:.7}
+#lp-opt .card.mutex .thumb{filter:grayscale(.25);opacity:.8}
+#lp-opt .main{flex:1;min-width:0;display:flex;flex-direction:column;min-height:72px}
+#lp-opt .row1{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+#lp-opt .name{
+  font-size:15px;font-weight:600;color:#222;line-height:1.35;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;
+}
+#lp-opt .card.invalid .name{color:#999}
+#lp-opt .card.mutex .name{color:#777}
+#lp-opt .price{
+  flex:0 0 auto;font-size:15px;font-weight:600;color:var(--orange);line-height:1.35;
+  white-space:nowrap;
+}
+#lp-opt .card.invalid .price{color:#bbb;font-weight:500}
+#lp-opt .bad{
+  display:inline-block;margin-left:4px;font-size:10px;color:#fff;background:#c0c0c0;
+  border-radius:2px;padding:1px 4px;vertical-align:middle;font-weight:500;
+}
+#lp-opt .desc{
+  margin-top:4px;font-size:12px;color:var(--sub);line-height:1.35;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+#lp-opt .card.invalid .desc{color:#ccc}
+#lp-opt .hint-line{margin-top:4px;font-size:11px;color:#aaa;line-height:1.3}
+#lp-opt .row2{
+  margin-top:auto;padding-top:8px;display:flex;align-items:center;justify-content:flex-end;gap:10px;
+}
+#lp-opt .qty{
+  display:inline-flex;align-items:center;border:1px solid #e5e5e5;border-radius:4px;overflow:hidden;
+  height:26px;
+}
+#lp-opt .qty button{
+  width:26px;height:26px;border:0;background:#fff;color:#666;font-size:14px;cursor:pointer;
+  line-height:1;padding:0;
+}
+#lp-opt .qty span{
+  min-width:28px;text-align:center;font-size:13px;color:#333;border-left:1px solid #e5e5e5;border-right:1px solid #e5e5e5;
+  line-height:24px;
+}
+#lp-opt .del-btn{
+  display:none;border:0;background:transparent;color:#ff4d4f;font-size:13px;cursor:pointer;padding:4px 0;
+}
+#lp-opt.managing .del-btn{display:inline-block}
+#lp-opt.managing .qty{display:none}
+#lp-opt .settle{
+  flex:0 0 auto;background:#fff;border-top:1px solid #eee;
+  padding:8px 12px;display:flex;align-items:center;gap:10px;
+}
+#lp-opt .settle .all{
+  display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;flex:0 0 auto;
+}
+#lp-opt .settle .all .chk{margin-top:0}
+#lp-opt .settle .all span{font-size:13px;color:#333}
+#lp-opt .settle .sum{flex:1;text-align:right;font-size:14px;color:#333}
+#lp-opt .settle .sum em{font-style:normal;color:var(--orange);font-weight:600;font-size:16px}
+#lp-opt .settle .extra{display:block;font-size:10px;color:#999;font-weight:400;margin-top:1px}
+#lp-opt .pay{
+  flex:0 0 auto;border:0;background:var(--brand);color:#fff;font-size:15px;font-weight:600;
+  border-radius:22px;padding:10px 22px;cursor:pointer;min-width:100px;
+}
+#lp-opt .pay:disabled{background:#cfcfcf;cursor:not-allowed}
+#lp-opt .tabbar{
+  flex:0 0 auto;background:#fff;border-top:1px solid #eee;
+  display:grid;grid-template-columns:repeat(5,1fr);padding:6px 0 8px;height:56px;
+}
+#lp-opt .tabbar .tab{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  font-size:10px;color:#888;position:relative;
+}
+#lp-opt .tabbar .tab.on{color:var(--brand)}
+#lp-opt .tabbar .ico{font-size:18px;line-height:1}
+#lp-opt .tabbar .badge{
+  position:absolute;top:0;right:calc(50% - 18px);min-width:14px;height:14px;padding:0 3px;
+  background:#ff4d4f;color:#fff;border-radius:8px;font-size:9px;line-height:14px;text-align:center;
+}
+#lp-opt .toast{
+  position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);
+  background:rgba(0,0,0,.78);color:#fff;font-size:13px;line-height:1.45;
+  padding:12px 16px;border-radius:10px;max-width:78%;text-align:center;
+  z-index:40;opacity:0;pointer-events:none;transition:opacity .2s;
+}
+#lp-opt .toast.show{opacity:1}
+#lp-opt .panel{display:none;height:100%;flex-direction:column;background:var(--bg)}
+#lp-opt .panel.on{display:flex}
+#lp-opt .ok-head{
+  flex:0 0 auto;background:var(--brand);color:#fff;text-align:center;
+  padding:28px 20px 36px;position:relative;
+  border-radius:0 0 50% 50% / 0 0 28px 28px;
+}
+#lp-opt .ok-head .mark{
+  width:56px;height:56px;margin:0 auto 12px;border-radius:50%;background:#fff;
+  display:flex;align-items:center;justify-content:center;
+}
+#lp-opt .ok-head .mark::after{
+  content:"";width:14px;height:24px;border:solid var(--brand);border-width:0 4px 4px 0;
+  transform:rotate(45deg);margin-top:-4px;
+}
+#lp-opt .ok-head h2{margin:0;font-size:22px;font-weight:700}
+#lp-opt .ok-head p{margin:8px 0 0;font-size:13px;opacity:.95;line-height:1.45}
+#lp-opt .ok-head p em{font-style:normal;color:#d8f56a;font-weight:600}
+#lp-opt .ok-scroll{flex:1;overflow-y:auto;padding:0 14px 16px;margin-top:-8px}
+#lp-opt .ok-block{margin-top:12px}
+#lp-opt .ok-block .hd{
+  font-size:14px;font-weight:600;color:#333;margin:0 0 8px;display:flex;align-items:center;gap:6px;
+}
+#lp-opt .bought{
+  background:#fff;border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;
+}
+#lp-opt .bought .pic{
+  width:48px;height:48px;border-radius:6px;background:#e8f0fe;flex:0 0 48px;
+}
+#lp-opt .bought .info{flex:1;min-width:0}
+#lp-opt .bought .info .n{font-size:14px;font-weight:500}
+#lp-opt .bought .info .s{font-size:12px;color:var(--brand);margin-top:4px}
+#lp-opt .bought .go{
+  flex:0 0 auto;border:0;background:var(--orange);color:#fff;font-size:13px;font-weight:600;
+  border-radius:16px;padding:7px 14px;cursor:pointer;
+}
+#lp-opt .cart-tip{
+  margin-top:10px;padding:11px 14px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  cursor:pointer;
+  background:#eef8f5;border-radius:8px;border:0;box-shadow:none;
+}
+#lp-opt .cart-tip .txt{font-size:13px;color:#333;line-height:1.4;font-weight:500}
+#lp-opt .cart-tip .link{
+  font-size:13px;color:var(--brand-dark);font-weight:600;white-space:nowrap;
+}
+#lp-opt .cs-card{
+  margin-top:12px;background:linear-gradient(90deg,#eef8ff,#fff);border-radius:12px;
+  padding:14px 12px;display:flex;gap:10px;align-items:center;
+  box-shadow:0 2px 10px rgba(80,140,200,.08);
+}
+#lp-opt .cs-card .qr{
+  width:72px;height:72px;flex:0 0 72px;background:
+    repeating-linear-gradient(0deg,#333 0 2px,transparent 2px 4px),
+    repeating-linear-gradient(90deg,#333 0 2px,transparent 2px 4px);
+  background-size:8px 8px;border-radius:4px;opacity:.85;
+}
+#lp-opt .cs-card .cs-txt{flex:1;min-width:0}
+#lp-opt .cs-card .cs-txt .t{font-size:13px;font-weight:600;margin-bottom:6px}
+#lp-opt .cs-card .cs-txt li{font-size:11px;color:#666;line-height:1.55;list-style:disc;margin-left:14px}
+#lp-opt .cs-card .avatar{
+  width:56px;height:72px;flex:0 0 56px;border-radius:8px;
+  background:linear-gradient(180deg,#ffe8d6,#f5c9a8);display:flex;align-items:flex-end;justify-content:center;
+  font-size:10px;color:#a66;padding-bottom:4px;
+}
+#lp-opt .ok-foot{
+  flex:0 0 auto;background:#fff;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));
+  display:flex;gap:12px;border-top:1px solid #f0f0f0;
+}
+#lp-opt .ok-foot button{
+  flex:1;border-radius:22px;padding:12px;font-size:15px;font-weight:500;cursor:pointer;
+}
+#lp-opt .ok-foot .ghost{
+  background:#fff;color:var(--brand);border:1px solid var(--brand);
+}
+#lp-opt .ok-foot .solid{
+  background:var(--brand);color:#fff;border:0;
+}
+/* —— 待预约 / 去预约 / 选日 —— */
+#lp-opt .tabs-row{
+  display:flex;gap:14px;padding:10px 14px;background:#fff;overflow-x:auto;
+  font-size:14px;color:#888;border-bottom:1px solid #f0f0f0;flex:0 0 auto;
+}
+#lp-opt .tabs-row .on{color:var(--brand);font-weight:600;position:relative}
+#lp-opt .tabs-row .on::after{
+  content:"";position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);
+  width:20px;height:3px;border-radius:2px;background:var(--brand);
+}
+#lp-opt .order-card{
+  margin:12px;background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 0 rgba(0,0,0,.02);
+}
+#lp-opt .order-card .ono{font-size:12px;color:#999}
+#lp-opt .order-card .row{display:flex;gap:10px;margin-top:10px}
+#lp-opt .order-card .othumb{
+  width:64px;height:64px;border-radius:6px;flex:0 0 64px;
+  background:linear-gradient(145deg,#d9f0ea,#a8d9ce);
+}
+#lp-opt .order-card .ometa{flex:1;min-width:0}
+#lp-opt .order-card .ometa .n{font-size:15px;font-weight:600}
+#lp-opt .order-card .ometa .d{font-size:12px;color:#999;margin-top:4px}
+#lp-opt .order-card .tag{
+  display:inline-block;margin-top:6px;font-size:11px;color:var(--brand-dark);
+  background:#eef8f5;padding:2px 6px;border-radius:3px;
+}
+#lp-opt .order-card .price{font-size:15px;font-weight:600;color:var(--orange);margin-top:10px}
+#lp-opt .order-card .acts{
+  margin-top:12px;display:flex;justify-content:flex-end;gap:8px;
+}
+#lp-opt .order-card .acts button{
+  border:1px solid #e5e5e5;background:#fff;border-radius:16px;padding:7px 14px;
+  font-size:13px;cursor:pointer;
+}
+#lp-opt .order-card .acts .pri{
+  border-color:var(--brand);color:#fff;background:var(--brand);font-weight:600;
+}
+#lp-opt .mask{
+  position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:20;
+  display:none;
+}
+#lp-opt .mask.on{display:block}
+#lp-opt .sheet{
+  position:absolute;left:0;right:0;bottom:0;z-index:21;background:#fff;
+  border-radius:16px 16px 0 0;padding:14px 16px 20px;
+  transform:translateY(110%);transition:transform .25s;max-height:78%;
+  display:flex;flex-direction:column;
+}
+#lp-opt .sheet.on{transform:translateY(0)}
+#lp-opt .sheet .shd{
+  display:flex;align-items:center;justify-content:center;position:relative;
+  font-size:16px;font-weight:600;margin-bottom:14px;
+}
+#lp-opt .sheet .shd .x{
+  position:absolute;right:0;border:0;background:transparent;font-size:20px;
+  color:#999;cursor:pointer;line-height:1;padding:4px;
+}
+#lp-opt .sheet .remain{font-size:14px;color:#333;margin-bottom:16px}
+#lp-opt .sheet .remain em{font-style:normal;color:var(--brand-dark);font-weight:600}
+#lp-opt .sheet .field{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 0;border-top:1px solid #f0f0f0;font-size:14px;cursor:pointer;
+}
+#lp-opt .sheet .field .ph{color:#bbb}
+#lp-opt .sheet .field .val{color:#333;font-weight:500}
+#lp-opt .sheet .sfoot{
+  display:flex;gap:10px;margin-top:18px;
+}
+#lp-opt .sheet .sfoot button{
+  flex:1;border-radius:22px;padding:12px;font-size:15px;cursor:pointer;
+}
+#lp-opt .sheet .sfoot .cancel{border:1px solid #e5e5e5;background:#fff;color:#666}
+#lp-opt .sheet .sfoot .ok{border:0;background:var(--brand);color:#fff;font-weight:600}
+#lp-opt .sheet .sfoot .ok:disabled{background:#cfcfcf}
+#lp-opt .date-sheet{
+  max-height:88%;padding:0 0 12px;background:#fff;z-index:24;
+}
+#lp-opt .change-sheet{
+  z-index:23;max-height:48%;
+}
+#lp-opt .change-sheet .field{border-top:0;padding:8px 0 4px}
+/* 快捷改约叠层时：背后原因抽屉可见、压暗、不可点 */
+#lp-opt .reason-sheet.behind{
+  pointer-events:none;
+}
+#lp-opt .reason-sheet.behind::after{
+  content:"";position:absolute;inset:0;border-radius:16px 16px 0 0;
+  background:rgba(0,0,0,.35);pointer-events:none;z-index:1;
+}
+#lp-opt .orange-tip{
+  margin:0;padding:10px 14px;border-radius:0;
+  background:#fff4e5;color:#333;font-size:13px;line-height:1.45;
+  display:flex;align-items:flex-start;gap:8px;
+}
+#lp-opt .orange-tip .ico{
+  flex:0 0 16px;width:16px;height:16px;margin-top:1px;border-radius:50%;
+  background:#f5a623;color:#fff;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;line-height:1;
+}
+#lp-opt .orange-tip .tip-txt{flex:1;min-width:0;color:#8a5a2b}
+#lp-opt .date-bar{
+  display:flex;align-items:center;gap:10px;padding:12px 14px 8px;
+}
+#lp-opt .date-bar .picked{
+  flex:1;min-width:0;font-size:15px;font-weight:600;color:#333;
+}
+#lp-opt .date-bar .picked .d{
+  border-bottom:2px solid #666;padding-bottom:2px;display:inline-block;
+}
+#lp-opt .date-bar .ok-link{
+  flex:0 0 auto;border:0;background:transparent;color:var(--brand);
+  font-size:15px;font-weight:600;cursor:pointer;padding:4px 2px;
+}
+#lp-opt .date-bar .ok-link:disabled{color:#ccc;cursor:not-allowed}
+#lp-opt .cal-wrap{padding:4px 10px 8px;overflow-y:auto;flex:1}
+#lp-opt .cal-week{
+  display:grid;grid-template-columns:repeat(7,1fr);text-align:center;
+  font-size:12px;color:#bbb;margin-bottom:4px;padding:0 2px;
+}
+#lp-opt .cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:2px 0;text-align:center;
+}
+#lp-opt .cal-grid .cell{
+  height:42px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:15px;border-radius:50%;cursor:pointer;position:relative;color:#333;
+}
+#lp-opt .cal-grid .cell.mute{color:#ddd;cursor:default}
+#lp-opt .cal-grid .cell.disabled{color:#ddd;cursor:not-allowed}
+#lp-opt .cal-grid .cell.occupied{color:#ccc;cursor:not-allowed}
+#lp-opt .cal-grid .cell.occupied .sub{
+  font-size:8px;color:#bbb;line-height:1;margin-top:1px;
+}
+#lp-opt .cal-grid .cell.on{
+  background:var(--brand);color:#fff;font-weight:600;
+}
+#lp-opt .cal-grid .cell.on .sub{display:none}
+#lp-opt .cancel-sheet{max-height:82%}
+#lp-opt .cancel-sheet .chk{margin-top:0}
+#lp-opt .cancel-sheet .all-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 12px;margin:0 0 4px;background:#f7f8fa;border-radius:8px;
+  font-size:14px;color:#333;cursor:pointer;user-select:none;
+}
+#lp-opt .cancel-sheet .all-row .left{
+  display:flex;align-items:center;gap:8px;min-width:0;
+}
+#lp-opt .cancel-sheet .all-row .left .lab{font-weight:500}
+#lp-opt .cancel-sheet .all-row .sum{
+  flex:0 0 auto;font-size:13px;color:#999;
+}
+#lp-opt .cancel-sheet .all-row .sum em{
+  font-style:normal;color:var(--brand-dark);font-weight:600;margin:0 2px;
+}
+#lp-opt .cancel-list{overflow-y:auto;flex:1;max-height:42vh;padding:0 2px}
+#lp-opt .cancel-item{
+  display:flex;align-items:center;gap:12px;padding:14px 4px;
+  border-bottom:1px solid #f3f3f3;cursor:pointer;
+}
+#lp-opt .cancel-item:last-child{border-bottom:0}
+#lp-opt .cancel-item .meta{flex:1;min-width:0}
+#lp-opt .cancel-item .meta .t{font-size:14px;font-weight:500;color:#333}
+#lp-opt .cancel-item .meta .s{font-size:12px;color:#999;margin-top:4px}
+#lp-opt .detail-hero{
+  background:var(--brand);color:#fff;padding:4px 16px 16px;flex:0 0 auto;
+}
+#lp-opt .detail-hero .st{font-size:22px;font-weight:700;margin:4px 0 12px}
+#lp-opt .detail-hero .prod{
+  background:#fff;color:#333;border-radius:10px;padding:12px;display:flex;gap:10px;align-items:center;
+}
+#lp-opt .detail-hero .prod .pic{
+  width:56px;height:56px;border-radius:6px;flex:0 0 56px;
+  background:
+    linear-gradient(180deg, transparent 55%, rgba(26,179,148,.92) 55%),
+    radial-gradient(circle at 50% 38%, #b8ddd4 0 28%, #8ec9bb 29% 48%, #dfeee9 49%);
+}
+#lp-opt .detail-hero .prod .info{flex:1;min-width:0}
+#lp-opt .detail-hero .prod .n{font-size:15px;font-weight:600}
+#lp-opt .detail-hero .prod .d{
+  display:inline-block;margin-top:6px;font-size:11px;color:#999;
+  background:#f5f5f5;padding:2px 6px;border-radius:3px;
+}
+#lp-opt .detail-hero .prod .p{font-size:15px;font-weight:600;color:var(--orange);margin-left:auto;white-space:nowrap}
+#lp-opt .remain-label{
+  font-size:13px;color:#666;padding:10px 16px 2px;background:var(--bg);flex:0 0 auto;
+}
+#lp-opt .svc-card{
+  margin:8px 12px;background:#fff;border-radius:10px;padding:12px 14px;
+}
+#lp-opt .svc-card .top{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+#lp-opt .svc-card .top .t{font-size:14px;color:#333}
+#lp-opt .svc-card .top .st{
+  font-size:13px;color:var(--brand);display:flex;align-items:center;gap:2px;cursor:pointer;flex:0 0 auto;
+}
+#lp-opt .svc-card .btns{
+  margin-top:12px;display:flex;justify-content:flex-end;gap:8px;
+}
+#lp-opt .svc-card .btns button{
+  border:1px solid #e5e5e5;background:#fff;border-radius:16px;padding:6px 12px;
+  font-size:13px;cursor:pointer;color:#333;
+}
+#lp-opt .detail-foot{
+  flex:0 0 auto;background:#fff;border-top:1px solid #eee;
+  padding:8px 12px 10px;display:flex;align-items:center;gap:12px;
+}
+#lp-opt .detail-foot .icons{display:flex;align-items:center;gap:14px;flex:0 0 auto}
+#lp-opt .detail-foot .ico-btn{
+  border:0;background:transparent;padding:0;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  font-size:10px;color:#666;min-width:44px;
+}
+#lp-opt .detail-foot .ico-btn .ico{
+  width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;line-height:1;color:var(--brand);font-weight:600;
+}
+#lp-opt .detail-foot .ico-btn .ico.headset::before{
+  content:"";width:18px;height:14px;border:2px solid var(--brand);border-bottom:0;
+  border-radius:9px 9px 0 0;display:block;position:relative;
+  box-shadow:inset 0 -2px 0 var(--brand);
+}
+#lp-opt .detail-foot .go-book{
+  flex:1;border:0;background:var(--brand);color:#fff;font-size:16px;font-weight:600;
+  border-radius:22px;padding:12px 16px;cursor:pointer;display:none;
+}
+#lp-opt .detail-foot.has-remain .go-book{display:block}
+#lp-opt .detail-foot .refund-btn{display:none}
+#lp-opt .detail-foot.has-remain .refund-btn{display:flex}
+#lp-opt .reason-sheet{padding:12px 16px 16px;max-height:92%}
+#lp-opt .reason-risk{
+  display:flex;align-items:flex-start;gap:10px;
+  background:#eef8f5;border-radius:8px;padding:10px 12px;margin-bottom:10px;
+}
+#lp-opt .reason-risk .txt{
+  flex:1;min-width:0;font-size:12px;color:#555;line-height:1.55;
+}
+#lp-opt .reason-risk .txt b{color:#333;font-weight:600}
+#lp-opt .reason-risk .report{
+  flex:0 0 auto;align-self:center;border:0;background:var(--brand);color:#fff;
+  border-radius:14px;padding:6px 10px;font-size:12px;cursor:pointer;white-space:nowrap;
+}
+#lp-opt .reason-orange{
+  display:flex;align-items:flex-start;gap:8px;
+  background:#fff1e8;border-radius:6px;padding:10px 12px;margin-bottom:8px;
+  font-size:13px;color:#e56a1a;line-height:1.45;
+}
+#lp-opt .reason-orange .ico{
+  flex:0 0 16px;width:16px;height:16px;margin-top:1px;border-radius:50%;
+  background:var(--orange);color:#fff;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;line-height:1;
+}
+#lp-opt .reason-list{overflow-y:auto;flex:1;max-height:42vh;padding:0}
+#lp-opt .reason-item{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 0;border-bottom:1px solid #f3f3f3;font-size:15px;color:#333;cursor:pointer;
+}
+#lp-opt .reason-item:last-child{border-bottom:0}
+#lp-opt .reason-item .dot{
+  width:20px;height:20px;border-radius:50%;border:1.5px solid #ccc;flex:0 0 20px;
+}
+#lp-opt .reason-item.on{
+  color:var(--brand-dark);font-weight:500;border-bottom-color:transparent;padding-bottom:8px;
+}
+#lp-opt .reason-item.on .dot{
+  border-color:var(--brand);background:var(--brand);
+  box-shadow:inset 0 0 0 4px #fff;
+}
+#lp-opt .reason-rebook{
+  display:none;margin:0 0 10px;padding:10px 12px;border-radius:6px;
+  background:#eef8f5;font-size:13px;color:#555;line-height:1.45;cursor:pointer;
+}
+#lp-opt .reason-rebook.on{display:block}
+#lp-opt .reason-rebook em{
+  font-style:normal;font-weight:600;color:var(--brand-dark);text-decoration:underline;
+}
+#lp-opt .reason-sheet .sfoot{margin-top:12px;display:flex;gap:10px}
+#lp-opt .reason-sheet .sfoot .cancel{
+  flex:1;border:1px solid #e5e5e5;background:#fff;color:#666;
+  border-radius:22px;padding:12px;font-size:15px;cursor:pointer;
+}
+#lp-opt .reason-sheet .sfoot .ok{
+  flex:1;border:0;background:var(--brand);color:#fff;font-weight:600;
+  border-radius:22px;padding:12px;font-size:15px;cursor:pointer;
+}
+#lp-opt .reason-sheet .sfoot .ok:disabled{background:#cfcfcf}
+#lp-opt .modal-mask{
+  position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:30;
+  display:none;align-items:center;justify-content:center;padding:24px;
+}
+#lp-opt .modal-mask.on{display:flex}
+#lp-opt .modal{
+  width:100%;max-width:300px;background:#fff;border-radius:12px;padding:20px 16px 16px;
+  text-align:center;position:relative;
+}
+#lp-opt .modal .mx{
+  position:absolute;right:10px;top:8px;border:0;background:transparent;font-size:18px;color:#999;cursor:pointer;
+}
+#lp-opt .modal .warn{
+  width:40px;height:40px;margin:0 auto 12px;border-radius:50%;border:2px solid #faad14;
+  color:#faad14;font-size:22px;font-weight:700;line-height:36px;
+}
+#lp-opt .modal .mt{font-size:15px;color:#333;line-height:1.5}
+#lp-opt .modal .mt .org{color:var(--orange);display:block;margin-top:6px;font-size:13px}
+#lp-opt .modal .macts{display:flex;gap:10px;margin-top:18px}
+#lp-opt .modal .macts button{
+  flex:1;border-radius:8px;padding:10px;font-size:14px;cursor:pointer;
+}
+#lp-opt .modal .macts .no{border:0;background:#f5f5f5;color:#666}
+#lp-opt .modal .macts .yes{border:0;background:var(--brand);color:#fff;font-weight:600}
+</style>
+
+<aside class="desk">
+  <div class="label">连陪需求优化</div>
+  <button type="button" class="on" data-tab="cart" id="nav-cart">
+    <span class="t">购物车</span>
+    <span class="d">勾选互斥</span>
+  </button>
+  <div class="sub">
+    <button type="button" data-tab="ok-other" id="nav-ok-other">
+      <span class="t">成功页 · 非连陪</span>
+      <span class="d">预约优先 + 弱引导</span>
+    </button>
+    <button type="button" data-tab="ok-lp" id="nav-ok-lp">
+      <span class="t">成功页 · 连陪</span>
+      <span class="d">无预约 + 弱引导</span>
+    </button>
+  </div>
+  <button type="button" data-tab="rebook" id="nav-rebook">
+    <span class="t">取消订单 / 补约</span>
+    <span class="d">退次 · 去预约 · 改约</span>
+  </button>
+</aside>
+
+<div class="stage">
+  <div class="phone">
+    <section class="panel on" id="panel-cart">
+      <div class="topbar">
+        <button type="button" class="home" aria-label="首页">⌂</button>
+        <div class="title">购物车</div>
+        <div class="capsule" aria-hidden="true"><span>●●●</span><span>○</span></div>
+      </div>
+      <div class="manage-row">
+        <button type="button" id="btn-manage">管理</button>
+      </div>
+      <div class="scroll" id="cart-list"></div>
+      <div class="settle">
+        <div class="all" id="chk-all-wrap">
+          <div class="chk" id="chk-all"></div>
+          <span>全选</span>
+        </div>
+        <div class="sum">
+          合计: <em>¥<span id="sum-price">0</span></em>
+          <span class="extra" id="sum-extra" hidden></span>
+        </div>
+        <button type="button" class="pay" id="btn-pay" disabled>去结算</button>
+      </div>
+      <nav class="tabbar" aria-label="底部导航">
+        <div class="tab"><span class="ico">⌂</span>首页</div>
+        <div class="tab"><span class="ico">▦</span>分类</div>
+        <div class="tab"><span class="ico">◎</span>AI助理</div>
+        <div class="tab on"><span class="ico">👜</span>购物车<span class="badge" id="cart-badge">4</span></div>
+        <div class="tab"><span class="ico">☺</span>我的</div>
+      </nav>
+    </section>
+
+    <!-- 图一：非连陪支付成功 -->
+    <section class="panel" id="panel-ok-other">
+      <div class="ok-head">
+        <div class="mark" aria-hidden="true"></div>
+        <h2>支付成功</h2>
+        <p>请尽快完成服务预约</p>
+      </div>
+      <div class="ok-scroll">
+        <div class="ok-block">
+          <div class="hd">☰ 已购服务 (共1项)</div>
+          <div class="bought">
+            <div class="pic"></div>
+            <div class="info">
+              <div class="n">一次</div>
+              <div class="s">待预约1次</div>
+            </div>
+            <button type="button" class="go">去预约</button>
+          </div>
+          <div class="cart-tip" data-go-cart="lp" title="弱引导">
+            <div class="txt">购物车还有连续陪护未结算</div>
+            <div class="link">去结算 ›</div>
+          </div>
+        </div>
+        <div class="cs-card">
+          <div class="qr" aria-hidden="true"></div>
+          <div class="cs-txt">
+            <div class="t">长按识别添加客服微信</div>
+            <ul>
+              <li>1对1健康管家 随时在线解答</li>
+              <li>售后全程无忧 最快2小时解决</li>
+              <li>定期活动提醒 赠送专属暖心礼</li>
+            </ul>
+          </div>
+          <div class="avatar">客服</div>
+        </div>
+      </div>
+      <div class="ok-foot">
+        <button type="button" class="ghost" data-go-cart="home">返回首页</button>
+        <button type="button" class="solid">查看订单</button>
+      </div>
+    </section>
+
+    <!-- 图二：连陪支付成功 -->
+    <section class="panel" id="panel-ok-lp">
+      <div class="ok-head">
+        <div class="mark" aria-hidden="true"></div>
+        <h2>支付成功</h2>
+        <p>服务人员将在上门 <em>前2小时</em> 联系您</p>
+      </div>
+      <div class="ok-scroll">
+        <div class="cart-tip" data-go-cart="other" title="弱引导" style="margin-top:16px">
+          <div class="txt">购物车还有未结算服务</div>
+          <div class="link">去结算 ›</div>
+        </div>
+        <div class="cs-card">
+          <div class="qr" aria-hidden="true"></div>
+          <div class="cs-txt">
+            <div class="t">长按识别添加客服微信</div>
+            <ul>
+              <li>1对1健康管家 随时在线解答</li>
+              <li>售后全程无忧 最快2小时解决</li>
+              <li>定期活动提醒 赠送专属暖心礼</li>
+            </ul>
+          </div>
+          <div class="avatar">客服</div>
+        </div>
+      </div>
+      <div class="ok-foot">
+        <button type="button" class="ghost" data-go-cart="home">返回首页</button>
+        <button type="button" class="solid">查看订单</button>
+      </div>
+    </section>
+
+    <!-- 取消订单 / 补约 -->
+    <section class="panel" id="panel-rebook">
+      <div class="topbar">
+        <button type="button" class="home" aria-label="首页">⌂</button>
+        <div class="title">订单详情</div>
+        <div class="capsule" aria-hidden="true"><span>●●●</span><span>○</span></div>
+      </div>
+
+      <div id="rb-view-detail" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden">
+        <div class="detail-hero">
+          <div class="st">待完成</div>
+          <div class="prod">
+            <div class="pic"></div>
+            <div class="info">
+              <div class="n">测试夜间服务</div>
+              <div class="d">夜间服务1次</div>
+            </div>
+            <div class="p">¥390.00</div>
+          </div>
+        </div>
+        <div class="remain-label">剩余<span id="detail-remain">0</span>次</div>
+        <div class="scroll" id="sub-order-list" style="padding:0 0 12px;flex:1"></div>
+        <div class="detail-foot" id="detail-foot">
+          <div class="icons">
+            <button type="button" class="ico-btn" aria-label="联系客服">
+              <span class="ico headset" aria-hidden="true"></span>
+              <span>联系客服</span>
+            </button>
+            <button type="button" class="ico-btn refund-btn" aria-label="发起退款">
+              <span class="ico" aria-hidden="true">¥</span>
+              <span>发起退款</span>
+            </button>
+          </div>
+          <button type="button" class="go-book" id="btn-go-book">去预约</button>
+        </div>
+      </div>
+
+      <div class="mask" id="book-mask"></div>
+
+      <!-- ① 选择要取消的子单 -->
+      <div class="sheet cancel-sheet" id="cancel-sheet" role="dialog" aria-label="取消订单">
+        <div class="shd">取消订单<button type="button" class="x" id="cancel-close">×</button></div>
+        <div class="all-row" id="cancel-all-row">
+          <div class="left">
+            <div class="chk" id="cancel-chk-all"></div>
+            <span class="lab">全选</span>
+          </div>
+          <div class="sum">已选<em id="cancel-sum">0</em>项</div>
+        </div>
+        <div class="cancel-list" id="cancel-list"></div>
+        <div class="sfoot">
+          <button type="button" class="cancel" id="cancel-dismiss">取消</button>
+          <button type="button" class="ok" id="cancel-next" disabled>下一步</button>
+        </div>
+      </div>
+
+      <!-- ② 选择取消原因（现网抽屉） -->
+      <div class="sheet reason-sheet" id="reason-sheet" role="dialog" aria-label="取消订单">
+        <div class="shd">取消订单<button type="button" class="x" id="reason-close">×</button></div>
+        <div class="reason-risk">
+          <div class="txt"><b>【风险提示】</b>为了保障您的权益，请务必拒绝任何形式的线下交易。私下交易无保障，纠纷难维权。如遇此情况，请立即通过“一键举报”功能向我们反馈</div>
+          <button type="button" class="report">一键举报</button>
+        </div>
+        <div class="reason-orange">
+          <span class="ico" aria-hidden="true">i</span>
+          <span>取消后将退还预约次数。如需退款，请在取消成功后发起退款</span>
+        </div>
+        <div class="reason-list" id="reason-list"></div>
+        <div class="sfoot">
+          <button type="button" class="cancel" id="reason-back">上一步</button>
+          <button type="button" class="ok" id="reason-next" disabled>确认</button>
+        </div>
+      </div>
+
+      <!-- ③ 确认取消弹窗（现网） -->
+      <div class="modal-mask" id="cancel-modal">
+        <div class="modal">
+          <button type="button" class="mx" id="modal-x">×</button>
+          <div class="warn">!</div>
+          <div class="mt">
+            取消后将退还预约次数。
+            <span class="org">如需退款，请在取消成功后发起退款。</span>
+          </div>
+          <div class="macts">
+            <button type="button" class="no" id="modal-no">暂不取消</button>
+            <button type="button" class="yes" id="modal-yes">确认取消</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sheet" id="book-sheet" role="dialog" aria-label="预约服务">
+        <div class="shd">预约服务<button type="button" class="x" id="book-close">×</button></div>
+        <div class="remain">剩余次数：<em id="book-remain">0次</em></div>
+        <div class="field" id="book-time-field">
+          <span>预约服务时间</span>
+          <span class="ph" id="book-time-val">请选择 ›</span>
+        </div>
+        <div class="sfoot">
+          <button type="button" class="cancel" id="book-cancel">取消</button>
+          <button type="button" class="ok" id="book-confirm" disabled>确认</button>
+        </div>
+      </div>
+
+      <!-- 单选取消 · 更改服务时间（叠在原因抽屉上，背后不隐去） -->
+      <div class="sheet change-sheet" id="change-sheet" role="dialog" aria-label="更改服务时间">
+        <div class="shd">更改服务时间<button type="button" class="x" id="change-close">×</button></div>
+        <div class="field" id="change-time-field">
+          <span>预约服务时间</span>
+          <span class="ph" id="change-time-val">请选择 ›</span>
+        </div>
+        <div class="sfoot">
+          <button type="button" class="cancel" id="change-cancel">取消</button>
+          <button type="button" class="ok" id="change-confirm" disabled>确认</button>
+        </div>
+      </div>
+
+      <div class="sheet date-sheet" id="date-sheet" role="dialog" aria-label="选择日期">
+        <div class="orange-tip" id="date-orange-tip">
+          <span class="ico" aria-hidden="true">i</span>
+          <span class="tip-txt" id="date-tip-txt">今日夜间可约，20:00 开始</span>
+        </div>
+        <div class="date-bar">
+          <div class="picked">
+            <span class="d" id="bar-date">2026年11月9日</span>
+          </div>
+          <button type="button" class="ok-link" id="date-confirm">确定</button>
+        </div>
+        <div class="cal-wrap">
+          <div class="cal-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const STORAGE_KEY = "lp-opt-cart-checked-v2";
+  const root = document.getElementById("lp-opt");
+  const listEl = document.getElementById("cart-list");
+  const chkAll = document.getElementById("chk-all");
+  const sumPrice = document.getElementById("sum-price");
+  const sumExtra = document.getElementById("sum-extra");
+  const btnPay = document.getElementById("btn-pay");
+  const btnManage = document.getElementById("btn-manage");
+  const toastEl = document.getElementById("toast");
+  const badge = document.getElementById("cart-badge");
+  const panelCart = document.getElementById("panel-cart");
+  const panelResult = document.getElementById("panel-result");
+
+  let items = [
+    { id: "ot1", type: "other", name: "血透/放疗/化疗陪诊", desc: "血透/放疗/化疗陪诊", price: 399, qty: 1, thumb: "血透陪诊" },
+    { id: "ot2", type: "other", name: "麻醉/特殊检查陪诊", desc: "麻醉/特殊检查陪诊", price: 268, qty: 1, thumb: "麻醉陪诊" },
+    { id: "lp1", type: "lianpei", name: "住院夜间12小时陪护（三…", desc: "住院夜间12小时陪护（三天起）", price: 365, qty: 3, thumb: "住院夜间陪护" },
+    { id: "bad1", type: "invalid", name: "住院夜间12小时陪护", desc: "住院夜间12小时陪护", price: 0, qty: 1, thumb: "住院夜间陪护" },
+    { id: "lp2", type: "lianpei", name: "居家夜间12小时看护", desc: "居家夜间12小时看护", price: 365, qty: 3, thumb: "居家夜间看护" },
+  ];
+
+  let checked = new Set();
+  let toastTimer = 0;
+
+  function loadChecked() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return;
+      checked = new Set(arr.filter((id) => items.some((it) => it.id === id && it.type !== "invalid")));
+      sanitizeChecked(false);
+    } catch (_) {}
+  }
+  function saveChecked() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...checked])); } catch (_) {}
+  }
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2200);
+  }
+
+  const isLp = (it) => it.type === "lianpei";
+  const isOt = (it) => it.type === "other";
+  const isBad = (it) => it.type === "invalid";
+  const checkedItems = () => items.filter((it) => checked.has(it.id));
+  function mode() {
+    const c = checkedItems();
+    if (!c.length) return "none";
+    if (c.some(isLp)) return "lianpei";
+    return "other";
+  }
+
+  function sanitizeChecked(autoPickLoneLp) {
+    checked.forEach((id) => {
+      const it = items.find((x) => x.id === id);
+      if (!it || isBad(it)) checked.delete(id);
+    });
+    const c = checkedItems();
+    const lps = c.filter(isLp);
+    const ots = c.filter(isOt);
+    if (lps.length && ots.length) lps.forEach((it) => checked.delete(it.id));
+    else if (lps.length > 1) {
+      const keep = lps[0].id;
+      lps.slice(1).forEach((it) => checked.delete(it.id));
+      checked.add(keep);
+    }
+    if (autoPickLoneLp) {
+      const live = items.filter((it) => !isBad(it));
+      if (live.length === 1 && isLp(live[0])) {
+        checked.clear();
+        checked.add(live[0].id);
+      }
+    }
+  }
+
+  function canCheck(it) {
+    if (isBad(it)) return false;
+    const m = mode();
+    if (m === "none") return true;
+    if (m === "lianpei") return isLp(it) && checked.has(it.id);
+    return isOt(it);
+  }
+
+  function tryCheck(it) {
+    // 失效 / 互斥不可点：不 Toast，靠行内文案
+    if (isBad(it)) return;
+    if (!canCheck(it) && !checked.has(it.id)) return;
+    if (checked.has(it.id)) {
+      checked.delete(it.id);
+      saveChecked(); render(); return;
+    }
+    if (isLp(it)) { checked.clear(); checked.add(it.id); }
+    else checked.add(it.id);
+    saveChecked(); render();
+  }
+
+  function onSelectAll() {
+    const sellable = items.filter((it) => !isBad(it));
+    const others = sellable.filter(isOt);
+    const lps = sellable.filter(isLp);
+    const m = mode();
+
+    if (m === "other" && others.length && others.every((it) => checked.has(it.id))) {
+      checked.clear(); saveChecked(); render(); return;
+    }
+    if (m === "lianpei") {
+      // 已勾连陪时点全选：混装不能扩到非连陪；多连陪不能全勾
+      if (others.length) {
+        toast("连续陪护需单独结算");
+        return;
+      }
+      if (lps.length > 1) {
+        toast("一次只能结算一个连续陪护");
+        return;
+      }
+      checked.clear(); saveChecked(); render(); return;
+    }
+    if (others.length && lps.length) {
+      checked = new Set(others.map((it) => it.id));
+      saveChecked(); render();
+      toast("已选中其他服务，连续陪护请单独结算");
+      return;
+    }
+    if (others.length) {
+      checked = new Set(others.map((it) => it.id));
+      saveChecked(); render(); return;
+    }
+    if (lps.length === 1) {
+      checked = new Set([lps[0].id]); saveChecked(); render(); return;
+    }
+    if (lps.length > 1) {
+      checked = new Set([lps[0].id]); saveChecked(); render();
+      toast("一次只能结算一个连续陪护");
+    }
+  }
+
+  function allState() {
+    const others = items.filter((it) => isOt(it));
+    const m = mode();
+    if (m === "none") return "off";
+    if (m === "other") {
+      if (!others.length) return "off";
+      return others.every((it) => checked.has(it.id)) ? "on" : "half";
+    }
+    const live = items.filter((it) => !isBad(it));
+    if (live.length === 1 && isLp(live[0]) && checked.has(live[0].id)) return "on";
+    return "half";
+  }
+
+  function render() {
+    sanitizeChecked(false);
+    const m = mode();
+    listEl.innerHTML = items.map((it) => {
+      const on = checked.has(it.id);
+      const invalid = isBad(it);
+      const locked = !invalid && !canCheck(it) && !on;
+      let chk = "chk";
+      let card = "card";
+      let hint = "";
+      if (invalid) {
+        chk += " invalid-disabled";
+        card += " invalid";
+      } else if (locked) {
+        chk += " mutex-disabled"; card += " mutex";
+        hint = isLp(it) && m === "lianpei"
+          ? `<div class="hint-line">一次只能结算一个连续陪护</div>`
+          : `<div class="hint-line">连续陪护需单独结算</div>`;
+      } else if (on) chk += " on";
+
+      const priceHtml = invalid
+        ? `¥0<span class="bad">失效</span>`
+        : `¥${it.price}`;
+
+      const qtyHtml = invalid
+        ? ""
+        : `<div class="qty">
+            <button type="button" data-act="minus" data-id="${it.id}">−</button>
+            <span>${it.qty}</span>
+            <button type="button" data-act="plus" data-id="${it.id}">+</button>
+          </div>`;
+
+      return `<div class="${card}" data-id="${it.id}">
+        <div class="${chk}" data-act="chk" data-id="${it.id}"></div>
+        <div class="thumb"><div class="img"></div><div class="cap">${it.thumb}</div></div>
+        <div class="main">
+          <div class="row1">
+            <div class="name">${it.name}</div>
+            <div class="price">${priceHtml}</div>
+          </div>
+          <div class="desc">${it.desc}</div>
+          ${hint}
+          <div class="row2">
+            ${qtyHtml}
+            <button type="button" class="del-btn" data-act="del" data-id="${it.id}">删除</button>
+          </div>
+        </div>
+      </div>`;
+    }).join("");
+
+    const st = allState();
+    chkAll.classList.toggle("on", st === "on");
+    chkAll.style.opacity = st === "half" ? "0.55" : "1";
+
+    const c = checkedItems();
+    const total = c.reduce((s, it) => s + it.price * it.qty, 0);
+    sumPrice.textContent = String(total);
+    btnPay.disabled = c.length === 0;
+    btnPay.textContent = m === "lianpei" ? "去结算" : "去结算";
+
+    const liveCount = items.filter((it) => !isBad(it)).length;
+    badge.textContent = String(liveCount);
+    badge.style.display = liveCount ? "block" : "none";
+
+    const uncheckedLp = items.filter((it) => isLp(it) && !checked.has(it.id));
+    if (m === "other" && uncheckedLp.length) {
+      sumExtra.hidden = false;
+      sumExtra.textContent = `还有${uncheckedLp.length}个连续陪护未结算`;
+    } else {
+      sumExtra.hidden = true;
+    }
+  }
+
+  listEl.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-act]");
+    if (!t) return;
+    const id = t.getAttribute("data-id");
+    const it = items.find((x) => x.id === id);
+    if (!it) return;
+    const act = t.getAttribute("data-act");
+    if (act === "chk") { tryCheck(it); return; }
+    if (act === "plus" && !isBad(it)) {
+      if (isLp(it)) {
+        if (it.qty >= 30) { toast("连续陪护最多30天，无法再增加"); return; }
+        it.qty += 1;
+      } else {
+        it.qty += 1;
+      }
+      render();
+      return;
+    }
+    if (act === "minus" && !isBad(it)) {
+      if (isLp(it)) {
+        if (it.qty <= 3) { toast("连续陪护至少3天，无法再减少"); return; }
+        it.qty -= 1;
+      } else {
+        it.qty = Math.max(1, it.qty - 1);
+      }
+      render();
+      return;
+    }
+    if (act === "del") {
+      items = items.filter((x) => x.id !== id);
+      checked.delete(id);
+      sanitizeChecked(true);
+      saveChecked();
+      render();
+    }
+  });
+
+  document.getElementById("chk-all-wrap").addEventListener("click", onSelectAll);
+
+  btnManage.addEventListener("click", () => {
+    const on = root.classList.toggle("managing");
+    btnManage.textContent = on ? "完成" : "管理";
+  });
+
+  btnPay.addEventListener("click", () => {
+    // 未勾时按钮已禁用；勾选层已互斥，不做跳转与兜底 Toast
+  });
+
+  const panels = {
+    cart: document.getElementById("panel-cart"),
+    "ok-other": document.getElementById("panel-ok-other"),
+    "ok-lp": document.getElementById("panel-ok-lp"),
+    rebook: document.getElementById("panel-rebook"),
+  };
+  const navBtns = [
+    document.getElementById("nav-cart"),
+    document.getElementById("nav-ok-other"),
+    document.getElementById("nav-ok-lp"),
+    document.getElementById("nav-rebook"),
+  ];
+
+  function showPanel(key) {
+    Object.keys(panels).forEach((k) => {
+      panels[k].classList.toggle("on", k === key);
+    });
+    navBtns.forEach((btn) => {
+      if (!btn) return;
+      btn.classList.toggle("on", btn.getAttribute("data-tab") === key);
+    });
+    if (key === "cart") render();
+    if (key === "rebook") {
+      renderSubOrders();
+      syncRemainUI();
+    }
+    if (key !== "rebook") closeBookSheets();
+  }
+
+  navBtns.forEach((btn) => {
+    if (!btn) return;
+    btn.addEventListener("click", () => showPanel(btn.getAttribute("data-tab")));
+  });
+
+  document.querySelectorAll("[data-go-cart]").forEach((el) => {
+    el.addEventListener("click", () => {
+      const mode = el.getAttribute("data-go-cart");
+      showPanel("cart");
+      if (mode === "lp") {
+        const liveLp = items.filter(isLp);
+        if (liveLp.length === 1) {
+          checked.clear();
+          checked.add(liveLp[0].id);
+          saveChecked();
+          render();
+        } else if (liveLp.length > 1) {
+          checked.clear();
+          saveChecked();
+          render();
+          toast("请选择要结算的连续陪护（一次一个）");
+        }
+      } else if (mode === "other") {
+        const others = items.filter(isOt);
+        if (others.length) {
+          checked = new Set(others.map((x) => x.id));
+          saveChecked();
+          render();
+        }
+      }
+    });
+  });
+
+  /* —— 取消子单 + 补约选日 —— */
+  const bookMask = document.getElementById("book-mask");
+  const bookSheet = document.getElementById("book-sheet");
+  const changeSheet = document.getElementById("change-sheet");
+  const dateSheet = document.getElementById("date-sheet");
+  const cancelSheet = document.getElementById("cancel-sheet");
+  const reasonSheet = document.getElementById("reason-sheet");
+  const cancelModal = document.getElementById("cancel-modal");
+  const bookTimeVal = document.getElementById("book-time-val");
+  const bookConfirm = document.getElementById("book-confirm");
+  const changeTimeVal = document.getElementById("change-time-val");
+  const changeConfirm = document.getElementById("change-confirm");
+  const dateConfirm = document.getElementById("date-confirm");
+  const calGrid = document.getElementById("cal-grid");
+  const barDate = document.getElementById("bar-date");
+  const dateTipTxt = document.getElementById("date-tip-txt");
+  const subOrderList = document.getElementById("sub-order-list");
+  const cancelList = document.getElementById("cancel-list");
+  const cancelChkAll = document.getElementById("cancel-chk-all");
+  const cancelSum = document.getElementById("cancel-sum");
+  const cancelNextBtn = document.getElementById("cancel-next");
+  const reasonList = document.getElementById("reason-list");
+  const reasonNextBtn = document.getElementById("reason-next");
+  const detailRemainEl = document.getElementById("detail-remain");
+  const bookRemainEl = document.getElementById("book-remain");
+  const detailFoot = document.getElementById("detail-foot");
+
+  const DEMO_NOW = new Date(2026, 10, 9, 14, 0, 0);
+  const CANCEL_REASONS = [
+    "时间有变",
+    "服务人员无法提供服务",
+    "对服务人员不满意",
+    "服务人员联系不上",
+    "长时间无人接单",
+    "客服无响应",
+    "其他",
+  ];
+  /** @type {{id:string,dateKey:string,timeLabel:string,status:string}[]} */
+  let subOrders = [
+    { id: "s1", dateKey: "2026-11-10", timeLabel: "2026-11-10 20:00:00", status: "pending" },
+    { id: "s2", dateKey: "2026-11-11", timeLabel: "2026-11-11 20:00:00", status: "pending" },
+    { id: "s3", dateKey: "2026-11-12", timeLabel: "2026-11-12 20:00:00", status: "pending" },
+    { id: "s4", dateKey: "2026-11-13", timeLabel: "2026-11-13 20:00:00", status: "pending" },
+    { id: "s5", dateKey: "2026-11-14", timeLabel: "2026-11-14 20:00:00", status: "pending" },
+  ];
+  let remainTimes = 0;
+  let cancelChecked = new Set();
+  let cancelEntryId = "";
+  let selectedReason = "";
+  let calYear = 2026;
+  let calMonth = 10;
+  let pickedKey = "";
+  let pendingLabel = "";
+  /** 'book' | 'change' */
+  let datePickMode = "book";
+  let changePickedKey = "";
+  let changePendingLabel = "";
+
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+  function ymd(y, m, d) { return y + "-" + pad(m + 1) + "-" + pad(d); }
+  function startOfDay(dt) {
+    return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+  }
+  function earliestNightDate() {
+    return startOfDay(DEMO_NOW);
+  }
+  function occupiedKeys() {
+    const skip = datePickMode === "change" ? cancelChecked : new Set();
+    return new Set(
+      subOrders
+        .filter((s) => s.status === "pending" && !skip.has(s.id))
+        .map((s) => s.dateKey)
+    );
+  }
+  function dayState(y, m, d) {
+    const key = ymd(y, m, d);
+    const cell = startOfDay(new Date(y, m, d));
+    if (cell < earliestNightDate()) return "past";
+    if (occupiedKeys().has(key)) return "occupied";
+    return "ok";
+  }
+  function pendingSubs() {
+    return subOrders.filter((s) => s.status === "pending");
+  }
+  function syncRemainUI() {
+    detailRemainEl.textContent = String(remainTimes);
+    bookRemainEl.textContent = remainTimes + "次";
+    detailFoot.classList.toggle("has-remain", remainTimes > 0);
+  }
+  function renderSubOrders() {
+    const list = pendingSubs();
+    if (!list.length) {
+      subOrderList.innerHTML = `<div style="font-size:13px;color:#999;padding:16px 12px">暂无待服务子单。有剩余次数时可点底部「去预约」。</div>`;
+      return;
+    }
+    subOrderList.innerHTML = list.map((s) => `
+      <div class="svc-card" data-id="${s.id}">
+        <div class="top">
+          <div class="t">上门时间：${s.timeLabel}</div>
+          <div class="st">待服务 ›</div>
+        </div>
+        <div class="btns">
+          <button type="button" data-cancel-entry="${s.id}">取消订单</button>
+          <button type="button">联系客服</button>
+        </div>
+      </div>`).join("");
+  }
+  function renderCancelList() {
+    const list = pendingSubs();
+    cancelList.innerHTML = list.map((s) => {
+      const on = cancelChecked.has(s.id);
+      return `<div class="cancel-item" data-id="${s.id}">
+        <div class="chk ${on ? "on" : ""}" data-cid="${s.id}"></div>
+        <div class="meta">
+          <div class="t">上门时间：${s.timeLabel}</div>
+          <div class="s">待服务</div>
+        </div>
+      </div>`;
+    }).join("");
+    const n = cancelChecked.size;
+    cancelSum.textContent = String(n);
+    cancelNextBtn.disabled = n === 0;
+    const allOn = list.length > 0 && list.every((s) => cancelChecked.has(s.id));
+    cancelChkAll.classList.toggle("on", allOn);
+  }
+  function canShowRebookShortcut() {
+    return cancelChecked.size === 1 && selectedReason === "时间有变";
+  }
+  function renderReasons() {
+    reasonList.innerHTML = CANCEL_REASONS.map((r) => {
+      const on = selectedReason === r;
+      let html = `<div class="reason-item ${on ? "on" : ""}" data-reason="${r}">
+        <span class="dot"></span><span>${r}</span>
+      </div>`;
+      if (r === "时间有变" && canShowRebookShortcut()) {
+        html += `<div class="reason-rebook on" id="reason-rebook-tip" role="button" tabindex="0">
+          您可以点此 <em>更改预约服务时间</em>
+        </div>`;
+      }
+      return html;
+    }).join("");
+    reasonNextBtn.disabled = !selectedReason;
+  }
+  function resetChangeTimeField() {
+    changePickedKey = "";
+    changePendingLabel = "";
+    changeTimeVal.textContent = "请选择 ›";
+    changeTimeVal.classList.add("ph");
+    changeTimeVal.classList.remove("val");
+    changeConfirm.disabled = true;
+  }
+  function openChangeTimeSheet() {
+    if (cancelChecked.size !== 1) return;
+    datePickMode = "change";
+    resetChangeTimeField();
+    dateSheet.classList.remove("on");
+    bookSheet.classList.remove("on");
+    // 背后原因抽屉保持展示，但不可点
+    reasonSheet.classList.add("on", "behind");
+    bookMask.classList.add("on");
+    changeSheet.classList.add("on");
+  }
+  function closeChangeTimeOnly() {
+    changeSheet.classList.remove("on");
+    dateSheet.classList.remove("on");
+    datePickMode = "book";
+    resetChangeTimeField();
+    // 回到原因抽屉，恢复可点
+    reasonSheet.classList.add("on");
+    reasonSheet.classList.remove("behind");
+    bookMask.classList.add("on");
+  }
+  function doChangeTimeConfirm() {
+    if (cancelChecked.size !== 1 || !changePickedKey) return;
+    const oldId = Array.from(cancelChecked)[0];
+    subOrders.forEach((s) => {
+      if (s.id === oldId) s.status = "cancelled";
+    });
+    subOrders.push({
+      id: "s" + Date.now(),
+      dateKey: changePickedKey,
+      timeLabel: changePickedKey + " 20:00:00",
+      status: "pending",
+    });
+    // 改约：退次再立刻占用，剩余次数不变
+    cancelChecked.clear();
+    selectedReason = "";
+    changeSheet.classList.remove("on");
+    dateSheet.classList.remove("on");
+    cancelSheet.classList.remove("on");
+    reasonSheet.classList.remove("on", "behind");
+    cancelModal.classList.remove("on");
+    bookMask.classList.remove("on");
+    datePickMode = "book";
+    resetChangeTimeField();
+    pickedKey = "";
+    pendingLabel = "";
+    renderSubOrders();
+    syncRemainUI();
+    toast("取消成功");
+  }
+  function openCancelSheet(entryId) {
+    cancelEntryId = entryId;
+    cancelChecked = new Set([entryId]);
+    selectedReason = "";
+    bookMask.classList.add("on");
+    cancelSheet.classList.add("on");
+    reasonSheet.classList.remove("on", "behind");
+    cancelModal.classList.remove("on");
+    bookSheet.classList.remove("on");
+    changeSheet.classList.remove("on");
+    dateSheet.classList.remove("on");
+    datePickMode = "book";
+    resetChangeTimeField();
+    renderCancelList();
+  }
+  function openReasonSheet() {
+    cancelSheet.classList.remove("on");
+    reasonSheet.classList.add("on");
+    reasonSheet.classList.remove("behind");
+    bookMask.classList.add("on");
+    renderReasons();
+  }
+  function openCancelModal() {
+    reasonSheet.classList.remove("on", "behind");
+    bookMask.classList.remove("on");
+    cancelModal.classList.add("on");
+  }
+  function closeCancelFlow() {
+    cancelSheet.classList.remove("on");
+    reasonSheet.classList.remove("on", "behind");
+    cancelModal.classList.remove("on");
+    changeSheet.classList.remove("on");
+    datePickMode = "book";
+    resetChangeTimeField();
+    if (!bookSheet.classList.contains("on") && !dateSheet.classList.contains("on")) {
+      bookMask.classList.remove("on");
+    }
+  }
+  function doCancelConfirm() {
+    const n = cancelChecked.size;
+    if (!n) return;
+    subOrders.forEach((s) => {
+      if (cancelChecked.has(s.id)) s.status = "cancelled";
+    });
+    remainTimes += n;
+    cancelChecked.clear();
+    selectedReason = "";
+    closeCancelFlow();
+    renderSubOrders();
+    syncRemainUI();
+    toast("取消成功");
+  }
+  function labelOf(key) {
+    const parts = key.split("-");
+    return parts[0] + "年" + Number(parts[1]) + "月" + Number(parts[2]) + "日";
+  }
+  function syncBar() {
+    if (!pickedKey) {
+      dateConfirm.disabled = true;
+      return;
+    }
+    barDate.textContent = labelOf(pickedKey);
+    dateConfirm.disabled = false;
+  }
+  /** 与连陪确认页选日 tip 同源（本演示固定夜间） */
+  function syncDateTip() {
+    dateTipTxt.textContent = "今日夜间可约，20:00 开始";
+  }
+  /** 最近可约日（跳过已过去、已约） */
+  function earliestOkKey() {
+    let y = DEMO_NOW.getFullYear();
+    let m = DEMO_NOW.getMonth();
+    let d = DEMO_NOW.getDate();
+    for (let i = 0; i < 60; i++) {
+      const dt = new Date(y, m, d + i);
+      const st = dayState(dt.getFullYear(), dt.getMonth(), dt.getDate());
+      if (st === "ok") {
+        return ymd(dt.getFullYear(), dt.getMonth(), dt.getDate());
+      }
+    }
+    return "";
+  }
+  function renderCal() {
+    // 周一开始：周一=0 … 周日=6
+    const first = new Date(calYear, calMonth, 1);
+    const jsDay = first.getDay(); // 0=Sun
+    const startMon = (jsDay + 6) % 7;
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const prevDays = new Date(calYear, calMonth, 0).getDate();
+    let html = "";
+    for (let i = 0; i < startMon; i++) {
+      const d = prevDays - startMon + 1 + i;
+      html += `<div class="cell mute">${d}</div>`;
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const st = dayState(calYear, calMonth, d);
+      const key = ymd(calYear, calMonth, d);
+      let cls = "cell";
+      if (st === "past") cls += " disabled";
+      else if (st === "occupied") cls += " occupied";
+      if (pickedKey === key) cls += " on";
+      const sub = st === "occupied" ? `<span class="sub">已约</span>` : "";
+      html += `<div class="${cls}" data-key="${key}" data-st="${st}"><span>${d}</span>${sub}</div>`;
+    }
+    const filled = startMon + daysInMonth;
+    const rest = (7 - (filled % 7)) % 7;
+    for (let i = 1; i <= rest; i++) html += `<div class="cell mute">${i}</div>`;
+    calGrid.innerHTML = html;
+  }
+  function openBookSheet() {
+    datePickMode = "book";
+    bookMask.classList.add("on");
+    bookSheet.classList.add("on");
+    changeSheet.classList.remove("on");
+    dateSheet.classList.remove("on");
+  }
+  function openDateSheet() {
+    dateSheet.classList.add("on");
+    syncDateTip();
+    const curKey = datePickMode === "change" ? changePickedKey : pickedKey;
+    if (!curKey) {
+      const ok = earliestOkKey();
+      if (datePickMode === "change") {
+        changePickedKey = ok;
+        changePendingLabel = ok ? labelOf(ok) : "";
+      } else {
+        pickedKey = ok;
+        pendingLabel = ok ? labelOf(ok) : "";
+      }
+      if (ok) {
+        const parts = ok.split("-");
+        calYear = Number(parts[0]);
+        calMonth = Number(parts[1]) - 1;
+      }
+    } else {
+      const parts = curKey.split("-");
+      calYear = Number(parts[0]);
+      calMonth = Number(parts[1]) - 1;
+    }
+    // sync pickedKey used by calendar highlight
+    if (datePickMode === "change") pickedKey = changePickedKey;
+    renderCal();
+    syncBar();
+  }
+  function closeBookSheets() {
+    bookMask.classList.remove("on");
+    bookSheet.classList.remove("on");
+    changeSheet.classList.remove("on");
+    dateSheet.classList.remove("on");
+    cancelSheet.classList.remove("on");
+    reasonSheet.classList.remove("on", "behind");
+    cancelModal.classList.remove("on");
+    datePickMode = "book";
+  }
+  function closeDateOnly() {
+    dateSheet.classList.remove("on");
+    if (datePickMode === "change") {
+      changeSheet.classList.add("on");
+      reasonSheet.classList.add("on", "behind");
+      bookMask.classList.add("on");
+    }
+  }
+
+  subOrderList.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-cancel-entry]");
+    if (!btn) return;
+    openCancelSheet(btn.getAttribute("data-cancel-entry"));
+  });
+  document.getElementById("cancel-close").addEventListener("click", closeCancelFlow);
+  document.getElementById("cancel-dismiss").addEventListener("click", closeCancelFlow);
+  document.getElementById("cancel-all-row").addEventListener("click", () => {
+    const list = pendingSubs();
+    const allOn = list.length && list.every((s) => cancelChecked.has(s.id));
+    if (allOn) cancelChecked.clear();
+    else cancelChecked = new Set(list.map((s) => s.id));
+    renderCancelList();
+  });
+  cancelList.addEventListener("click", (e) => {
+    const item = e.target.closest(".cancel-item");
+    if (!item) return;
+    const id = item.getAttribute("data-id");
+    if (cancelChecked.has(id)) cancelChecked.delete(id);
+    else cancelChecked.add(id);
+    renderCancelList();
+  });
+  cancelNextBtn.addEventListener("click", () => {
+    if (!cancelChecked.size) return;
+    openReasonSheet();
+  });
+  document.getElementById("reason-close").addEventListener("click", closeCancelFlow);
+  document.getElementById("reason-back").addEventListener("click", () => {
+    reasonSheet.classList.remove("on", "behind");
+    cancelSheet.classList.add("on");
+    bookMask.classList.add("on");
+    renderCancelList();
+  });
+  reasonList.addEventListener("click", (e) => {
+    const tip = e.target.closest("#reason-rebook-tip, .reason-rebook");
+    if (tip) {
+      e.preventDefault();
+      openChangeTimeSheet();
+      return;
+    }
+    const item = e.target.closest(".reason-item");
+    if (!item) return;
+    selectedReason = item.getAttribute("data-reason") || "";
+    renderReasons();
+  });
+  reasonNextBtn.addEventListener("click", () => {
+    if (!selectedReason) return;
+    openCancelModal();
+  });
+  document.getElementById("modal-x").addEventListener("click", closeCancelFlow);
+  document.getElementById("modal-no").addEventListener("click", closeCancelFlow);
+  document.getElementById("modal-yes").addEventListener("click", doCancelConfirm);
+
+  document.getElementById("btn-go-book").addEventListener("click", () => {
+    if (remainTimes <= 0) {
+      toast("暂无剩余次数");
+      return;
+    }
+    syncRemainUI();
+    openBookSheet();
+  });
+  document.getElementById("book-close").addEventListener("click", closeBookSheets);
+  document.getElementById("book-cancel").addEventListener("click", closeBookSheets);
+  bookMask.addEventListener("click", () => {
+    if (changeSheet.classList.contains("on") || datePickMode === "change") {
+      // 点遮罩时：若在改约选日，先收选日；否则关掉改约层，保留原因抽屉
+      if (dateSheet.classList.contains("on")) {
+        closeDateOnly();
+        return;
+      }
+      closeChangeTimeOnly();
+      return;
+    }
+    closeBookSheets();
+  });
+  document.getElementById("book-time-field").addEventListener("click", () => {
+    datePickMode = "book";
+    openDateSheet();
+  });
+  document.getElementById("change-close").addEventListener("click", closeChangeTimeOnly);
+  document.getElementById("change-cancel").addEventListener("click", closeChangeTimeOnly);
+  document.getElementById("change-time-field").addEventListener("click", () => {
+    datePickMode = "change";
+    openDateSheet();
+  });
+  changeConfirm.addEventListener("click", () => {
+    if (changeConfirm.disabled) return;
+    doChangeTimeConfirm();
+  });
+  calGrid.addEventListener("click", (e) => {
+    const cell = e.target.closest(".cell[data-key]");
+    if (!cell) return;
+    const st = cell.getAttribute("data-st");
+    const key = cell.getAttribute("data-key");
+    if (st === "past" || st === "occupied") { toast("该日期不可约"); return; }
+    if (datePickMode === "change") {
+      changePickedKey = key;
+      changePendingLabel = labelOf(key);
+      pickedKey = key;
+    } else {
+      pickedKey = key;
+      pendingLabel = labelOf(key);
+    }
+    renderCal();
+    syncBar();
+  });
+  dateConfirm.addEventListener("click", () => {
+    if (datePickMode === "change") {
+      if (!changePickedKey) return;
+      changeTimeVal.textContent = changePendingLabel + " ›";
+      changeTimeVal.classList.remove("ph");
+      changeTimeVal.classList.add("val");
+      changeConfirm.disabled = false;
+      closeDateOnly();
+      return;
+    }
+    if (!pickedKey) return;
+    bookTimeVal.textContent = pendingLabel + " ›";
+    bookTimeVal.classList.remove("ph");
+    bookTimeVal.classList.add("val");
+    bookConfirm.disabled = false;
+    closeDateOnly();
+  });
+  bookConfirm.addEventListener("click", () => {
+    if (bookConfirm.disabled) return;
+    if (remainTimes <= 0) { toast("暂无剩余次数"); return; }
+    // 补约成功：占坑 + 扣次
+    subOrders.push({
+      id: "s" + Date.now(),
+      dateKey: pickedKey,
+      timeLabel: pendingLabel + " 20:00",
+      status: "pending",
+    });
+    remainTimes -= 1;
+    toast("预约成功（演示）");
+    closeBookSheets();
+    pickedKey = "";
+    pendingLabel = "";
+    bookTimeVal.textContent = "请选择 ›";
+    bookTimeVal.classList.add("ph");
+    bookTimeVal.classList.remove("val");
+    bookConfirm.disabled = true;
+    renderSubOrders();
+    syncRemainUI();
+    syncBar();
+  });
+
+  loadChecked();
+  sanitizeChecked(true);
+  render();
+  renderSubOrders();
+  syncRemainUI();
+})();
+</script>
+</div>
+</body>
+</html>
