@@ -1306,7 +1306,7 @@
     cancelChkAll.classList.toggle("on", allOn);
   }
   function canShowRebookShortcut() {
-    return cancelChecked.size === 1 && selectedReason === "时间有变";
+    return cancelChecked.size >= 1 && selectedReason === "时间有变";
   }
   function renderReasons() {
     reasonList.innerHTML = CANCEL_REASONS.map((r) => {
@@ -1332,7 +1332,7 @@
     changeConfirm.disabled = true;
   }
   function openChangeTimeSheet() {
-    if (cancelChecked.size !== 1) return;
+    if (!cancelChecked.size) return;
     datePickMode = "change";
     resetChangeTimeField();
     dateSheet.classList.remove("on");
@@ -1353,18 +1353,19 @@
     bookMask.classList.add("on");
   }
   function doChangeTimeConfirm() {
-    if (cancelChecked.size !== 1 || !changePickedKey) return;
-    const oldId = Array.from(cancelChecked)[0];
+    if (!cancelChecked.size || !changePickedKey) return;
+    const n = cancelChecked.size;
     subOrders.forEach((s) => {
-      if (s.id === oldId) s.status = "cancelled";
+      if (cancelChecked.has(s.id)) s.status = "cancelled";
     });
+    // 勾选多天一并取消，落约到所选新日期 1 天；单天改约剩次不变，多天净退次 n-1
     subOrders.push({
       id: "s" + Date.now(),
       dateKey: changePickedKey,
       timeLabel: changePickedKey + " 20:00:00",
       status: "pending",
     });
-    // 改约：退次再立刻占用，剩余次数不变
+    remainTimes += n - 1;
     cancelChecked.clear();
     selectedReason = "";
     changeSheet.classList.remove("on");
