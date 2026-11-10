@@ -6,7 +6,7 @@
 | 项    | 内容                                                                                                             |
 | ---- | -------------------------------------------------------------------------------------------------------------- |
 | 版本   | V1.32 · 2026/11/10 · 程海燕                                                                                       |
-| 本地原型 | [http://127.0.0.1:8767/prototype-lianpei-optimize.html](http://127.0.0.1:8767/prototype-lianpei-optimize.html) |
+| 本地原型 | [https://haiyan-design.github.io/prototypes/optimize/](https://haiyan-design.github.io/prototypes/optimize/) |
 | 原型文件 | `prototype-lianpei-optimize.html`                                                                              |
 | 关联   | 《连陪续单》V2.14+（剩次按链；日+夜有剩次侧不可勾；续段全取消可回退判窗）                                                                              |
 
