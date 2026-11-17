@@ -46,9 +46,11 @@
       display: flex; justify-content: center;
       position: relative;
     }
-    /* 全局浮层对齐手机框（支付方式 / 备选替换） */
+    /* 全局浮层对齐手机框（支付方式 / 备选替换 / 再买 / 沟通得如何） */
     .stage > .pay-method-sheet,
-    .stage > .replace-sheet-global {
+    .stage > .replace-sheet-global,
+    .stage > #repurchase-sheet,
+    .stage > #adopt-sheet {
       position: absolute; width: 375px; height: 780px;
       left: 50%; top: 0; transform: translateX(-50%);
       border-radius: 28px; overflow: hidden; z-index: 50;
@@ -80,8 +82,9 @@
       display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
       gap: 4px; z-index: 2; font: inherit;
       -webkit-tap-highlight-color: transparent;
+      animation: portal-entry-nudge 2.4s ease-in-out infinite;
     }
-    .portal-entry:active { opacity: .88; }
+    .portal-entry:active { opacity: .88; animation: none; transform: scale(.97); }
     .portal-ico {
       width: 46px; height: 46px; border-radius: 12px;
       background:
@@ -91,11 +94,48 @@
         inset 0 1px 0 rgba(255,255,255,.5),
         inset 0 -2px 4px rgba(10, 70, 160, .18);
       display: grid; place-items: center; position: relative;
+      z-index: 1;
+    }
+    .portal-ico::before,
+    .portal-ico::after {
+      content: "";
+      position: absolute; inset: -4px;
+      border-radius: 15px;
+      border: 2px solid rgba(47, 134, 246, .55);
+      pointer-events: none;
+      animation: portal-ring 2.4s ease-out infinite;
+    }
+    .portal-ico::after {
+      animation-delay: 1.2s;
     }
     .portal-ico svg { width: 30px; height: 30px; display: block; filter: drop-shadow(0 1px 1px rgba(0,40,100,.15)); }
     .portal-lab {
-      font-size: 12px; color: #333; font-weight: 500; line-height: 1.15;
+      font-size: 12px; color: #1a5fbf; font-weight: 700; line-height: 1.15;
       letter-spacing: .02em;
+      animation: portal-lab-pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes portal-entry-nudge {
+      0%, 100% { transform: translateY(0) scale(1); }
+      12% { transform: translateY(-2px) scale(1.04); }
+      24% { transform: translateY(0) scale(1); }
+      36% { transform: translateY(-1px) scale(1.02); }
+      48%, 100% { transform: translateY(0) scale(1); }
+    }
+    @keyframes portal-ring {
+      0% { transform: scale(.92); opacity: .7; }
+      70% { transform: scale(1.35); opacity: 0; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }
+    @keyframes portal-lab-pulse {
+      0%, 100% { color: #1a5fbf; opacity: 1; }
+      40% { color: #2f86f6; opacity: .92; }
+      70% { color: #1a5fbf; opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .portal-entry,
+      .portal-ico::before,
+      .portal-ico::after,
+      .portal-lab { animation: none; }
     }
     .page-head .persona-tabs[hidden] { display: none !important; }
     .page-head .portal-tip {
@@ -155,9 +195,10 @@
     }
     .mine-fab .lab { font-size: 12px; font-weight: 700; line-height: 1.1; pointer-events: none; }
     .mine-fab .mine-nav-count {
-      min-width: 18px; height: 16px; padding: 0 5px; border-radius: 999px;
-      background: rgba(255,255,255,.22); color: #fff; font-size: 11px; font-weight: 700;
+      min-width: 18px; height: 16px; padding: 0 6px; border-radius: 999px;
+      background: rgba(255,255,255,.22); color: #fff; font-size: 10px; font-weight: 700;
       line-height: 16px; text-align: center; pointer-events: none;
+      white-space: nowrap;
     }
     .mine-fab.has-items {
       background: var(--brand-dark);
@@ -166,11 +207,28 @@
     .mine-fab.has-items .mine-nav-count {
       background: #fff; color: var(--brand-dark);
     }
+    /* 详情底栏上方，避免挡操作 */
+    #screen-detail .mine-fab {
+      bottom: 108px;
+    }
     .phone.list-sub .region-nav,
     .phone.list-sub .mine-fab { display: none; }
     .phone.list-sub .back { display: grid; place-items: center; }
     .phone.list-sub .nav-list h1 { text-align: center; margin-right: 32px; font-weight: 600; }
     .phone:not(.list-sub) .nav-list .back { display: none; }
+    .home-mark {
+      display: none;
+      width: 32px; height: 32px; padding: 0; border: none; border-radius: 8px;
+      background: #5dcec4; cursor: pointer; flex-shrink: 0;
+      place-items: center;
+    }
+    .home-mark .disc {
+      width: 22px; height: 22px; border-radius: 50%; background: #fff;
+      display: grid; place-items: center; color: #1a1a1a;
+    }
+    .home-mark svg { width: 16px; height: 16px; display: block; }
+    .home-mark:active { opacity: .86; }
+    .phone.filter-heavy-mode .home-mark { display: grid; }
     .phone.match-mode .mine-fab { display: flex; }
     .phone .help-banner,
     .phone .match-bar,
@@ -312,6 +370,26 @@
     }
     .home-below .hb-hd .t { font-size: 14px; font-weight: 700; }
     .home-below .hb-hd .s { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .hb-empty {
+      margin: 0 12px 4px; padding: 10px 12px;
+      background: #f7f9f8; border-radius: 10px; text-align: center;
+      box-shadow: inset 0 0 0 1px #eef2f0;
+      font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.45;
+    }
+    .hb-fallback {
+      display: flex; align-items: center; gap: 6px;
+      padding: 12px 14px 8px;
+      font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.4;
+    }
+    .hb-fallback .thumb {
+      flex-shrink: 0; width: 18px; height: 18px; color: var(--brand);
+    }
+    .hb-fallback .thumb svg { display: block; width: 100%; height: 100%; }
+    .city-fallback-cards {
+      padding: 0 0 12px;
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .city-fallback-cards .card { margin-bottom: 12px; }
     .svc-map {
       position: relative; flex: 1; min-height: 280px; margin: 0 12px 12px;
       border-radius: 16px; overflow: hidden;
@@ -381,13 +459,14 @@
     }
     .hb-rec {
       display: flex; align-items: center; gap: 12px; text-align: left;
-      padding: 12px; border: none; border-radius: 14px;
+      /* 右侧预留与优选卡相同，避免优选卡更高/更宽 */
+      padding: 12px 28px 12px 12px; border: none; border-radius: 14px;
       background: #f7f9f8; width: 100%; font: inherit; cursor: pointer; color: var(--text);
       box-shadow: inset 0 0 0 1px #eef2f0;
       position: relative; overflow: hidden;
+      box-sizing: border-box;
     }
     .hb-rec.is-vip {
-      padding-right: 28px;
       background:
         radial-gradient(100% 90% at 0% 0%, rgba(24,193,160,.12), transparent 48%),
         linear-gradient(160deg, #eef8f5 0%, #ffffff 58%);
@@ -612,17 +691,20 @@
     .sort-chip.on .arr { color: var(--brand); }
 
     .card {
-      margin: 0 12px 12px; padding: 14px 14px 12px; background: var(--card);
+      margin: 0 12px 12px;
+      /* 右侧预留与优选卡相同，内容区宽度一致 */
+      padding: 14px 30px 12px 14px; background: var(--card);
       border-radius: 14px; cursor: pointer;
+      border: 1px solid transparent;
       box-shadow: 0 1px 0 rgba(0,0,0,.03);
       position: relative; overflow: hidden;
+      box-sizing: border-box;
     }
     .card.is-vip {
-      padding-right: 30px;
       background:
         radial-gradient(110% 95% at 0% 0%, rgba(24,193,160,.13), transparent 46%),
         linear-gradient(160deg, #eef8f5 0%, #ffffff 56%);
-      border: 1px solid rgba(24,193,160,.2);
+      border-color: rgba(24,193,160,.2);
       box-shadow:
         inset 3px 0 0 #18c1a0,
         0 4px 14px rgba(20, 140, 120, .07);
@@ -653,17 +735,6 @@
       width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
       background: #e8f7f5; display: block;
     }
-    .vip-badge {
-      position: absolute; top: -2px; left: -2px; z-index: 1;
-      width: 18px; height: 18px; border-radius: 50%;
-      background: linear-gradient(145deg, #ffb347, #ff7a18);
-      color: #fff; font-size: 10px; font-weight: 700;
-      display: grid; place-items: center;
-      box-shadow: 0 0 0 2px #fff, 0 2px 6px rgba(255, 122, 24, .35);
-      line-height: 1;
-    }
-    .avatar-wrap.lg .vip-badge { width: 22px; height: 22px; font-size: 11px; top: -1px; left: -1px; }
-    .avatar-wrap.sm .vip-badge { width: 16px; height: 16px; font-size: 9px; }
     .hot-badge {
       position: absolute; right: -3px; bottom: -3px; z-index: 2;
       width: 22px; height: 25px;
@@ -793,10 +864,35 @@
     }
 
     .hero {
-      display: flex; gap: 14px; padding: 18px 16px 16px;
+      display: flex; gap: 14px; padding: 18px 30px 16px 16px;
       background: linear-gradient(180deg, #f7fcfb 0%, #fff 70%);
       border-bottom: 8px solid var(--bg);
+      position: relative; overflow: hidden;
+      box-sizing: border-box;
     }
+    .hero.is-vip {
+      background:
+        radial-gradient(110% 95% at 0% 0%, rgba(24,193,160,.13), transparent 46%),
+        linear-gradient(160deg, #eef8f5 0%, #ffffff 70%);
+      box-shadow: inset 3px 0 0 #18c1a0;
+    }
+    .hero.is-vip::before {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none; opacity: .35;
+      background-image: radial-gradient(rgba(24,193,160,.2) 0.7px, transparent 0.8px);
+      background-size: 11px 11px;
+      mask-image: linear-gradient(115deg, rgba(0,0,0,.42), transparent 64%);
+    }
+    .hero.is-vip::after {
+      content: "优选";
+      position: absolute; right: 8px; top: 50%; z-index: 1;
+      transform: translateY(-50%);
+      writing-mode: vertical-rl;
+      font-size: 12px; font-weight: 700; letter-spacing: .48em;
+      color: rgba(20, 140, 120, .26);
+      line-height: 1; pointer-events: none; user-select: none;
+    }
+    .hero > * { position: relative; z-index: 1; }
     .hero h2 { font-size: 19px; font-weight: 700; }
     .stat-row {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
@@ -834,32 +930,19 @@
     .chip-list .chip.need {
       background: #eef8f5; color: var(--brand-dark); border-color: #d4efe8; font-weight: 600;
     }
-    .prefer-mark {
-      display: inline-flex; align-items: center;
-      font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
-      color: #0f8f78; background: #e0f5f0; border: 1px solid #b8e8df;
-      vertical-align: middle; margin-left: 2px;
-    }
     .hero-sub {
       margin-top: 6px; font-size: 12px; color: var(--text-2); line-height: 1.4;
     }
     .hero .name-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
     .hero .name-row h2 { margin: 0; }
     
-    .care-tabs {
-      display: flex; gap: 6px; margin: 2px 0 12px; padding: 3px;
-      background: #f3f6f5; border-radius: 10px;
+    .care-block { margin-top: 10px; }
+    .care-block:first-of-type { margin-top: 4px; }
+    .care-sub {
+      font-size: 12px; font-weight: 600; color: var(--text-2);
+      margin-bottom: 8px;
     }
-    .care-tabs button {
-      flex: 1; font: inherit; font-size: 12px; font-weight: 600;
-      padding: 8px 6px; border: none; border-radius: 8px;
-      background: transparent; color: var(--text-2); cursor: pointer;
-    }
-    .care-tabs button.on {
-      background: #fff; color: var(--brand-dark);
-      box-shadow: 0 1px 3px rgba(0,0,0,.06);
-    }
-    .care-pane { min-height: 36px; }
+    .care-block .chip-list { min-height: 28px; }
     .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     .card-tags .ctag {
       font-size: 11px; padding: 3px 8px; border-radius: 6px;
@@ -1083,10 +1166,13 @@
     #price-sheet .opt.on {
       border-color: #9ca3af; background: #f3f4f6; color: var(--text); font-weight: 600;
     }
+    #btn-skill.on,
+    #btn-skill,
     #btn-price.on,
     #btn-price {
       border-color: #e5e5e5; background: #fff; color: var(--text);
     }
+    #btn-skill.has-val,
     #btn-price.has-val {
       border-color: #d1d5db; background: #f9fafb; color: var(--text); font-weight: 600;
     }
@@ -1094,17 +1180,61 @@
       background: #f3f4f6; color: var(--text-2); border-color: #d1d5db;
     }
 
-    .region-cities-only {
-      max-height: 360px; overflow-y: auto; border-top: 1px solid var(--line);
+    #region-sheet .sheet.city-sheet { max-height: 86%; background: #f5f5f5; }
+    #region-sheet .sheet.city-sheet .sheet-hd { background: #fff; }
+    .city-picker {
+      position: relative; flex: 1; min-height: 0; overflow-y: auto;
+      padding: 8px 16px 20px; background: #f5f5f5;
     }
-    .region-cities-only button {
-      width: 100%; text-align: left; font: inherit; font-size: 14px;
-      padding: 14px 16px; border: none; border-bottom: 1px solid #f0f0f0;
-      background: #fff; cursor: pointer; color: var(--text);
-      display: flex; align-items: center; justify-content: space-between;
+    .city-picker .city-search {
+      display: flex; gap: 8px; align-items: center; margin-bottom: 12px;
     }
-    .region-cities-only button.on { color: var(--brand-dark); font-weight: 600; background: #f7faf9; }
-    .region-cities-only button.on::after { content: "✓"; color: var(--brand); font-weight: 700; }
+    .city-picker .city-search .box {
+      flex: 1; height: 36px; border: 1.5px solid var(--brand); border-radius: 8px;
+      display: flex; align-items: center; gap: 6px; padding: 0 10px;
+      background: #fff; color: #9aa0a6; font-size: 13px;
+    }
+    .city-picker .city-search .box svg { width: 14px; height: 14px; color: var(--brand); flex-shrink: 0; }
+    .city-picker .city-search .go {
+      height: 36px; padding: 0 14px; border: none; border-radius: 8px;
+      background: var(--brand); color: #fff; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .city-picker .city-now {
+      background: #fff; border-radius: 6px; padding: 12px 14px; margin-bottom: 14px;
+      font-size: 14px; color: var(--text);
+    }
+    .city-picker .city-now .lab { color: var(--muted); margin-right: 10px; }
+    .city-picker .sec-t {
+      font-size: 14px; font-weight: 600; color: var(--text); margin: 4px 0 10px;
+    }
+    .city-picker .hot {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 8px;
+    }
+    .city-picker .hot button {
+      height: 36px; border: 1px solid #ececec; border-radius: 6px; background: #fff;
+      font: inherit; font-size: 13px; color: var(--text); cursor: pointer; padding: 0 2px;
+    }
+    .city-picker .hot button.on {
+      border-color: var(--brand); color: var(--brand-dark); background: var(--brand-soft); font-weight: 600;
+    }
+    .city-picker .alpha-t {
+      margin: 14px 0 4px; font-size: 13px; font-weight: 700; color: var(--text);
+    }
+    .city-picker .alpha-list {
+      background: #fff; border-radius: 6px; padding: 0 14px; margin-right: 14px;
+    }
+    .city-picker .alpha-list button {
+      width: 100%; text-align: left; border: none; border-bottom: 1px solid #f0f0f0;
+      background: transparent; padding: 13px 0; font: inherit; font-size: 14px;
+      color: var(--text); cursor: pointer;
+    }
+    .city-picker .alpha-list button:last-child { border-bottom: none; }
+    .city-picker .alpha-list button.on { color: var(--brand-dark); font-weight: 600; }
+    .city-picker .idx {
+      position: absolute; right: 4px; top: 120px; width: 16px;
+      display: flex; flex-direction: column; align-items: center; gap: 1px;
+      font-size: 10px; color: var(--brand-dark); line-height: 1.35; pointer-events: none;
+    }
 
     #screen-help { background: #f7f8fa; }
     #screen-help .nav { background: #fff; }
@@ -1298,26 +1428,109 @@
     }
     .short-empty p { font-size: 13px; color: var(--muted); line-height: 1.55; margin-bottom: 16px; }
     .short-item {
-      margin: 0 12px 10px; padding: 14px; background: #fff; border-radius: 8px;
+      margin: 0 12px 10px; padding: 14px 28px 14px 14px; background: #fff; border-radius: 8px;
+      border: 1px solid transparent;
+      position: relative; overflow: hidden;
+      box-sizing: border-box;
     }
-    .short-item .row { display: flex; gap: 10px; align-items: flex-start; }
+    .short-item.is-vip {
+      background:
+        radial-gradient(110% 95% at 0% 0%, rgba(24,193,160,.13), transparent 46%),
+        linear-gradient(160deg, #eef8f5 0%, #ffffff 56%);
+      border-color: rgba(24,193,160,.2);
+      box-shadow: inset 3px 0 0 #18c1a0;
+    }
+    .short-item.is-vip::before {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none; opacity: .38;
+      background-image: radial-gradient(rgba(24,193,160,.2) 0.7px, transparent 0.8px);
+      background-size: 11px 11px;
+      mask-image: linear-gradient(115deg, rgba(0,0,0,.42), transparent 64%);
+    }
+    .short-item.is-vip::after {
+      content: "优选";
+      position: absolute; right: 6px; top: 50%; z-index: 1;
+      transform: translateY(-50%);
+      writing-mode: vertical-rl;
+      font-size: 11px; font-weight: 700; letter-spacing: .42em;
+      color: rgba(20, 140, 120, .26);
+      line-height: 1; pointer-events: none; user-select: none;
+    }
+    .short-item .row { display: flex; gap: 10px; align-items: flex-start; position: relative; z-index: 1; }
     .short-item .card-tags { margin-top: 6px; }
     .short-item .price-col { margin-left: auto; flex-shrink: 0; }
-    .short-item .acts { display: flex; gap: 8px; margin-top: 10px; }
+    .short-item .acts { display: flex; gap: 8px; margin-top: 10px; position: relative; z-index: 1; }
     .short-item .acts .btn { flex: 1; padding: 9px; font-size: 13px; }
+    .short-item.is-unavailable,
+    .replace-pick.is-unavailable {
+      background: #f0f0f0 !important;
+      border-color: #e4e4e4 !important;
+      box-shadow: none !important;
+      opacity: .92;
+      filter: grayscale(.35);
+    }
+    .short-item.is-unavailable.is-vip::before,
+    .short-item.is-unavailable.is-vip::after,
+    .replace-pick.is-unavailable.is-vip::before,
+    .replace-pick.is-unavailable.is-vip::after { opacity: .2; }
+    .tag.st-unavailable { background: #ebebeb; color: #888; }
+    .short-item.is-unavailable .acts .btn:not([data-remove]) {
+      pointer-events: none; opacity: .4;
+    }
+    .short-item.is-unavailable .contact-trash {
+      position: absolute; left: 50%; top: 50%; z-index: 3;
+      transform: translate(-50%, -50%);
+      width: 44px; height: 44px; border: none; border-radius: 50%;
+      background: rgba(0,0,0,.55); color: #fff; cursor: pointer;
+      display: grid; place-items: center; padding: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,.18);
+    }
+    .short-item.is-unavailable .contact-trash svg { width: 20px; height: 20px; fill: currentColor; }
+    .short-item.is-unavailable .contact-trash:active { transform: translate(-50%, -50%) scale(.96); }
+    .mine-filter .chip-clean {
+      margin-left: auto; color: var(--brand); border-color: rgba(24,193,160,.35); background: #f3fbf9;
+    }
+    .mine-filter .chip-clean[hidden] { display: none !important; }
     .tag.st-none { background: #f5f5f5; color: var(--muted); }
     .tag.st-called { background: #e8f4ff; color: #3b7ddd; }
     .tag.st-adopted { background: #fff3e8; color: var(--orange); }
     .replace-pick {
       width: 100%; display: flex; gap: 10px; align-items: center; text-align: left;
-      padding: 12px; margin-bottom: 8px; border: 1px solid #e8e8e8; border-radius: 8px;
+      padding: 12px 28px 12px 12px; margin-bottom: 8px; border: 1px solid #e8e8e8; border-radius: 8px;
       background: #fff; cursor: pointer; font: inherit;
+      position: relative; overflow: hidden;
+      box-sizing: border-box;
+    }
+    .replace-pick.is-vip {
+      background:
+        radial-gradient(110% 95% at 0% 0%, rgba(24,193,160,.13), transparent 46%),
+        linear-gradient(160deg, #eef8f5 0%, #ffffff 56%);
+      border-color: rgba(24,193,160,.28);
+      box-shadow: inset 3px 0 0 #18c1a0;
+    }
+    .replace-pick.is-vip::before {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none; opacity: .38;
+      background-image: radial-gradient(rgba(24,193,160,.2) 0.7px, transparent 0.8px);
+      background-size: 11px 11px;
+      mask-image: linear-gradient(115deg, rgba(0,0,0,.42), transparent 64%);
+    }
+    .replace-pick.is-vip::after {
+      content: "优选";
+      position: absolute; right: 6px; top: 50%; z-index: 1;
+      transform: translateY(-50%);
+      writing-mode: vertical-rl;
+      font-size: 11px; font-weight: 700; letter-spacing: .42em;
+      color: rgba(20, 140, 120, .26);
+      line-height: 1; pointer-events: none; user-select: none;
     }
     .replace-pick:active { background: var(--brand-soft); border-color: var(--brand); }
-    .replace-pick .info { flex: 1; min-width: 0; }
+    .replace-pick.is-vip:active { background: #e8f6f2; }
+    .replace-pick .info { flex: 1; min-width: 0; position: relative; z-index: 1; }
     .replace-pick .nm { font-size: 14px; font-weight: 600; }
     .replace-pick .card-tags { margin-top: 6px; }
-    .replace-pick .price-col { flex-shrink: 0; }
+    .replace-pick .price-col { flex-shrink: 0; position: relative; z-index: 1; }
+    .replace-pick .avatar-wrap { position: relative; z-index: 1; }
 
     .modal-box { padding: 8px 4px 4px; }
     .modal-box p { font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 12px; }
@@ -1336,12 +1549,13 @@
     }
 
     .toast {
-      position: absolute; left: 50%; bottom: 96px; transform: translateX(-50%) translateY(8px);
+      position: absolute; left: 50%; top: 50%; bottom: auto;
+      transform: translate(-50%, calc(-50% + 8px));
       background: rgba(0,0,0,.78); color: #fff; font-size: 13px; padding: 10px 14px;
       border-radius: 8px; opacity: 0; pointer-events: none; transition: .2s; z-index: 30;
       max-width: 86%; text-align: center; white-space: normal;
     }
-    .toast.show { opacity: 1; transform: translateX(-50%); }
+    .toast.show { opacity: 1; transform: translate(-50%, -50%); }
 
   </style>
 </head>
@@ -1377,6 +1591,13 @@
     <div class="phone" id="screen-list" data-phone>
       <div class="status-bar"><span>9:41</span><span>▌▌▌ 100%</span></div>
       <div class="nav nav-list">
+        <button type="button" class="home-mark" id="btn-home" aria-label="返回首页">
+          <span class="disc" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3.2 3.2 11v10h6.1v-6.6h5.4V21h6.1V11L12 3.2z"/>
+            </svg>
+          </span>
+        </button>
         <button type="button" class="back" id="list-back">‹</button>
         <h1 id="list-title">包月服务</h1>
         <button type="button" class="region-nav" id="btn-region">
@@ -1398,7 +1619,7 @@
 
       <div class="home-scroll" id="home-scroll">
         <div class="filter-heavy" id="filter-heavy">
-          <div class="fh-title">想找什么样的护工？</div>
+          <div class="fh-title">想找什么样的护理员？</div>
           <button type="button" class="fh-row" id="fh-skill">
             <span class="k">病症</span>
             <span class="v empty" id="fh-skill-v">请选择病症</span>
@@ -1419,19 +1640,7 @@
 
       <div class="filter-normal">
         <div class="filter-bar">
-          <div class="dd" id="dd-skill">
-            <button type="button" class="dd-btn" id="btn-skill">病症 <span>▾</span></button>
-            <div class="dd-menu" id="menu-skill">
-              <button type="button" data-v="不限" aria-selected="true">不限</button>
-              <button type="button" data-v="行动不便/中风/帕金森">行动不便/中风/帕金森</button>
-              <button type="button" data-v="老年痴呆">老年痴呆</button>
-              <button type="button" data-v="骨科/骨折术后">骨科/骨折术后</button>
-              <button type="button" data-v="长期卧床">长期卧床</button>
-              <button type="button" data-v="使用轮椅">使用轮椅</button>
-              <button type="button" data-v="大小便失禁">大小便失禁</button>
-              <button type="button" data-v="癌症／肿瘤">癌症／肿瘤</button>
-            </div>
-          </div>
+          <button type="button" class="more-btn" id="btn-skill">病症</button>
           <button type="button" class="more-btn" id="btn-price">价格</button>
           <button type="button" class="more-btn" id="btn-more">更多</button>
         </div>
@@ -1448,6 +1657,7 @@
           <button type="button" class="chip on" data-mine-f="all">全部</button>
           <button type="button" class="chip" data-mine-f="called">已拨打</button>
           <button type="button" class="chip" data-mine-f="adopted">已采用</button>
+          <button type="button" class="chip chip-clean" id="btn-clean-invalid" hidden>清理失效</button>
         </div>
       </div>
 
@@ -1469,14 +1679,13 @@
       </div>
 
       <div class="sheet-mask" id="region-sheet">
-        <div class="sheet">
+        <div class="sheet city-sheet">
           <div class="handle"></div>
           <div class="sheet-hd">
-            <h2>选择地区</h2>
+            <h2>选择城市</h2>
             <button type="button" class="close" data-close="region-sheet">×</button>
           </div>
-          <p class="sub">定位精确到市，选定后看该市人选</p>
-          <div class="region-cities-only" id="region-cities"></div>
+          <div class="city-picker" id="region-cities"></div>
         </div>
       </div>
 
@@ -1550,7 +1759,7 @@
             <h2>更多筛选</h2>
             <button type="button" class="close" data-close="more-sheet">×</button>
           </div>
-          <p class="sub" id="more-sub">性别、年龄、是否持证、身高</p>
+          <p class="sub" id="more-sub">性别、年龄、是否持有健康证、身高</p>
           <div class="sheet-body">
             <div class="field">
               <label>性别</label>
@@ -1571,11 +1780,11 @@
               </div>
             </div>
             <div class="field" id="field-level-more">
-              <label>是否持证</label>
+              <label>是否持有健康证</label>
               <div class="opts" id="opt-level">
                 <button type="button" class="opt on" data-v="不限">不限</button>
-                <button type="button" class="opt" data-v="持证">持证</button>
-                <button type="button" class="opt" data-v="未持证">未持证</button>
+                <button type="button" class="opt" data-v="持有">持有</button>
+                <button type="button" class="opt" data-v="未持有">未持有</button>
               </div>
             </div>
             <div class="field">
@@ -1620,7 +1829,7 @@
               </div>
             </div>
             <div class="pay-note">
-              同一护工仅<strong>首次拨打</strong>消耗 1 次；未接通可再拨或联系客服。
+              同一护理员仅<strong>首次拨打</strong>消耗 1 次；未接通可再拨。多次未接通可联系客服，确认后补偿通话次数。
             </div>
           </div>
           <div class="sheet-actions">
@@ -1630,9 +1839,9 @@
       </div>
 
       <div class="toast" id="list-toast"></div>
-      <button type="button" class="mine-fab" id="btn-mine-entry" aria-label="我的">
-        <span class="lab">我的</span>
-        <span class="mine-nav-count" id="mine-nav-badge">0</span>
+      <button type="button" class="mine-fab" id="btn-mine-entry" aria-label="备选 0/3">
+        <span class="lab">备选</span>
+        <span class="mine-nav-count" id="mine-nav-badge">0/3</span>
       </button>
     </div>
 
@@ -1673,14 +1882,12 @@
 
         <div class="section">
           <h3>照护能力</h3>
-          <div class="care-tabs" id="d-care-tabs" role="tablist">
-            <button type="button" class="on" data-care-tab="exp">照护经验</button>
-            <button type="button" data-care-tab="skill">照护技能</button>
-          </div>
-          <div class="care-pane on" id="d-pane-exp">
+          <div class="care-block">
+            <div class="care-sub">照护经验</div>
             <div class="chip-list" id="d-care-exp"></div>
           </div>
-          <div class="care-pane" id="d-pane-skill" hidden>
+          <div class="care-block">
+            <div class="care-sub">照护技能</div>
             <div class="chip-list" id="d-care-skills"></div>
             <button type="button" class="care-more" id="d-care-skills-more" hidden>展开全部</button>
           </div>
@@ -1700,7 +1907,7 @@
 
         <div class="boundary">
           <div class="t">服务与责任说明</div>
-          平台提供信息展示与电话沟通，不介入包月签约与履约结算。采用仅为你的个人状态记录，不代表签约，也不影响护工对外展示。
+          平台提供信息展示与电话沟通，不介入包月签约与履约结算。标记采用后，该护理员不再出现在其他用户的找人列表；护理员会收到通知，24 小时后可自行解锁，未操作则最长锁定 30 天。采用不代表平台签约。
         </div>
       </div>
 
@@ -1721,7 +1928,7 @@
             <div class="cert-view">
               <h4 id="cert-name">健康证</h4>
               <div class="meta" id="cert-meta"></div>
-              <div class="cert-wm">仅供护工服务签约参考<br />禁止他用</div>
+              <div class="cert-wm">仅供护理员服务签约参考<br />禁止他用</div>
             </div>
           </div>
         </div>
@@ -1731,23 +1938,6 @@
           <div class="handle"></div>
           <div class="sheet-hd"><h2 id="verify-title">认证说明</h2><button type="button" class="close" data-close="verify-sheet">×</button></div>
           <div class="sheet-body" id="verify-body" style="font-size:13px;color:var(--text-2);line-height:1.7"></div>
-        </div>
-      </div>
-
-      <div class="sheet-mask" id="adopt-sheet">
-        <div class="sheet">
-          <div class="handle"></div>
-          <div class="sheet-hd"><h2>沟通得如何？</h2><button type="button" class="close" data-close="adopt-sheet">×</button></div>
-          <div class="sheet-body modal-box">
-            <p>是否将「<strong id="adopt-name">—</strong>」标记为采用？</p>
-            <div class="warn">
-              采用仅为你的个人记录，可同时标记多位；之后也可在详情或联系记录中补标记。
-            </div>
-          </div>
-          <div class="sheet-actions">
-            <button type="button" class="btn ghost" id="btn-adopt-no">暂不</button>
-            <button type="button" class="btn primary" id="btn-adopt-yes">标记采用</button>
-          </div>
         </div>
       </div>
 
@@ -1772,7 +1962,7 @@
               </div>
             </div>
             <div class="pay-note">
-              同一护工仅<strong>首次拨打</strong>消耗 1 次；未接通可再拨或联系客服。
+              同一护理员仅<strong>首次拨打</strong>消耗 1 次；未接通可再拨。多次未接通可联系客服，确认后补偿通话次数。
             </div>
           </div>
           <div class="sheet-actions">
@@ -1782,6 +1972,28 @@
       </div>
 
       <div class="toast" id="detail-toast"></div>
+      <button type="button" class="mine-fab" id="btn-mine-entry-detail" aria-label="备选 0/3">
+        <span class="lab">备选</span>
+        <span class="mine-nav-count" id="mine-nav-badge-detail">0/3</span>
+      </button>
+    </div>
+
+    <!-- 沟通得如何：全局浮层（详情 / 我的 · 备选 / 已联系均可） -->
+    <div class="sheet-mask" id="adopt-sheet">
+      <div class="sheet">
+        <div class="handle"></div>
+        <div class="sheet-hd"><h2>沟通得如何？</h2><button type="button" class="close" data-close="adopt-sheet">×</button></div>
+        <div class="sheet-body modal-box">
+          <p>是否将「<strong id="adopt-name">—</strong>」标记为采用？</p>
+          <div class="warn">
+            标记后该护理员不再出现在其他用户的找人列表；护理员会收到通知，24 小时后可自行解锁，未操作则最长锁定 30 天。可同时标记多位，之后也可补标记。
+          </div>
+        </div>
+        <div class="sheet-actions">
+          <button type="button" class="btn ghost" id="btn-adopt-no">暂不</button>
+          <button type="button" class="btn primary" id="btn-adopt-yes">标记采用</button>
+        </div>
+      </div>
     </div>
 
     <!-- 备选已满：替换人选（全局浮层，详情/列表都可见） -->
@@ -1794,6 +2006,21 @@
         </div>
         <p class="sub">选择要替换掉的人选（最多 3 人）</p>
         <div class="sheet-body" id="replace-body"></div>
+      </div>
+    </div>
+
+    <!-- 次数耗光再买：确认层（全局，列表/详情/我的都可见） -->
+    <div class="sheet-mask" id="repurchase-sheet">
+      <div class="sheet">
+        <div class="handle"></div>
+        <div class="sheet-hd"><h2>通话次数已用完</h2><button type="button" class="close" data-close="repurchase-sheet">×</button></div>
+        <div class="sheet-body modal-box">
+          <p>当前通话次数已用完，是否再次购买通话包？</p>
+        </div>
+        <div class="sheet-actions">
+          <button type="button" class="btn ghost" id="btn-repurchase-no">取消</button>
+          <button type="button" class="btn primary" id="btn-repurchase-yes">再次购买</button>
+        </div>
       </div>
     </div>
 
@@ -1842,10 +2069,14 @@
 
   <script>
     const LEVELS = ["一级护理员", "二级护理员", "三级护理员", "四级护理员", "五级护理员"];
-    const CITIES = ["上海市", "杭州市", "苏州市"];
+    const CITY_HOT = ["上海市", "北京市", "南京市", "深圳市", "广州市", "济南市", "武汉市", "成都市"];
+    const CITY_ALPHA = {
+      A: ["阿拉善盟", "鞍山市", "安庆市", "安阳市", "阿坝藏族羌族自治州", "阿克苏地区", "阿勒泰地区", "阿拉尔市"]
+    };
+    const CITIES = [...CITY_HOT, ...Object.values(CITY_ALPHA).flat()];
     const VERIFY_INFO = {
       "健康证": "由平台核验护理人员提交的有效健康证明材料。",
-      "护工证": "由平台核验护理人员护工相关资格证明。",
+      "护理员证": "由平台核验护理员相关资格证明。",
       "执业护士资格": "由平台核验相关执业资格材料。"
     };
     const CERTS = {
@@ -1854,7 +2085,7 @@
         validFrom: "2025-03-12", validTo: "2026-03-11",
         org: "上海市黄浦区疾控中心"
       },
-      "护工证": { holder: "张敏", no: "护工证 3101****2288", issue: "2023-06-18", org: "上海市人社局" },
+      "护理员证": { holder: "张敏", no: "护理员证 3101****2288", issue: "2023-06-18", org: "上海市人社局" },
       "养老护理员证": { holder: "张敏", no: "护员证 3101****4412", issue: "2023-08-01", org: "上海市人社局" },
       "急救证": { holder: "张敏", no: "红会急救 2024****0933", issue: "2024-11-20", org: "上海市红十字会" }
     };
@@ -1901,17 +2132,13 @@
       const arr = Array.isArray(raw) ? raw : (raw && raw !== "不限" ? [raw] : []);
       return arr.filter((s) => s && s !== "不限");
     }
-    function hasCareCert(p) {
-      return (p.verify || []).includes("护工证");
+    function hasHealthCert(p) {
+      return (p.verify || []).includes("健康证");
     }
     const CERT_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 4h8a2 2 0 0 1 2 2v14l-3-1.5L12 21l-3-1.5L6 20V6a2 2 0 0 1 2-2z"/><path d="M9 9h6M9 13h6"/></svg>`;
     function certMarkHTML(p) {
-      if (!hasCareCert(p)) return "";
-      return `<span class="cert-mark">${CERT_ICON}持证</span>`;
-    }
-    function preferMarkHTML(p) {
-      if (!isVip(p)) return "";
-      return `<span class="prefer-mark">优选</span>`;
+      if (!hasHealthCert(p)) return "";
+      return `<span class="cert-mark">${CERT_ICON}健康证</span>`;
     }
     function cityLineHTML(p) {
       const city = cityShort(p.city || quick.city || "");
@@ -1984,7 +2211,7 @@
       return "根据你的历史关注优先推荐";
     }
     function homeFirstTip() {
-      return "附近口碑较好的认证护工，可先了解再沟通";
+      return "附近口碑较好的认证护理员，可先了解再沟通";
     }
     function homeFirstExpTags(p) {
       return careProfile(p).exp.slice(0, 2).map((s) =>
@@ -2025,13 +2252,12 @@
           <div class="prc"><div class="n">¥${p.monthly}</div><div class="u">/月 参考价</div></div>
         </button>`;
     }
-    function homeRecommendList() {
+    function homeRecommendList(city) {
       const first = isFirstPersona();
       const hist = first ? [] : recentSkills;
-      // 非初次首页推荐不跟上方筛选，只限同城；筛选条件留给「查看人选」
-      const pool = first
-        ? baseFilter(people)
-        : people.filter((p) => matchRegion(p, quick.city));
+      const region = city || quick.city;
+      // 首页推荐只限指定城市；病症/预算留给「查看人选」
+      const pool = people.filter((p) => matchRegion(p, region));
       const score = (p) => {
         let s = 0;
         const skills = p.skills || [];
@@ -2085,7 +2311,7 @@
         skills:["行动不便/中风/帕金森","骨科/骨折术后","长期卧床"], education:"高中/中专", languages:["普通话","上海话"],
         intro:"做过多年中风与术后康复护理，做事细心，能配合家属作息。希望用专业和耐心照顾好老人。",
         city:"上海市", district:"黄浦区", area:"上海市黄浦区",
-        verify:["健康证","护工证"], monthly:8800, avatar:"张", realName:"张敏",
+        verify:["健康证","护理员证"], monthly:8800, avatar:"张", realName:"张敏",
         phone:"13812346621", vip:3999, locked:false, hasVideo:true },
       { id:2, alias:"李芳", gender:"女", level:"三级护理员", age:42, years:8,
         skills:["骨科/骨折术后","使用轮椅"], education:"大专", languages:["普通话","英语"],
@@ -2097,13 +2323,13 @@
         skills:["长期卧床","大小便失禁"], education:"高中/中专", languages:["普通话"],
         intro:"体力较好，适合长期卧床老人的搬动与日常护理，态度踏实。",
         city:"上海市", district:"浦东新区", area:"上海市浦东新区",
-        verify:["健康证","护工证"], monthly:5800, avatar:"王", realName:"王建国",
+        verify:["健康证","护理员证"], monthly:5800, avatar:"王", realName:"王建国",
         phone:"13711112222", vip:999, locked:false },
       { id:4, alias:"陈晓燕", gender:"女", level:"五级护理员", age:39, years:10,
         skills:["癌症／肿瘤","骨科/骨折术后","行动不便/中风/帕金森"], education:"大专", languages:["普通话","上海话","英语"],
         intro:"肿瘤陪护与术后照护经验丰富，能用普通话和简单英语沟通，方便家属远程了解情况。",
         city:"上海市", district:"静安区", area:"上海市静安区",
-        verify:["健康证","护工证"], monthly:9800, avatar:"陈", realName:"陈晓燕",
+        verify:["健康证","护理员证"], monthly:9800, avatar:"陈", realName:"陈晓燕",
         phone:"13688889999", vip:3999, locked:false, hasVideo:true },
       { id:5, alias:"赵丽", gender:"女", level:"一级护理员", age:52, years:6,
         skills:["老年痴呆"], education:"初中", languages:["普通话","苏州话"],
@@ -2115,13 +2341,13 @@
         skills:["行动不便/中风/帕金森","骨科/骨折术后"], education:"高中/中专", languages:["普通话","上海话"],
         intro:"中风与骨折护理都做过，作息规律，能接受住家沟通。",
         city:"上海市", district:"浦东新区", area:"上海市浦东新区",
-        verify:["健康证","护工证"], monthly:7600, avatar:"孙", realName:"孙伟",
+        verify:["健康证","护理员证"], monthly:7600, avatar:"孙", realName:"孙伟",
         phone:"15833334444", vip:999, locked:false },
       { id:7, alias:"周敏", gender:"女", level:"四级护理员", age:46, years:11,
         skills:["行动不便/中风/帕金森","老年痴呆"], education:"高中/中专", languages:["普通话","上海话"],
         intro:"长期做中风与认知症照护，熟悉翻身拍背等日常护理，性格温和。",
         city:"上海市", district:"长宁区", area:"上海市长宁区",
-        verify:["健康证","护工证"], monthly:7500, avatar:"周", realName:"周敏",
+        verify:["健康证","护理员证"], monthly:7500, avatar:"周", realName:"周敏",
         phone:"13122223333", vip:3999, locked:false },
       { id:8, alias:"吴倩", gender:"女", level:"三级护理员", age:40, years:7,
         skills:["骨科/骨折术后","使用轮椅"], education:"大专", languages:["普通话"],
@@ -2133,13 +2359,13 @@
         skills:["长期卧床","使用轮椅"], education:"高中/中专", languages:["普通话"],
         intro:"负责长期卧床与轮椅照护，力气足，做事干脆。",
         city:"上海市", district:"闵行区", area:"上海市闵行区",
-        verify:["健康证","护工证"], monthly:6200, avatar:"郑", realName:"郑强",
+        verify:["健康证","护理员证"], monthly:6200, avatar:"郑", realName:"郑强",
         phone:"13377778888", vip:999, locked:false },
       { id:10, alias:"冯静", gender:"女", level:"四级护理员", age:45, years:9,
         skills:["癌症／肿瘤","大小便失禁"], education:"本科", languages:["普通话","英语"],
         intro:"有医院陪护与居家照护经验，表达清楚，方便家属远程沟通。",
         city:"上海市", district:"虹口区", area:"上海市虹口区",
-        verify:["健康证","护工证"], monthly:8200, avatar:"冯", realName:"冯静",
+        verify:["健康证","护理员证"], monthly:8200, avatar:"冯", realName:"冯静",
         phone:"13455556666", vip:3999, locked:false, hasVideo:true }
     ];
 
@@ -2172,8 +2398,8 @@
           education: EDU_OPTS[i % EDU_OPTS.length],
           languages: LANG_POOL[i % LANG_POOL.length],
           intro: `从事照护 ${3 + (i % 10)} 年，认真负责，可根据家属需求沟通照护安排。`,
-          city: "上海市", district: dist, area: `上海市${dist}`,
-          verify: i % 3 === 0 ? ["健康证", "护工证"] : ["健康证"],
+          city: CITY_HOT[i % CITY_HOT.length], district: dist, area: `${CITY_HOT[i % CITY_HOT.length]}${dist}`,
+          verify: i % 3 === 0 ? ["健康证", "护理员证"] : ["健康证"],
           monthly: 5000 + (i % 10) * 400,
           avatar: n.realName[0],
           phone: `139${String(10000000 + i * 111).slice(0, 8)}`,
@@ -2277,12 +2503,12 @@
       quick.priceMin = PRICE_LO;
       quick.priceMax = PRICE_HI;
     }
-    // 外扩演示：不设病症/预算，用性别+年龄+持证压出很少/0 命中
+    // 外扩演示：不设病症/预算，用性别+年龄+健康证压出很少/0 命中
     function applyExpandDemoFilters() {
       clearHomeFilters();
       quick.gender = "男";
       more.age = "55以上";
-      quick.cert = "持证";
+      quick.cert = "持有";
     }
     let draftPrice = { min: PRICE_LO, max: PRICE_HI };
     let wiz = {
@@ -2292,18 +2518,22 @@
     let wizStep = 0;
     let matchFilters = null;
     let callCredits = 0;
+    let hasBoughtCallPack = false; // 是否买过通话包（区分首购 / 次数耗光再买）
     let revealed = {}; // id -> timestamp(ms); 90 天内视为已拨打有效
-    let shortlist = []; // ids max 3
+    let shortlist = [1]; // 演示：张敏在备选且失效，可看置灰
     let pendingReplaceId = null;
     let adoptedIds = { 1: true }; // 演示：已采纳过张敏
+    let unavailableIds = { 1: true }; // 演示：张敏下架/失效，已联系里可见置灰+垃圾桶
+    let dismissedContactIds = {}; // 已联系里手动清掉的失效记录（不取消采用）
     let pendingCallId = null;
+    const TRASH_ICON = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2zm1 6h2v9h-2V9zm4 0h2v9h-2V9zM7 9h2v9H7V9zm-1 12h12a1 1 0 0 0 1-1V7H5v13a1 1 0 0 0 1 1z"/></svg>`;
 
     const specs = {
       list: { title: "人员列表", id: "P01",
         html: `<dt>首页</dt><dd>重筛选仅病症/预算；未下单下方地图，已下单下方推荐。</dd>
           <dt>结果</dt><dd>点「查看人选」后改为轻量吸顶筛选（病症/价格/更多）+ 列表，筛选占比收小。</dd>` },
-      help: { title: "帮我找护工", id: "P01b",
-        html: `<dt>入口</dt><dd>列表「帮我找护工」；病症、预算必填，可再选更看重哪一点。定位仅到市。</dd>` },
+      help: { title: "帮我找护理员", id: "P01b",
+        html: `<dt>入口</dt><dd>列表「帮我找护理员」；病症、预算必填，可再选更看重哪一点。定位仅到市。</dd>` },
       match: { title: "推荐结果", id: "P01c",
         html: `<dt>推荐列表</dt><dd>硬过滤后按偏好排序，全量分页；顶部轻筛选吸顶同步条件。</dd>` },
       mine: { title: "我的", id: "P01d",
@@ -2312,21 +2542,27 @@
           <dt>已联系</dt><dd>已拨打或已采用；详情 / 采用 / 再拨打；可筛全部/已拨打/已采用。</dd>` },
       detail: { title: "人员详情", id: "P02",
         html: `<dt>拨打</dt><dd>无次数时底部抽屉购买；已拨打可再次拨打不扣次。</dd>
-          <dt>采用</dt><dd>个人状态记录，可多人、不锁定；已拨打后可在详情/备选/我的补标记。</dd>` },
+          <dt>采用</dt><dd>已拨打后可标记；可多人；采用后对他人隐藏，护理员可 24h 后解锁，最长 30 天。</dd>` },
     };
 
     function $(id) { return document.getElementById(id); }
     function toast(id, msg) {
-      const el = $(id); el.textContent = msg; el.classList.add("show");
-      clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("show"), 1800);
+      const el = $(id);
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(el._t);
+      el._t = setTimeout(() => el.classList.remove("show"), 1800);
+    }
+    function activeToastId() {
+      return $("screen-detail").classList.contains("active") ? "detail-toast" : "list-toast";
     }
     function maskPhone(p) { return p.slice(0, 3) + "****" + p.slice(-4); }
     function person(id) { return people.find((x) => x.id === id); }
     function displayName(p) { return p.realName || p.alias; }
     function avatarHTML(p, size) {
       const cls = size ? `avatar-wrap ${size}` : "avatar-wrap";
-      const vipBadge = isVip(p) ? `<span class="vip-badge">优</span>` : "";
-      return `<div class="${cls}"><img class="avatar-img" src="${p.photo}" alt="" />${vipBadge}</div>`;
+      return `<div class="${cls}"><img class="avatar-img" src="${p.photo}" alt="" /></div>`;
     }
     function diseaseTagsHTML(p, limit = 2) {
       const prefer = skillList();
@@ -2352,6 +2588,28 @@
       return `¥${quick.priceMin}–${quick.priceMax}`;
     }
     function isAdopted(id) { return !!adoptedIds[id]; }
+    function isUnavailable(id) { return !!unavailableIds[id]; }
+    function dismissContactRecord(id) {
+      dismissedContactIds[id] = true;
+      refreshActionPanels();
+      updateCreditsUI();
+      toast(activeToastId(), "已删除");
+    }
+    function cleanInvalidContacts() {
+      const ids = mineIds("all").filter((id) => isUnavailable(id));
+      if (!ids.length) return;
+      ids.forEach((id) => { dismissedContactIds[id] = true; });
+      refreshActionPanels();
+      updateCreditsUI();
+      toast(activeToastId(), "已清理失效人选");
+    }
+    function syncCleanInvalidBtn() {
+      const btn = $("btn-clean-invalid");
+      if (!btn) return;
+      const show = mineMode && mineTab === "contact"
+        && mineIds(mineFilter).some((id) => isUnavailable(id));
+      btn.hidden = !show;
+    }
     function cityShort(city) {
       return (city || "").replace(/市$/, "") || city || "";
     }
@@ -2383,10 +2641,11 @@
       if (!t) return false;
       return Date.now() - t < REVEAL_DAYS * 24 * 60 * 60 * 1000;
     }
+    // 与 PRD 10.5 / 10.6：未拨打且未采用不展示状态标签（无「未联系」）
     function contactStatus(id) {
       if (isAdopted(id)) return { text: "已采用", cls: "st-adopted" };
       if (isRevealActive(id)) return { text: "已拨打", cls: "st-called" };
-      return { text: "未联系", cls: "st-none" };
+      return null;
     }
 
     function mineIds(filter = "all") {
@@ -2397,7 +2656,7 @@
       Object.keys(adoptedIds).forEach((id) => {
         if (adoptedIds[id]) ids.add(+id);
       });
-      let list = [...ids].filter((id) => person(id));
+      let list = [...ids].filter((id) => person(id) && !dismissedContactIds[id]);
       if (filter === "called") list = list.filter((id) => isRevealActive(id));
       if (filter === "adopted") list = list.filter((id) => isAdopted(id));
       return list.sort((a, b) => {
@@ -2409,11 +2668,18 @@
     function updateCreditsUI() {
       const n = shortlist.length;
       const mn = mineIds("all").length;
-      const total = n + mn;
-      const entry = $("btn-mine-entry");
-      const badge = $("mine-nav-badge");
-      entry.classList.toggle("has-items", total > 0);
-      badge.textContent = total > 99 ? "99+" : String(total);
+      // 悬浮球：列表 + 详情各一颗，备选 + n/3；点进仍是「我的」
+      [
+        ["btn-mine-entry", "mine-nav-badge"],
+        ["btn-mine-entry-detail", "mine-nav-badge-detail"],
+      ].forEach(([eid, bid]) => {
+        const entry = $(eid);
+        const badge = $(bid);
+        if (!entry || !badge) return;
+        entry.classList.toggle("has-items", n > 0);
+        badge.textContent = `${n}/${SHORTLIST_MAX}`;
+        entry.setAttribute("aria-label", `备选 ${n}/${SHORTLIST_MAX}`);
+      });
       const favN = $("tab-fav-n");
       const contactN = $("tab-contact-n");
       if (favN) favN.textContent = String(n);
@@ -2424,10 +2690,12 @@
       if (!mineMode) return;
       if (mineTab === "fav") renderShortlistPanel();
       else renderMinePanel();
+      syncCleanInvalidBtn();
     }
 
     function baseFilter(list) {
       return list.filter((p) => {
+        if (isUnavailable(p.id)) return false;
         if (matchFilters) {
           if (!matchRegion(p, matchFilters.city)) return false;
           if (matchFilters.skill && !skillHit(p, matchFilters.skill)) return false;
@@ -2444,8 +2712,8 @@
           if (p.monthly < quick.priceMin || p.monthly > quick.priceMax) return false;
           if (quick.gender !== "不限" && p.gender !== quick.gender) return false;
         }
-        if (quick.cert === "持证" && !hasCareCert(p)) return false;
-        if (quick.cert === "未持证" && hasCareCert(p)) return false;
+        if (quick.cert === "持有" && !hasHealthCert(p)) return false;
+        if (quick.cert === "未持有" && hasHealthCert(p)) return false;
         if (more.age === "55以上") {
           if (p.age < 55) return false;
         } else if (more.age !== "不限") {
@@ -2573,7 +2841,12 @@
           label: more.age === "55以上" ? "55岁以上" : more.age.replace("-", "–") + "岁"
         });
       }
-      if (quick.cert !== "不限") items.push({ key: "cert", value: "", label: quick.cert });
+      if (quick.cert !== "不限") {
+        const certLab = quick.cert === "持有" ? "持有健康证"
+          : quick.cert === "未持有" ? "未持有健康证"
+          : quick.cert;
+        items.push({ key: "cert", value: "", label: certLab });
+      }
       if (more.height !== "不限") {
         // 身高：直接展示所选档位文案
         items.push({ key: "height", value: "", label: more.height.replace("-", "–") });
@@ -2660,6 +2933,35 @@
     }
 
     const THUMB_ICON = `<span class="exp-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14.6 8.5V4.2c0-1.5-1.2-2.7-2.7-2.7-.4 0-.8.1-1.1.3L7.2 8.5H3.5C2.1 8.5 1 9.6 1 11v8c0 1.4 1.1 2.5 2.5 2.5h12.3c1.2 0 2.2-.8 2.4-2l1.6-8.2c.3-1.5-.9-2.8-2.4-2.8h-2.8zM6 19.5H3.5c-.3 0-.5-.2-.5-.5v-8c0-.3.2-.5.5-.5H6v9z"/></svg></span>`;
+    const THUMB_FALLBACK = `<svg class="thumb" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 20h3V9H2v11zm19.83-8.17c.18-.41.17-.88-.03-1.28A1.99 1.99 0 0 0 20 9h-5.72l.86-4.13.03-.32c0-.41-.17-.79-.44-1.06L14.17 2 7.59 8.59C7.22 8.95 7 9.45 7 10v8c0 1.1.9 2 2 2h8c.78 0 1.48-.45 1.83-1.12l3.02-7.05c.09-.23.13-.47.13-.72 0-.17-.02-.34-.07-.5z"/></svg>`;
+
+    function listCity() {
+      if (matchFilters && matchFilters.city) return matchFilters.city;
+      return quick.city || "上海市";
+    }
+
+    function cityHasPeople(city = listCity()) {
+      return people.some((p) => matchRegion(p, city));
+    }
+
+    function cityEmptyHintHTML() {
+      return `<div class="hb-empty">当前城市暂无护理员，可换个城市看看</div>`;
+    }
+
+    /** 同城无人时挂上海推荐；list=结果页用列表卡，home=首页用推荐卡 */
+    function shanghaiRecommendBlockHTML(mode = "home") {
+      if (listCity() === "上海市") return "";
+      const shRecs = homeRecommendList("上海市");
+      if (!shRecs.length) return "";
+      const first = isFirstPersona();
+      const cards = mode === "list"
+        ? shRecs.map((p) => personCardHTML(p)).join("")
+        : shRecs.map((p) => first ? homeFirstCardHTML(p) : homeReturningCardHTML(p)).join("");
+      const wrap = mode === "list" ? "city-fallback-cards" : "hb-recs";
+      return `
+        <div class="hb-fallback">${THUMB_FALLBACK}<span>可以先看看上海的护理员</span></div>
+        <div class="${wrap}">${cards}</div>`;
+    }
 
     function expandBlockHTML(expandList) {
       if (!expandList.length) return "";
@@ -2736,11 +3038,6 @@
       [...$("opt-level").children].forEach((o) => o.classList.toggle("on", o.dataset.v === quick.cert));
       const oh = $("opt-height");
       if (oh) [...oh.children].forEach((o) => o.classList.toggle("on", o.dataset.v === more.height));
-      const picked = skillList();
-      [...document.querySelectorAll("#menu-skill button")].forEach((b) => {
-        const v = b.dataset.v;
-        b.setAttribute("aria-selected", v === "不限" ? !picked.length : picked.includes(v));
-      });
     }
 
     function syncPriceUI() {
@@ -2788,17 +3085,20 @@
 
     function renderPager(total, page, pages) {
       const el = $("list-pager");
-      if (mineMode || total <= PAGE_SIZE) {
+      // 推荐人选列表有命中时始终展示页数；首页 / 我的 / 零命中不展示
+      if (mineMode || !returningFilterApplied || total <= 0) {
         el.classList.remove("show");
         el.innerHTML = "";
         return;
       }
+      const p = Math.max(1, page);
+      const ps = Math.max(1, pages);
       el.classList.add("show");
       el.innerHTML = `
-        <span>第 <span class="pg-num">${page}</span> / ${pages} 页 · 每页 ${PAGE_SIZE} 人</span>
+        <span>第 <span class="pg-num">${p}</span> / ${ps} 页 · 每页 ${PAGE_SIZE} 人</span>
         <div class="pg-btns">
-          <button type="button" id="pg-prev" ${page <= 1 ? "disabled" : ""}>上一页</button>
-          <button type="button" id="pg-next" ${page >= pages ? "disabled" : ""}>下一页</button>
+          <button type="button" id="pg-prev" ${p <= 1 ? "disabled" : ""}>上一页</button>
+          <button type="button" id="pg-next" ${p >= ps ? "disabled" : ""}>下一页</button>
         </div>`;
       $("pg-prev").onclick = () => {
         if (listPage <= 1) return;
@@ -2807,7 +3107,7 @@
         $("list-scroll").scrollTop = 0;
       };
       $("pg-next").onclick = () => {
-        if (listPage >= pages) return;
+        if (listPage >= ps) return;
         listPage += 1;
         renderCards();
         $("list-scroll").scrollTop = 0;
@@ -2839,13 +3139,25 @@
       const expandList = showExpand ? expandCandidates(data).slice(0, expandNeed) : [];
       const listPhone = $("screen-list");
       const isEmptyResult = !data.length && returningFilterApplied && !matchMode;
+      const isCityEmptyResult = isEmptyResult && !cityHasPeople();
       if (listPhone) {
         listPhone.classList.toggle("is-empty-result", !!isEmptyResult);
-        listPhone.classList.toggle("has-expand", !!(showExpand || (isEmptyResult && expandList.length)));
+        listPhone.classList.toggle("has-expand", !!(showExpand || (isEmptyResult && !isCityEmptyResult && expandList.length)));
       }
       $("result-count").textContent = resultCountLabel(data.length);
 
-      // 零结果：修改筛选色块 + 外扩整区（标题溶于外扩）
+      // 同城无人：不展示改条件/外扩，走空城 + 上海推荐
+      if (isCityEmptyResult) {
+        renderFilterSummary({ hideTop: true });
+        $("card-list").innerHTML = cityEmptyHintHTML() + shanghaiRecommendBlockHTML("list");
+        document.querySelectorAll("#card-list .card").forEach((c) => {
+          c.onclick = () => openDetail(+c.dataset.id);
+        });
+        renderPager(0, 1, 1);
+        return;
+      }
+
+      // 零结果（同城仍有人）：修改筛选色块 + 外扩整区
       if (isEmptyResult) {
         renderFilterSummary({ hideTop: true });
         $("card-list").innerHTML = filterReviseBlockHTML({ empty: true }) + expandBlockHTML(expandList);
@@ -2870,7 +3182,7 @@
         document.querySelectorAll("#card-list .card").forEach((c) => {
           c.onclick = () => openDetail(+c.dataset.id);
         });
-        renderPager(0, 1, 1);
+        renderPager(data.length, 1, 1);
         return;
       }
 
@@ -2883,7 +3195,14 @@
       const pageData = data.slice(start, start + PAGE_SIZE);
 
       if (!data.length) {
-        $("card-list").innerHTML = `<div class="empty-box"><h4>暂无符合条件的护理员</h4><p>试试放宽筛选条件后再查看。</p></div>`;
+        if (!cityHasPeople()) {
+          $("card-list").innerHTML = cityEmptyHintHTML() + shanghaiRecommendBlockHTML("list");
+          document.querySelectorAll("#card-list .card").forEach((c) => {
+            c.onclick = () => openDetail(+c.dataset.id);
+          });
+        } else {
+          $("card-list").innerHTML = `<div class="empty-box"><h4>暂无符合条件的护理员</h4><p>试试放宽筛选条件后再查看。</p></div>`;
+        }
         renderPager(0, 1, 1);
         return;
       }
@@ -2908,17 +3227,21 @@
       $("shortlist-panel").innerHTML = shortlist.map((id) => {
         const p = person(id);
         if (!p) return "";
-        const st = contactStatus(id);
+        const bad = isUnavailable(id);
+        const st = bad
+          ? { text: "暂不可联系", cls: "st-unavailable" }
+          : contactStatus(id);
+        const stHtml = st ? `<span class="tag ${st.cls}">${st.text}</span>` : "";
         return `
-          <div class="short-item">
+          <div class="short-item${isVip(p) ? " is-vip" : ""}${bad ? " is-unavailable" : ""}">
             <div class="row">
               ${avatarHTML(p, "sm")}
               <div style="flex:1;min-width:0">
                 <div class="name-row">
                   <span class="nm">${displayName(p)}</span>
-                  ${st.cls === "st-none" ? "" : `<span class="tag ${st.cls}">${st.text}</span>`}
+                  ${stHtml}
                 </div>
-                <div class="card-tags">${diseaseTagsHTML(p)}</div>
+                <div class="card-tags">${cardExpTags(p, 2) || `<span class="ctag">经验未标注</span>`}</div>
               </div>
               ${priceColHTML(p)}
             </div>
@@ -2935,10 +3258,16 @@
         };
       });
       document.querySelectorAll("#shortlist-panel [data-open]").forEach((b) => {
-        b.onclick = () => openDetail(+b.dataset.open);
+        b.onclick = () => {
+          if (isUnavailable(+b.dataset.open)) return;
+          openDetail(+b.dataset.open);
+        };
       });
       document.querySelectorAll("#shortlist-panel [data-dial]").forEach((b) => {
-        b.onclick = () => startCall(+b.dataset.dial);
+        b.onclick = () => {
+          if (isUnavailable(+b.dataset.dial)) return;
+          startCall(+b.dataset.dial);
+        };
       });
     }
 
@@ -2949,7 +3278,7 @@
           ? "还没有采用记录。<br />拨打后可在详情标记采用。"
           : mineFilter === "called"
             ? "还没有拨打记录。<br />去详情或备选列表拨打后会出现在这里。"
-            : "拨打或采用过的护工会出现在这里。<br />不必先加入备选。";
+            : "暂无已联系记录。拨打或标记采用后将显示于此。";
         $("mine-panel").innerHTML = `
           <div class="short-empty">
             <p>${tip}</p>
@@ -2961,16 +3290,21 @@
       $("mine-panel").innerHTML = ids.map((id) => {
         const p = person(id);
         if (!p) return "";
+        const bad = isUnavailable(id);
         const adopted = isAdopted(id);
-        const st = contactStatus(id);
+        const st = bad
+          ? { text: "暂不可联系", cls: "st-unavailable" }
+          : contactStatus(id);
+        const stHtml = st ? `<span class="tag ${st.cls}">${st.text}</span>` : "";
         return `
-          <div class="short-item">
+          <div class="short-item${isVip(p) ? " is-vip" : ""}${bad ? " is-unavailable" : ""}">
+            ${bad ? `<button type="button" class="contact-trash" data-dismiss-contact="${p.id}" aria-label="删除失效记录">${TRASH_ICON}</button>` : ""}
             <div class="row">
               ${avatarHTML(p, "sm")}
               <div style="flex:1">
                 <div class="name-row">
                   <span class="nm">${displayName(p)}</span>
-                  ${st.cls === "st-none" ? "" : `<span class="tag ${st.cls}">${st.text}</span>`}
+                  ${stHtml}
                 </div>
                 <div class="meta">${p.district || p.area} · 参考价 ¥${p.monthly}</div>
               </div>
@@ -2984,18 +3318,37 @@
             </div>
           </div>`;
       }).join("");
+      document.querySelectorAll("#mine-panel [data-dismiss-contact]").forEach((b) => {
+        b.onclick = (e) => {
+          e.stopPropagation();
+          dismissContactRecord(+b.dataset.dismissContact);
+        };
+      });
       document.querySelectorAll("#mine-panel [data-open]").forEach((b) => {
-        b.onclick = () => openDetail(+b.dataset.open);
+        b.onclick = () => {
+          if (isUnavailable(+b.dataset.open)) return;
+          openDetail(+b.dataset.open);
+        };
       });
       document.querySelectorAll("#mine-panel [data-dial]").forEach((b) => {
-        b.onclick = () => startCall(+b.dataset.dial);
+        b.onclick = () => {
+          if (isUnavailable(+b.dataset.dial)) return;
+          startCall(+b.dataset.dial);
+        };
       });
       document.querySelectorAll("#mine-panel [data-adopt]").forEach((b) => {
-        b.onclick = () => markAdopt(+b.dataset.adopt);
+        b.onclick = () => {
+          if (isUnavailable(+b.dataset.adopt)) return;
+          markAdopt(+b.dataset.adopt);
+        };
       });
       document.querySelectorAll("#mine-panel [data-unadopt]").forEach((b) => {
-        b.onclick = () => cancelAdopt(+b.dataset.unadopt);
+        b.onclick = () => {
+          if (isUnavailable(+b.dataset.unadopt)) return;
+          cancelAdopt(+b.dataset.unadopt);
+        };
       });
+      syncCleanInvalidBtn();
     }
 
     function syncFavBtn(on) {
@@ -3046,11 +3399,12 @@
       const incoming = person(id);
       $("replace-body").innerHTML = shortlist.map((sid) => {
         const p = person(sid);
-        return `<button type="button" class="replace-pick" data-replace="${sid}">
+        const bad = isUnavailable(sid);
+        return `<button type="button" class="replace-pick${isVip(p) ? " is-vip" : ""}${bad ? " is-unavailable" : ""}" data-replace="${sid}">
           ${avatarHTML(p, "sm")}
           <div class="info">
-            <div class="nm">${displayName(p)}</div>
-            <div class="card-tags">${diseaseTagsHTML(p)}</div>
+            <div class="nm">${displayName(p)}${bad ? ` <span class="tag st-unavailable">暂不可联系</span>` : ""}</div>
+            <div class="card-tags">${cardExpTags(p, 2) || `<span class="ctag">经验未标注</span>`}</div>
           </div>
           ${priceColHTML(p)}
         </button>`;
@@ -3100,29 +3454,30 @@
 
     function confirmPayPurchase() {
       callCredits += 3;
+      hasBoughtCallPack = true;
       updateCreditsUI();
       closePaySheets();
-      const tid = $("screen-detail").classList.contains("active") ? "detail-toast" : "list-toast";
-      toast(tid, "支付成功，已到账 3 次通话");
-      const callId = pendingCallId || currentId;
-      if (callId) setTimeout(() => startCall(callId), 300);
+      pendingCallId = null;
+      // 支付成功只到账，不自动拨打；留在当前页
+      toast(activeToastId(), "支付成功，已到账 3 次通话，请再次点击拨打");
+    }
+
+    function openRepurchaseSheet() {
+      $("repurchase-sheet").classList.add("show");
     }
 
     function startCall(id) {
       const p = person(id);
       if (!p) {
-        toast("list-toast", "该护工暂不可联系");
+        toast(activeToastId(), "该护理员暂不可联系");
         return;
       }
       currentId = id;
       if (!isRevealActive(id) && callCredits <= 0) {
         pendingCallId = id;
-        if (!$("screen-detail").classList.contains("active") && !mineMode) {
-          openDetail(id);
-          setTimeout(openPaySheet, 0);
-        } else {
-          openPaySheet();
-        }
+        // 买过包且次数耗光：先提醒再买；首购直接出购买抽屉。我的页不跳详情
+        if (hasBoughtCallPack) openRepurchaseSheet();
+        else openPaySheet();
         return;
       }
       pendingCallId = null;
@@ -3131,34 +3486,31 @@
         revealed[id] = Date.now();
         updateCreditsUI();
       }
-      fillDetail();
+      if ($("screen-detail").classList.contains("active")) fillDetail();
       refreshActionPanels();
       updateCreditsUI();
-      const toastId = $("screen-detail").classList.contains("active") ? "detail-toast" : "list-toast";
-      toast(toastId, `正在拨打 ${p.phone}。未接通可稍后再拨或联系客服。`);
+      toast(activeToastId(), `正在拨打 ${p.phone}。未接通可稍后再拨或联系客服。`);
       setTimeout(() => {
         if (isAdopted(id)) return;
         $("adopt-name").textContent = displayName(p);
-        if (!$("screen-detail").classList.contains("active")) openDetail(id);
+        // 在哪里点的拨打，沟通确认就在哪一页出，不跳详情
         $("adopt-sheet").classList.add("show");
       }, 700);
     }
 
     function markAdopt(id) {
       const pid = id || currentId;
-      if (!pid || !isRevealActive(pid)) {
-        toast("detail-toast", "请先拨打后再标记采用");
-        return;
-      }
+      // 未拨打无采用入口，不提示「请先拨打」
+      if (!pid || !isRevealActive(pid)) return;
       adoptedIds[pid] = true;
       const p = person(pid);
       if (p) p.adoptCount = (p.adoptCount || 0) + 1;
       $("adopt-sheet").classList.remove("show");
-      fillDetail();
+      if ($("screen-detail").classList.contains("active")) fillDetail();
       renderCards();
       refreshActionPanels();
       updateCreditsUI();
-      toast("detail-toast", "已标记采用（个人记录，可同时标记多位）");
+      toast(activeToastId(), "已标记采用。该护理员已对其他用户隐藏，护理员将收到通知");
     }
 
     function confirmAdopt() { markAdopt(currentId); }
@@ -3173,7 +3525,7 @@
       renderCards();
       refreshActionPanels();
       updateCreditsUI();
-      toast("detail-toast", "已取消采用标记");
+      toast(activeToastId(), "已取消采用");
     }
 
     let savedListScrollTop = 0;
@@ -3194,9 +3546,9 @@
       const p = person(currentId) || people[0];
       const wrap = $("d-avatar-wrap");
       wrap.className = "avatar-wrap lg";
-      // 优选：头像左上角设计感角标
-      const vipBadge = isVip(p) ? `<span class="vip-badge">优</span>` : "";
-      wrap.innerHTML = `<img class="avatar-img" src="${p.photo}" alt="" />${vipBadge}`;
+      wrap.innerHTML = `<img class="avatar-img" src="${p.photo}" alt="" />`;
+      const hero = wrap.closest(".hero");
+      if (hero) hero.classList.toggle("is-vip", isVip(p));
       $("d-alias").textContent = displayName(p);
       const certSlot = $("d-cert-slot");
       if (certSlot) certSlot.innerHTML = certMarkHTML(p);
@@ -3257,20 +3609,6 @@
         };
         renderSkills(false);
       }
-      const tabs = $("d-care-tabs");
-      if (tabs) {
-        const showPane = (key) => {
-          tabs.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.careTab === key));
-          ["exp", "skill"].forEach((k) => {
-            const pane = $("d-pane-" + k);
-            if (pane) pane.hidden = k !== key;
-          });
-        };
-        tabs.querySelectorAll("button").forEach((b) => {
-          b.onclick = () => showPane(b.dataset.careTab);
-        });
-        showPane("exp");
-      }
       $("d-edu").textContent = p.education || "暂未填写";
       const langs = p.languages || [];
       $("d-langs").innerHTML = langs.length
@@ -3284,7 +3622,7 @@
       const called = isRevealActive(p.id);
       const st = contactStatus(p.id);
       const tag = $("d-contact-tag");
-      if (st.cls === "st-none") {
+      if (!st) {
         tag.hidden = true;
         tag.textContent = "";
         tag.className = "tag";
@@ -3413,10 +3751,10 @@
         t.classList.toggle("on", t.dataset.mineTab === mineTab));
       if (matchMode && matchFilters) {
         refreshMatchTags();
-        if ($("more-sub")) $("more-sub").textContent = "可继续缩小性别、年龄、是否持证、身高";
+        if ($("more-sub")) $("more-sub").textContent = "可继续缩小性别、年龄、是否持有健康证、身高";
       } else if (!matchMode) {
         if (!mineMode) matchFilters = null;
-        if ($("more-sub")) $("more-sub").textContent = "性别、年龄、是否持证、身高";
+        if ($("more-sub")) $("more-sub").textContent = "性别、年龄、是否持有健康证、身高";
       }
       syncPersonaChrome();
       renderCards();
@@ -3490,27 +3828,37 @@
         box.innerHTML = "";
         return;
       }
-      const recs = homeRecommendList();
+      const localRecs = homeRecommendList();
       const first = isFirstPersona();
+      const cityEmpty = !localRecs.length;
+      // 当前城无人：不展示「为您推荐/附近可约」标题，只留空态 + 上海推荐
+      const fallbackShanghai = cityEmpty && quick.city !== "上海市"
+        && homeRecommendList("上海市").length > 0;
       let title = "为您推荐";
-      let tip;
-      if (first) {
-        // 初次首页按未选病症展示；选病症后的对症价值在列表
-        title = "附近可约护工";
-        tip = homeFirstTip();
-      } else {
-        tip = homeReturningTip();
+      let tip = "";
+      if (!cityEmpty) {
+        if (first) {
+          title = "附近可约护理员";
+          tip = homeFirstTip();
+        } else {
+          tip = homeReturningTip();
+        }
       }
+      const cardHTML = (list) => list.map((p) =>
+        first ? homeFirstCardHTML(p) : homeReturningCardHTML(p)
+      ).join("");
       box.innerHTML = `
+        ${cityEmpty ? "" : `
         <div class="hb-hd">
           <div>
             <div class="t">${title}</div>
-            <div class="s">${tip}</div>
+            ${tip ? `<div class="s">${tip}</div>` : ""}
           </div>
-        </div>
+        </div>`}
         <div class="hb-recs">
-          ${recs.map((p) => first ? homeFirstCardHTML(p) : homeReturningCardHTML(p)).join("")}
-        </div>`;
+          ${localRecs.length ? cardHTML(localRecs) : cityEmptyHintHTML()}
+        </div>
+        ${fallbackShanghai ? shanghaiRecommendBlockHTML("home") : ""}`;
       box.querySelectorAll("[data-hb-id]").forEach((b) => {
         b.onclick = () => openDetail(+b.dataset.hbId);
       });
@@ -3688,16 +4036,16 @@
       updateFilterUI();
       setListMode({});
       show("match");
-      toast("list-toast", "已生成优先推荐");
     }
 
     function updateFilterUI() {
       $("region-label").textContent = regionLabel(quick.city);
       const skillBtn = skillList();
       const skillBtnText = !skillBtn.length ? "病症" : (skillBtn.length === 1 ? skillShort(skillBtn[0]) : `病症 ${skillBtn.length}`);
-      $("btn-skill").innerHTML = `${skillBtnText} <span>▾</span>`;
+      $("btn-skill").textContent = skillBtnText;
       $("btn-price").textContent = priceLabel();
       $("btn-skill").classList.toggle("on", skillBtn.length > 0);
+      $("btn-skill").classList.toggle("has-val", skillBtn.length > 0);
       $("btn-price").classList.remove("on");
       $("btn-price").classList.toggle("has-val", hasPriceFilter());
       const moreOn = more.age !== "不限" || more.height !== "不限" || quick.cert !== "不限" || quick.gender !== "不限";
@@ -3709,24 +4057,48 @@
       syncHeavyFilterUI();
     }
 
+    function pickCity(city) {
+      quick.city = city;
+      quick.district = "不限";
+      if (matchFilters) {
+        matchFilters.city = quick.city;
+        matchFilters.district = "不限";
+        matchFilters.areaLabel = regionLabel(quick.city);
+      }
+      updateFilterUI();
+      resetListPage();
+      syncPersonaChrome();
+      renderCards();
+      $("region-sheet").classList.remove("show");
+      toast("list-toast", `已切换至 ${regionLabel(quick.city)}`);
+    }
+
     function renderRegionSheet() {
-      const cities = CITIES;
-      if (!quick.city || !cities.includes(quick.city)) quick.city = cities[0];
-      $("region-cities").innerHTML = cities.map((c) =>
-        `<button type="button" class="${c === quick.city ? "on" : ""}" data-city="${c}">${c}</button>`
-      ).join("");
+      if (!quick.city) quick.city = "上海市";
+      const alphaBlocks = Object.keys(CITY_ALPHA).map((letter) => {
+        const rows = CITY_ALPHA[letter].map((c) =>
+          `<button type="button" class="${c === quick.city ? "on" : ""}" data-city="${c}">${c}</button>`
+        ).join("");
+        return `<div class="alpha-t">${letter}</div><div class="alpha-list">${rows}</div>`;
+      }).join("");
+      $("region-cities").innerHTML = `
+        <div class="city-search">
+          <div class="box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <span>输入城市名进行搜索</span>
+          </div>
+          <button type="button" class="go">搜索</button>
+        </div>
+        <div class="city-now"><span class="lab">当前城市</span><strong>${quick.city}</strong></div>
+        <div class="sec-t">热门城市</div>
+        <div class="hot">${CITY_HOT.map((c) =>
+          `<button type="button" class="${c === quick.city ? "on" : ""}" data-city="${c}">${c}</button>`
+        ).join("")}</div>
+        ${alphaBlocks}
+        <div class="idx" aria-hidden="true">A<br>B<br>C<br>D<br>E<br>F<br>G<br>H<br>J<br>K<br>L<br>M<br>N<br>P<br>Q<br>R<br>S<br>T<br>W<br>X<br>Y<br>Z</div>`;
       $("region-cities").onclick = (e) => {
         const b = e.target.closest("button[data-city]"); if (!b) return;
-        quick.city = b.dataset.city;
-        quick.district = "不限";
-        if (matchFilters) {
-          matchFilters.city = quick.city;
-          matchFilters.district = "不限";
-          matchFilters.areaLabel = regionLabel(quick.city);
-        }
-        updateFilterUI(); resetListPage(); renderCards();
-        $("region-sheet").classList.remove("show");
-        toast("list-toast", `已切换至 ${regionLabel(quick.city)}`);
+        pickCity(b.dataset.city);
       };
     }
 
@@ -3796,16 +4168,10 @@
       });
     }
 
-    setupDD("dd-skill", (opt) => {
-      quick.skill = togglePick(skillList(), opt.dataset.v);
-      skillList().forEach(rememberSkill);
-      if (matchMode && matchFilters) {
-        matchFilters.skill = skillList()[0] || "";
-        refreshMatchTags();
-      }
-      updateFilterUI(); resetListPage(); renderCards();
-      renderHomeBelow();
-    }, true);
+    $("btn-skill").onclick = () => {
+      syncSkillSheet();
+      $("skill-sheet").classList.add("show");
+    };
     $("btn-sort-comp").onclick = () => {
       if (sortMode === "comp") return;
       sortMode = "comp";
@@ -3871,12 +4237,25 @@
     if ($("btn-more-m")) $("btn-more-m").onclick = openMoreSheet;
     $("btn-region").onclick = () => { renderRegionSheet(); $("region-sheet").classList.add("show"); };
 
+    function dismissAdoptWithoutMark() {
+      const sheet = $("adopt-sheet");
+      if (!sheet || !sheet.classList.contains("show")) return;
+      sheet.classList.remove("show");
+      toast(activeToastId(), "可稍后在详情或「我的 · 已联系」中标记采用");
+    }
     document.querySelectorAll("[data-close]").forEach((btn) => {
-      btn.onclick = () => $(btn.dataset.close).classList.remove("show");
+      btn.onclick = () => {
+        if (btn.dataset.close === "adopt-sheet") dismissAdoptWithoutMark();
+        else $(btn.dataset.close).classList.remove("show");
+      };
     });
-    ["region-sheet","skill-sheet","price-sheet","more-sheet","replace-sheet","cert-sheet","verify-sheet","adopt-sheet","pay-sheet-list","pay-sheet-detail","pay-method-sheet"].forEach((id) => {
+    ["region-sheet","skill-sheet","price-sheet","more-sheet","replace-sheet","cert-sheet","verify-sheet","adopt-sheet","repurchase-sheet","pay-sheet-list","pay-sheet-detail","pay-method-sheet"].forEach((id) => {
       const el = $(id); if (!el) return;
-      el.addEventListener("click", (e) => { if (e.target.id === id) el.classList.remove("show"); });
+      el.addEventListener("click", (e) => {
+        if (e.target.id !== id) return;
+        if (id === "adopt-sheet") dismissAdoptWithoutMark();
+        else el.classList.remove("show");
+      });
     });
     if ($("pay-method-list")) {
       $("pay-method-list").onclick = (e) => {
@@ -3918,7 +4297,6 @@
     $("more-apply").onclick = () => {
       if (!isFirstPersona()) snapshotReturningFilter();
       updateFilterUI(); resetListPage(); renderCards(); $("more-sheet").classList.remove("show");
-      toast("list-toast", "已应用筛选");
     };
     if ($("btn-clear-match")) $("btn-clear-match").onclick = () => {
       matchFilters = null;
@@ -3955,6 +4333,10 @@
         .map((o) => o.dataset.v)
         .filter((v) => v && v !== "不限");
       skillList().forEach(rememberSkill);
+      if (matchMode && matchFilters) {
+        matchFilters.skill = skillList()[0] || "";
+        refreshMatchTags();
+      }
       if (!isFirstPersona()) snapshotReturningFilter();
       updateFilterUI(); resetListPage(); renderCards();
       renderHomeBelow();
@@ -3991,11 +4373,14 @@
     document.querySelectorAll("#mine-filter [data-mine-f]").forEach((chip) => {
       chip.onclick = () => {
         mineFilter = chip.dataset.mineF;
-        document.querySelectorAll("#mine-filter .chip").forEach((c) =>
+        document.querySelectorAll("#mine-filter [data-mine-f]").forEach((c) =>
           c.classList.toggle("on", c.dataset.mineF === mineFilter));
         renderMinePanel();
       };
     });
+    if ($("btn-clean-invalid")) {
+      $("btn-clean-invalid").onclick = () => cleanInvalidContacts();
+    }
 
     $("btn-fav").onclick = () => toggleFav(currentId);
     $("btn-call-2").onclick = () => startCall(currentId);
@@ -4008,8 +4393,16 @@
         ls.scrollTop = savedListScrollTop;
       }
     };
-    $("btn-adopt-no").onclick = () => { $("adopt-sheet").classList.remove("show"); toast("detail-toast", "可稍后在详情或「我的 · 已联系」中标记采用"); };
+    $("btn-adopt-no").onclick = () => dismissAdoptWithoutMark();
     $("btn-adopt-yes").onclick = confirmAdopt;
+    $("btn-repurchase-no").onclick = () => {
+      $("repurchase-sheet").classList.remove("show");
+      pendingCallId = null;
+    };
+    $("btn-repurchase-yes").onclick = () => {
+      $("repurchase-sheet").classList.remove("show");
+      openPaySheet();
+    };
     document.querySelectorAll(".btn-buy-pay").forEach((btn) => {
       btn.onclick = () => openPayMethodSheet();
     });
@@ -4021,6 +4414,7 @@
     document.querySelectorAll("[data-go]").forEach((el) => {
       el.addEventListener("click", (e) => { e.stopPropagation(); show(el.getAttribute("data-go")); });
     });
+    $("btn-home").onclick = () => exitToPortal();
     $("list-back").onclick = () => {
       if (returningFilterApplied && !mineMode) {
         if (!isFirstPersona()) snapshotReturningFilter();
@@ -4058,7 +4452,7 @@
         restoreReturningFilter();
         returningFilterApplied = false;
       } else if (persona === "expand") {
-        // 外扩模拟：仅用性别/年龄/持证，直接进入结果少+外扩列表
+        // 外扩模拟：仅用性别/年龄/健康证，直接进入结果少+外扩列表
         applyExpandDemoFilters();
         returningFilterApplied = true;
       } else {
@@ -4077,87 +4471,91 @@
     };
 
     (function setupMineFabDrag() {
-      const fab = $("btn-mine-entry");
-      const phone = $("screen-list");
-      if (!fab || !phone) return;
+      const fabs = ["btn-mine-entry", "btn-mine-entry-detail"].map((id) => $(id)).filter(Boolean);
+      if (!fabs.length) return;
       const EDGE = 12;
       const DRAG_THRESHOLD = 6;
-      let dragging = false;
-      let moved = false;
-      let startX = 0, startY = 0;
-      let originLeft = 0, originTop = 0;
-      let pointerId = null;
 
       function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
-      function placeAt(left, top) {
-        const pr = phone.getBoundingClientRect();
-        const maxL = pr.width - fab.offsetWidth - EDGE;
-        const maxT = pr.height - fab.offsetHeight - EDGE;
-        const l = clamp(left, EDGE, maxL);
-        const t = clamp(top, EDGE, maxT);
-        fab.style.left = l + "px";
-        fab.style.top = t + "px";
-        fab.style.right = "auto";
-        fab.style.bottom = "auto";
-      }
+      fabs.forEach((fab) => {
+        let dragging = false;
+        let moved = false;
+        let startX = 0, startY = 0;
+        let originLeft = 0, originTop = 0;
+        let pointerId = null;
+        const phone = fab.closest(".phone");
+        if (!phone) return;
 
-      function snapToSide() {
-        const pr = phone.getBoundingClientRect();
-        const fr = fab.getBoundingClientRect();
-        const left = fr.left - pr.left;
-        const top = fr.top - pr.top;
-        const mid = left + fab.offsetWidth / 2;
-        const snapLeft = mid < pr.width / 2 ? EDGE : pr.width - fab.offsetWidth - EDGE;
-        fab.style.transition = "left .2s ease, top .2s ease";
-        placeAt(snapLeft, top);
-        setTimeout(() => { fab.style.transition = ""; }, 220);
-      }
-
-      fab.addEventListener("pointerdown", (e) => {
-        if (e.button != null && e.button !== 0) return;
-        dragging = true;
-        moved = false;
-        pointerId = e.pointerId;
-        fab.setPointerCapture(pointerId);
-        fab.classList.add("dragging");
-        const pr = phone.getBoundingClientRect();
-        const fr = fab.getBoundingClientRect();
-        startX = e.clientX;
-        startY = e.clientY;
-        originLeft = fr.left - pr.left;
-        originTop = fr.top - pr.top;
-        placeAt(originLeft, originTop);
-        e.preventDefault();
-      });
-
-      fab.addEventListener("pointermove", (e) => {
-        if (!dragging || e.pointerId !== pointerId) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        if (!moved && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
-        moved = true;
-        placeAt(originLeft + dx, originTop + dy);
-      });
-
-      function endDrag(e) {
-        if (!dragging || (e && e.pointerId !== pointerId)) return;
-        dragging = false;
-        fab.classList.remove("dragging");
-        try { fab.releasePointerCapture(pointerId); } catch (_) {}
-        pointerId = null;
-        if (moved) {
-          snapToSide();
-          return;
+        function placeAt(left, top) {
+          const pr = phone.getBoundingClientRect();
+          const maxL = pr.width - fab.offsetWidth - EDGE;
+          const maxT = pr.height - fab.offsetHeight - EDGE;
+          const l = clamp(left, EDGE, maxL);
+          const t = clamp(top, EDGE, maxT);
+          fab.style.left = l + "px";
+          fab.style.top = t + "px";
+          fab.style.right = "auto";
+          fab.style.bottom = "auto";
         }
-        show("mine");
-      }
 
-      fab.addEventListener("pointerup", endDrag);
-      fab.addEventListener("pointercancel", endDrag);
-      fab.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+        function snapToSide() {
+          const pr = phone.getBoundingClientRect();
+          const fr = fab.getBoundingClientRect();
+          const left = fr.left - pr.left;
+          const top = fr.top - pr.top;
+          const mid = left + fab.offsetWidth / 2;
+          const snapLeft = mid < pr.width / 2 ? EDGE : pr.width - fab.offsetWidth - EDGE;
+          fab.style.transition = "left .2s ease, top .2s ease";
+          placeAt(snapLeft, top);
+          setTimeout(() => { fab.style.transition = ""; }, 220);
+        }
+
+        fab.addEventListener("pointerdown", (e) => {
+          if (e.button != null && e.button !== 0) return;
+          dragging = true;
+          moved = false;
+          pointerId = e.pointerId;
+          fab.setPointerCapture(pointerId);
+          fab.classList.add("dragging");
+          const pr = phone.getBoundingClientRect();
+          const fr = fab.getBoundingClientRect();
+          startX = e.clientX;
+          startY = e.clientY;
+          originLeft = fr.left - pr.left;
+          originTop = fr.top - pr.top;
+          placeAt(originLeft, originTop);
+          e.preventDefault();
+        });
+
+        fab.addEventListener("pointermove", (e) => {
+          if (!dragging || e.pointerId !== pointerId) return;
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+          if (!moved && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+          moved = true;
+          placeAt(originLeft + dx, originTop + dy);
+        });
+
+        function endDrag(e) {
+          if (!dragging || (e && e.pointerId !== pointerId)) return;
+          dragging = false;
+          fab.classList.remove("dragging");
+          try { fab.releasePointerCapture(pointerId); } catch (_) {}
+          pointerId = null;
+          if (moved) {
+            snapToSide();
+            return;
+          }
+          show("mine");
+        }
+
+        fab.addEventListener("pointerup", endDrag);
+        fab.addEventListener("pointercancel", endDrag);
+        fab.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        });
       });
     })();
 
