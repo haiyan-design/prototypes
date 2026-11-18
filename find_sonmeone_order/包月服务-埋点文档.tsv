@@ -53,7 +53,7 @@
 通话	monthly	购买	pay_sheet	购买通话抽屉曝光	monthly_pay_sheet_expose	打开购买通话（首购或再买确认后）	entry；caregiver_id	V5.30.0	新增	购买链路 ；沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
 通话	monthly	购买	pay_sheet	确认支付点击	monthly_pay_confirm_click	点「确认支付 ¥3.99」	entry；caregiver_id	V5.30.0	新增	不扣款；接着出支付方式；沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
 通话	monthly	支付方式	pay_method	支付方式页曝光	monthly_pay_method_view	选择支付方式层打开	entry；caregiver_id	V5.30.0	新增	沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
-通话	monthly	支付方式	pay_method	支付方式选择	monthly_pay_method_select	切换微信/金币/好友代付	pay_method	V5.30.0	新增	只切换不支付；沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
+通话	monthly	支付方式	pay_method	支付方式选择	monthly_pay_method_select	切换微信/金币	pay_method	V5.30.0	新增	只切换不支付；本期无好友代付；沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
 通话	monthly	支付	pay_method	立即支付点击	monthly_pay_click	点「立即支付」	pay_method；amount；entry；caregiver_id	V5.30.0	新增	沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
 通话	monthly	支付结果	pay_result	通话包支付结果	monthly_pay_result	后端支付结果返回	result；fail_reason；pay_method；amount；credits_added；call_credits_after；entry	V5.30.0	新增	成功只到账不自动拨打；与全链路 payment_result 区分业务线；沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
 采用	monthly	沟通确认	adopt_sheet	沟通得如何曝光	monthly_adopt_sheet_expose	拨打完成后弹出（未采用过）	caregiver_id	V5.30.0	新增	已采用不再弹，不报

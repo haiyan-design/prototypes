@@ -59,7 +59,7 @@ has_bought_pack,是否曾购买过通话包：1 是 / 0 否,`1` 是 / `0` 否
 fail_reason,失败原因；成功为空,—（自由值，无固定枚举）
 deducted,本次是否扣次：1 是 / 0 否,`1` 是 / `0` 否
 entry,购买入口：`first_buy` / `repurchase`,`first_buy` 首购 / `repurchase` 再买
-pay_method,支付方式：微信/金币/好友代付等,与现网一致：微信 / 金币 / 好友代付
+pay_method,支付方式：微信/金币,微信 / 金币（本期无好友代付）
 amount,支付金额,—（自由值，无固定枚举）
 credits_added,本次到账增加的通话次数,—（自由值，无固定枚举）
 close_type,关闭方式：`btn` / `mask` / `x`,`btn` 暂不 / `mask` 遮罩 / `x` 关闭按钮

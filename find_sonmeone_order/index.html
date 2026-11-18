@@ -182,6 +182,28 @@
     #screen-detail .mine-fab {
       bottom: 108px;
     }
+    .back-top {
+      position: absolute; right: 20px; bottom: 92px; z-index: 28;
+      width: 44px; height: 44px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,.96); color: #333;
+      box-shadow: 0 4px 14px rgba(0,0,0,.12); border: 1px solid #ebebeb;
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0; font: inherit; cursor: pointer; padding: 0;
+      opacity: 0; pointer-events: none; transform: translateY(6px);
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .back-top.show {
+      display: flex; opacity: 1; pointer-events: auto; transform: none;
+    }
+    .back-top .arr {
+      font-size: 14px; font-weight: 700; line-height: 1; color: var(--brand-dark);
+    }
+    .back-top .lab {
+      font-size: 10px; font-weight: 600; line-height: 1.1; color: #666; margin-top: 1px;
+    }
+    #screen-detail .back-top { bottom: 176px; }
+    .phone.mine-mode .back-top,
+    .phone.list-sub:not(.match-mode) .back-top { display: none !important; }
     .phone.list-sub .region-nav,
     .phone.list-sub .mine-fab { display: none; }
     .phone.list-sub .back { display: grid; place-items: center; }
@@ -1317,6 +1339,19 @@
       border-top: none; padding-top: 4px;
       background: linear-gradient(180deg, transparent, #fff 30%);
     }
+    .pay-agree {
+      display: flex; align-items: flex-start; gap: 8px;
+      margin: 0 0 10px; padding: 0 2px;
+      font-size: 12px; color: #666; line-height: 1.45; cursor: pointer;
+      user-select: none; -webkit-user-select: none;
+    }
+    .pay-agree input {
+      margin-top: 2px; width: 15px; height: 15px; flex-shrink: 0;
+      accent-color: var(--brand);
+    }
+    .pay-agree .link {
+      color: var(--brand-dark); font-weight: 600; text-decoration: none;
+    }
     .pay-sheet .btn-buy-pay {
       background: linear-gradient(90deg, #14ad8f, #18c1a0);
       box-shadow: 0 8px 16px rgba(24,193,160,.28);
@@ -1345,7 +1380,6 @@
     .pay-method .pm-ico svg { width: 22px; height: 22px; display: block; }
     .pay-method .pm-ico.wx { background: #e9f8ef; color: #09bb07; }
     .pay-method .pm-ico.coin { background: #fff4e5; color: #f5a623; }
-    .pay-method .pm-ico.friend { background: #e8f8f6; color: #18c1a0; }
     .pay-method .pm-main { flex: 1; min-width: 0; }
     .pay-method .pm-name { font-size: 15px; font-weight: 600; }
     .pay-method .pm-sub { margin-top: 2px; font-size: 12px; color: var(--muted); }
@@ -1779,12 +1813,19 @@
             </div>
           </div>
           <div class="sheet-actions">
+            <label class="pay-agree">
+              <input type="checkbox" class="pay-agree-check" />
+              <span>已阅读并同意<a href="javascript:;" class="link" data-pay-agree>《通话服务协议》</a></span>
+            </label>
             <button type="button" class="btn primary block btn-buy-pay">确认支付 ¥<span data-pack-price>3.99</span></button>
           </div>
         </div>
       </div>
 
       <div class="toast" id="list-toast"></div>
+      <button type="button" class="back-top" id="btn-back-top-list" aria-label="回到顶部">
+        <span class="arr">↑</span><span class="lab">顶部</span>
+      </button>
       <button type="button" class="mine-fab" id="btn-mine-entry" aria-label="备选 0/3">
         <span class="lab">备选</span>
         <span class="mine-nav-count" id="mine-nav-badge">0/3</span>
@@ -1797,7 +1838,7 @@
         <button type="button" class="back" id="detail-back">‹</button>
         <h1>人员详情</h1>
       </div>
-      <div class="scroll" style="padding-bottom:96px">
+      <div class="scroll" id="detail-scroll" style="padding-bottom:96px">
         <div class="hero">
           <div class="avatar-wrap lg" id="d-avatar-wrap"></div>
           <div style="flex:1;min-width:0">
@@ -1910,12 +1951,19 @@
             </div>
           </div>
           <div class="sheet-actions">
+            <label class="pay-agree">
+              <input type="checkbox" class="pay-agree-check" />
+              <span>已阅读并同意<a href="javascript:;" class="link" data-pay-agree>《通话服务协议》</a></span>
+            </label>
             <button type="button" class="btn primary block btn-buy-pay">确认支付 ¥<span data-pack-price>3.99</span></button>
           </div>
         </div>
       </div>
 
       <div class="toast" id="detail-toast"></div>
+      <button type="button" class="back-top" id="btn-back-top-detail" aria-label="回到顶部">
+        <span class="arr">↑</span><span class="lab">顶部</span>
+      </button>
       <button type="button" class="mine-fab" id="btn-mine-entry-detail" aria-label="备选 0/3">
         <span class="lab">备选</span>
         <span class="mine-nav-count" id="mine-nav-badge-detail">0/3</span>
@@ -1991,13 +2039,6 @@
                 <span class="pm-name">金币支付</span>
                 <div class="pm-sub">e护通金币：128</div>
               </span>
-              <span class="pm-radio" aria-hidden="true"></span>
-            </button>
-            <button type="button" class="pay-method" data-pay="friend">
-              <span class="pm-ico friend" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 12 12zm0 1.8c-2.7 0-8 1.3-8 4v1.7h16V17.8c0-2.7-5.3-4-8-4z"/></svg>
-              </span>
-              <span class="pm-main"><span class="pm-name">好友代付</span></span>
               <span class="pm-radio" aria-hidden="true"></span>
             </button>
           </div>
@@ -3472,6 +3513,7 @@
     function openPaySheet() {
       const onDetail = $("screen-detail").classList.contains("active");
       const sheet = $(onDetail ? "pay-sheet-detail" : "pay-sheet-list");
+      sheet.querySelectorAll(".pay-agree-check").forEach((el) => { el.checked = false; });
       sheet.classList.add("show");
     }
 
@@ -3801,6 +3843,7 @@
       }
       syncPersonaChrome();
       renderCards();
+      if (window.__refreshBackTop) window.__refreshBackTop();
     }
 
     function refreshMatchTags() {
@@ -4183,6 +4226,7 @@
         $("screen-list").classList.toggle("list-sub", mineMode);
         syncPersonaChrome();
       }
+      if (window.__refreshBackTop) window.__refreshBackTop();
     }
 
     function setupDD(ddId, onPick, keepOpen) {
@@ -4441,7 +4485,22 @@
       openPaySheet();
     };
     document.querySelectorAll(".btn-buy-pay").forEach((btn) => {
-      btn.onclick = () => openPayMethodSheet();
+      btn.onclick = () => {
+        const sheet = btn.closest(".pay-sheet");
+        const ok = sheet && sheet.querySelector(".pay-agree-check")?.checked;
+        if (!ok) {
+          toast(activeToastId(), "请先阅读并同意《通话服务协议》");
+          return;
+        }
+        openPayMethodSheet();
+      };
+    });
+    document.querySelectorAll("[data-pay-agree]").forEach((a) => {
+      a.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toast(activeToastId(), "打开《通话服务协议》");
+      };
     });
     $("btn-play").onclick = () => toast("detail-toast", "播放介绍视频");
     document.querySelectorAll("[data-cert]").forEach((el) => {
@@ -4506,6 +4565,51 @@
       const ls = $("list-scroll");
       if (ls && returningFilterApplied) ls.scrollTop = 0;
     };
+
+    (function setupBackTop() {
+      const SHOW_AFTER = 220;
+      function activeListScroll() {
+        const list = $("screen-list");
+        if (!list || !list.classList.contains("active") || list.classList.contains("mine-mode")) return null;
+        return $(list.classList.contains("filter-heavy-mode") ? "home-scroll" : "list-scroll");
+      }
+      function refreshListBackTop() {
+        const btn = $("btn-back-top-list");
+        if (!btn) return;
+        const sc = activeListScroll();
+        btn.classList.toggle("show", !!(sc && sc.scrollTop >= SHOW_AFTER));
+      }
+      function refreshDetailBackTop() {
+        const btn = $("btn-back-top-detail");
+        const sc = $("detail-scroll");
+        if (!btn || !sc) return;
+        const onDetail = $("screen-detail") && $("screen-detail").classList.contains("active");
+        btn.classList.toggle("show", !!(onDetail && sc.scrollTop >= SHOW_AFTER));
+      }
+      ["home-scroll", "list-scroll"].forEach((id) => {
+        const sc = $(id);
+        if (sc) sc.addEventListener("scroll", refreshListBackTop, { passive: true });
+      });
+      const ds = $("detail-scroll");
+      if (ds) ds.addEventListener("scroll", refreshDetailBackTop, { passive: true });
+      const listBtn = $("btn-back-top-list");
+      if (listBtn) {
+        listBtn.onclick = () => {
+          const sc = activeListScroll();
+          if (sc) sc.scrollTo({ top: 0, behavior: "smooth" });
+        };
+      }
+      const detailBtn = $("btn-back-top-detail");
+      if (detailBtn) {
+        detailBtn.onclick = () => {
+          const sc = $("detail-scroll");
+          if (sc) sc.scrollTo({ top: 0, behavior: "smooth" });
+        };
+      }
+      window.__refreshBackTop = () => { refreshListBackTop(); refreshDetailBackTop(); };
+      refreshListBackTop();
+      refreshDetailBackTop();
+    })();
 
     (function setupMineFabDrag() {
       const fabs = ["btn-mine-entry", "btn-mine-entry-detail"].map((id) => $(id)).filter(Boolean);
