@@ -99,6 +99,56 @@
     .region-nav .pin svg { width: 11px; height: 11px; display: block; }
     .region-nav .val { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .region-nav .chev { font-size: 9px; color: var(--brand); opacity: .7; flex-shrink: 0; }
+    .mine-callpack-bar {
+      display: none; flex-shrink: 0;
+      background: #fff; border-top: 1px solid #eee;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    }
+    .phone.mine-mode .mine-callpack-bar { display: block; }
+    .phone.mine-mode #list-scroll { padding-bottom: 8px; }
+    .mine-callpack-bar .btn-entry {
+      width: 100%; display: flex; align-items: center; gap: 8px;
+      border: 1px solid #ececec; border-radius: 12px; background: #fafafa;
+      padding: 12px 14px; font: inherit; cursor: pointer; text-align: left; color: var(--text);
+    }
+    .mine-callpack-bar .btn-entry .t { flex: 1; font-size: 14px; font-weight: 700; }
+    .mine-callpack-bar .btn-entry .sub { font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .mine-callpack-bar .btn-entry .sub em {
+      font-style: normal; color: var(--brand-dark); font-weight: 700;
+    }
+    .mine-callpack-bar .btn-entry .chev { color: #bbb; font-size: 16px; font-weight: 600; }
+    .callpack-sheet .sheet {
+      max-height: 78%; display: flex; flex-direction: column;
+    }
+    .callpack-sheet .sheet-body {
+      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      padding: 4px 16px 12px;
+    }
+    .cp-line {
+      font-size: 13px; color: #666; margin: 0 0 10px; line-height: 1.4;
+    }
+    .cp-line em { font-style: normal; color: var(--brand-dark); font-weight: 700; }
+    .cp-card {
+      background: #f7f8fa; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px;
+      border: none; width: 100%; text-align: left; font: inherit; color: inherit; cursor: default;
+    }
+    .cp-card.tap { cursor: pointer; }
+    .cp-card .row1 {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    }
+    .cp-card .name { font-size: 15px; font-weight: 700; color: #333; }
+    .cp-card .price { font-size: 14px; font-weight: 700; color: #ff6a00; white-space: nowrap; }
+    .cp-card .meta {
+      margin-top: 6px; font-size: 12px; color: #999; line-height: 1.45;
+    }
+    .cp-card .tip {
+      margin-top: 8px; padding: 8px 10px; border-radius: 6px;
+      background: #f6ffed; color: #52c41a; font-size: 12px;
+      display: flex; justify-content: space-between; gap: 8px;
+    }
+    .cp-empty {
+      padding: 28px 16px; text-align: center; color: #999; font-size: 13px; line-height: 1.5;
+    }
     .mine-fab {
       position: absolute; right: 16px; bottom: 22px; z-index: 30;
       width: 58px; height: 58px; border-radius: 50%; border: none;
@@ -159,7 +209,6 @@
     .phone.filter-heavy-mode .flow-card,
     .phone.filter-heavy-mode .filter-normal,
     .phone.filter-heavy-mode .result-meta,
-    .phone.filter-heavy-mode #list-pager,
     .phone.filter-heavy-mode #card-list,
     .phone.filter-heavy-mode #list-scroll { display: none !important; }
     .phone:not(.filter-heavy-mode) .home-scroll { display: none !important; }
@@ -590,18 +639,6 @@
       padding: 10px 12px 6px; display: flex; justify-content: space-between; align-items: center;
       font-size: 12px; color: var(--muted);
     }
-    .list-pager {
-      display: none; margin: 4px 12px 16px; padding: 10px 12px; background: #fff; border-radius: 8px;
-      align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted);
-    }
-    .list-pager.show { display: flex; }
-    .list-pager .pg-btns { display: flex; gap: 8px; align-items: center; }
-    .list-pager button {
-      font: inherit; font-size: 12px; padding: 6px 10px; border-radius: 6px;
-      border: 1px solid #ddd; background: #fff; color: var(--text); cursor: pointer;
-    }
-    .list-pager button:disabled { opacity: .4; cursor: not-allowed; }
-    .list-pager .pg-num { color: var(--text); font-weight: 600; }
     .sort-bar { display: flex; gap: 8px; align-items: center; }
     .sort-chip {
       font: inherit; font-size: 12px; color: var(--muted); border: none; background: none;
@@ -1256,16 +1293,6 @@
       color: #fff; box-shadow: 0 10px 24px rgba(20, 140, 120, .22);
       overflow: hidden;
     }
-    .pay-pack::after {
-      content: "通话包"; position: absolute; right: -6px; top: 14px;
-      writing-mode: vertical-rl; letter-spacing: .2em;
-      font-size: 11px; font-weight: 700; opacity: .22;
-    }
-    .pay-pack .badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px;
-      background: rgba(255,255,255,.2); margin-bottom: 10px;
-    }
     .pay-pack .t { font-size: 17px; font-weight: 700; letter-spacing: .02em; }
     .pay-pack .price-row {
       display: flex; align-items: baseline; gap: 6px; margin: 10px 0 12px;
@@ -1575,10 +1602,28 @@
           </div>
         </div>
         <div id="card-list"></div>
-        <div class="list-pager" id="list-pager"></div>
         <div id="shortlist-panel" style="display:none"></div>
         <div id="mine-panel" style="display:none"></div>
         <div style="height:20px"></div>
+      </div>
+
+      <div class="mine-callpack-bar" id="mine-callpack-bar">
+        <button type="button" class="btn-entry" id="btn-mine-callpack">
+          <span class="t">通话包购买记录</span>
+          <span class="sub">剩余 <em id="mine-call-n">0</em> 次</span>
+          <span class="chev">›</span>
+        </button>
+      </div>
+
+      <div class="sheet-mask callpack-sheet" id="callpack-sheet">
+        <div class="sheet">
+          <div class="handle"></div>
+          <div class="sheet-hd">
+            <h2 id="callpack-sheet-title">通话包购买记录</h2>
+            <button type="button" class="close" data-close="callpack-sheet">×</button>
+          </div>
+          <div class="sheet-body" id="callpack-sheet-body"></div>
+        </div>
       </div>
 
       <div class="sheet-mask" id="region-sheet">
@@ -1715,28 +1760,26 @@
         <div class="sheet">
           <div class="handle"></div>
           <div class="sheet-hd">
-            <h2>购买通话</h2>
+            <h2 data-pack-name>电话沟通包</h2>
             <button type="button" class="close" data-close="pay-sheet-list">×</button>
           </div>
           <div class="sheet-body">
             <div class="pay-pack">
-              <div class="badge">限时沟通权益</div>
-              <div class="t">电话沟通包</div>
               <div class="price-row">
-                <span class="price"><em>¥</em>3.99</span>
+                <span class="price"><em>¥</em><span data-pack-price>3.99</span></span>
               </div>
-              <div class="feats">
+              <div class="feats" data-pack-feats>
                 <span class="feat">3 次拨打</span>
                 <span class="feat">90 天有效</span>
                 <span class="feat">同人复拨不扣次</span>
               </div>
             </div>
-            <div class="pay-note">
+            <div class="pay-note" data-pack-rule>
               同一护理员仅<strong>首次拨打</strong>消耗 1 次；未接通可再拨。多次未接通可联系客服，确认后补偿通话次数。
             </div>
           </div>
           <div class="sheet-actions">
-            <button type="button" class="btn primary block btn-buy-pay">确认支付 ¥3.99</button>
+            <button type="button" class="btn primary block btn-buy-pay">确认支付 ¥<span data-pack-price>3.99</span></button>
           </div>
         </div>
       </div>
@@ -1848,28 +1891,26 @@
         <div class="sheet">
           <div class="handle"></div>
           <div class="sheet-hd">
-            <h2>购买通话</h2>
+            <h2 data-pack-name>电话沟通包</h2>
             <button type="button" class="close" data-close="pay-sheet-detail">×</button>
           </div>
           <div class="sheet-body">
             <div class="pay-pack">
-              <div class="badge">限时沟通权益</div>
-              <div class="t">电话沟通包</div>
               <div class="price-row">
-                <span class="price"><em>¥</em>3.99</span>
+                <span class="price"><em>¥</em><span data-pack-price>3.99</span></span>
               </div>
-              <div class="feats">
+              <div class="feats" data-pack-feats>
                 <span class="feat">3 次拨打</span>
                 <span class="feat">90 天有效</span>
                 <span class="feat">同人复拨不扣次</span>
               </div>
             </div>
-            <div class="pay-note">
+            <div class="pay-note" data-pack-rule>
               同一护理员仅<strong>首次拨打</strong>消耗 1 次；未接通可再拨。多次未接通可联系客服，确认后补偿通话次数。
             </div>
           </div>
           <div class="sheet-actions">
-            <button type="button" class="btn primary block btn-buy-pay">确认支付 ¥3.99</button>
+            <button type="button" class="btn primary block btn-buy-pay">确认支付 ¥<span data-pack-price>3.99</span></button>
           </div>
         </div>
       </div>
@@ -2187,8 +2228,8 @@
         s += (p.years || 0);
         return s;
       };
-      const limit = first ? 5 : 12;
-      return [...pool].sort((a, b) => score(b) - score(a) || a.id - b.id).slice(0, limit);
+      // 无限列表：同城池全量按推荐分排序展示（滚动浏览）
+      return [...pool].sort((a, b) => score(b) - score(a) || a.id - b.id);
     }
     function careProfile(p) {
       const exp = [], skills = [], seenE = new Set(), seenS = new Set();
@@ -2333,8 +2374,7 @@
       p.adoptCount = demo ? demo.adoptCount : (i % 4);
     });
 
-    let currentId = 1, sortMode = "comp", priceDir = "desc", listPage = 1;
-    const PAGE_SIZE = 12;
+    let currentId = 1, sortMode = "comp", priceDir = "desc";
     let returningFilterApplied = false; // false=首页；true=列表页
     let persona = "returning"; // returning=非初次 | first=初次（仅首页推荐不同）
     // 演示：最近关注过的病症（最多 3 个，新在前；非初次首页标绿与排序用）
@@ -2422,6 +2462,16 @@
     let matchFilters = null;
     let callCredits = 0;
     let hasBoughtCallPack = false; // 是否买过通话包（区分首购 / 次数耗光再买）
+    const CALL_PACK = {
+      name: "电话沟通包",
+      times: 3,
+      price: 3.99,
+      validDays: 90,
+      payMethod: "微信支付",
+    };
+    // 购买记录：按到账时间新→旧；扣次按有效期近的先扣
+    let callPackOrders = [];
+    let callpackDetailId = null;
     let revealed = {}; // id -> timestamp(ms); 90 天内视为已拨打有效
     let shortlist = [1]; // 演示：张敏在备选且失效，可看置灰
     let pendingReplaceId = null;
@@ -2440,9 +2490,10 @@
       match: { title: "推荐结果", id: "P01c",
         html: `<dt>推荐列表</dt><dd>硬过滤后按偏好排序，全量分页；顶部轻筛选吸顶同步条件。</dd>` },
       mine: { title: "我的", id: "P01d",
-        html: `<dt>入口</dt><dd>列表右下角悬浮球「我的」；内分备选 / 已联系。</dd>
+        html: `<dt>入口</dt><dd>列表右下角悬浮球「备选」；内分备选 / 已联系。</dd>
           <dt>备选</dt><dd>最多 3 人；移出备选 / 详情 / 拨打电话。</dd>
-          <dt>已联系</dt><dd>已拨打或已采用；详情 / 采用 / 再拨打；可筛全部/已拨打/已采用。</dd>` },
+          <dt>已联系</dt><dd>已拨打或已采用；详情 / 采用 / 再拨打；可筛全部/已拨打/已采用。</dd>
+          <dt>通话包</dt><dd>底部「购买记录」入口；点击半屏浮层查看有效期与剩余。</dd>` },
       detail: { title: "人员详情", id: "P02",
         html: `<dt>拨打</dt><dd>无次数时底部抽屉购买；已拨打可再次拨打不扣次。</dd>
           <dt>采用</dt><dd>已拨打后可标记；可多人；采用后对他人隐藏，护理员可 24h 后解锁，最长 30 天。</dd>` },
@@ -2568,9 +2619,62 @@
       });
     }
 
+    function pad2(n) { return String(n).padStart(2, "0"); }
+    function formatDateYMD(ts) {
+      const d = new Date(ts);
+      return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+    }
+    function formatDateTime(ts) {
+      const d = new Date(ts);
+      return `${formatDateYMD(ts)} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    }
+    function pruneExpiredCallLots() {
+      const now = Date.now();
+      callPackOrders.forEach((o) => {
+        if (o.remain > 0 && o.expireAt <= now) o.remain = 0;
+      });
+    }
+    function syncCallCredits() {
+      pruneExpiredCallLots();
+      callCredits = callPackOrders.reduce((s, o) => s + (o.remain || 0), 0);
+    }
+    function addCallPackOrder() {
+      const now = Date.now();
+      const expireAt = now + CALL_PACK.validDays * 86400000;
+      callPackOrders.unshift({
+        id: "cp" + now,
+        orderNo: "TH" + String(now).slice(-12),
+        name: CALL_PACK.name,
+        times: CALL_PACK.times,
+        remain: CALL_PACK.times,
+        price: CALL_PACK.price,
+        payMethod: CALL_PACK.payMethod,
+        boughtAt: now,
+        expireAt,
+      });
+      hasBoughtCallPack = true;
+      syncCallCredits();
+    }
+    function consumeCallCredit() {
+      syncCallCredits();
+      const lot = callPackOrders
+        .filter((o) => o.remain > 0)
+        .sort((a, b) => a.expireAt - b.expireAt)[0];
+      if (!lot) return false;
+      lot.remain -= 1;
+      syncCallCredits();
+      return true;
+    }
+    function findCallPackOrder(id) {
+      return callPackOrders.find((o) => o.id === id) || null;
+    }
+
     function updateCreditsUI() {
+      syncCallCredits();
       const n = shortlist.length;
       const mn = mineIds("all").length;
+      const mineCallN = $("mine-call-n");
+      if (mineCallN) mineCallN.textContent = String(callCredits);
       // 悬浮球：列表 + 详情各一颗，备选 + n/3；点进仍是「我的」
       [
         ["btn-mine-entry", "mine-nav-badge"],
@@ -2587,6 +2691,82 @@
       const contactN = $("tab-contact-n");
       if (favN) favN.textContent = String(n);
       if (contactN) contactN.textContent = String(mn);
+      const sheet = $("callpack-sheet");
+      if (sheet && sheet.classList.contains("show")) renderCallpackSheet();
+    }
+
+    function renderCallpackSheet() {
+      const body = $("callpack-sheet-body");
+      const title = $("callpack-sheet-title");
+      if (!body) return;
+      syncCallCredits();
+      if (callpackDetailId) {
+        const o = findCallPackOrder(callpackDetailId);
+        if (!o) {
+          callpackDetailId = null;
+        } else {
+          if (title) title.textContent = "订单详情";
+          body.innerHTML = `
+            <button type="button" class="cp-line" id="btn-cp-back" style="border:none;background:none;padding:0;cursor:pointer;color:#666;font:inherit;margin-bottom:10px">‹ 返回购买记录</button>
+            <div class="cp-card">
+              <div class="row1">
+                <div class="name">${o.name} · ${o.times}次</div>
+                <div class="price">¥${o.price.toFixed(2)}</div>
+              </div>
+              <div class="tip">
+                <span>有效期至 ${formatDateYMD(o.expireAt)}</span>
+                <span>剩余 ${o.remain} 次</span>
+              </div>
+            </div>
+            <div class="cp-card">
+              <div class="meta">订单编号　${o.orderNo}</div>
+              <div class="meta">下单时间　${formatDateTime(o.boughtAt)}</div>
+              <div class="meta">支付方式　${o.payMethod}</div>
+              <div class="meta">到账次数　${o.times} 次</div>
+              <div class="meta">剩余次数　${o.remain} 次</div>
+              <div class="meta">次数有效期至　${formatDateYMD(o.expireAt)}</div>
+            </div>`;
+          const back = $("btn-cp-back");
+          if (back) back.onclick = () => { callpackDetailId = null; renderCallpackSheet(); };
+          return;
+        }
+      }
+      if (title) title.textContent = "通话包购买记录";
+      const records = callPackOrders.length
+        ? callPackOrders.map((o) => `
+            <button type="button" class="cp-card tap" data-cp-id="${o.id}">
+              <div class="row1">
+                <div class="name">${o.name} · ${o.times}次</div>
+                <div class="price">¥${o.price.toFixed(2)}</div>
+              </div>
+              <div class="meta">订单号 ${o.orderNo} · ${formatDateTime(o.boughtAt)}</div>
+              <div class="tip">
+                <span>有效期至 ${formatDateYMD(o.expireAt)}</span>
+                <span>剩余 ${o.remain} 次</span>
+              </div>
+            </button>`).join("")
+        : `<div class="cp-empty">暂无购买记录<br/>购买后可在此查看有效期与本单剩余次数</div>`;
+      body.innerHTML = `
+        <p class="cp-line">账户剩余 <em>${callCredits}</em> 次（同人复拨不扣次）</p>
+        ${records}`;
+      body.querySelectorAll("[data-cp-id]").forEach((el) => {
+        el.onclick = () => {
+          callpackDetailId = el.getAttribute("data-cp-id");
+          renderCallpackSheet();
+        };
+      });
+    }
+
+    function openCallpackSheet() {
+      callpackDetailId = null;
+      renderCallpackSheet();
+      $("callpack-sheet").classList.add("show");
+    }
+
+    function closeCallpackSheet() {
+      callpackDetailId = null;
+      const sheet = $("callpack-sheet");
+      if (sheet) sheet.classList.remove("show");
     }
 
     function refreshActionPanels() {
@@ -2717,14 +2897,14 @@
       return sorted(list);
     }
 
-    // 不满一页时外扩，人数补满至一页（PAGE_SIZE）
+    // 有筛选且同城仍有未命中人选 → 外扩（与命中人数无关，外扩区无限列表）
 
     function hasListFilters() {
+      // 外扩触发只认显式筛选；换城本身不算「有筛选」
       return quick.cert !== "不限"
         || quick.gender !== "不限"
         || skillList().length
         || hasPriceFilter()
-        || quick.city !== "上海市"
         || more.age !== "不限"
         || more.height !== "不限";
     }
@@ -2885,8 +3065,8 @@
       if (matchMode || mineMode) return false;
       if (!returningFilterApplied) return false;
       if (!hasListFilters()) return false;
-      // 符合条件人数不满一页 → 外扩
-      return matched.length < PAGE_SIZE && expandCandidates(matched).length > 0;
+      if (!cityHasPeople()) return false;
+      return expandCandidates(matched).length > 0;
     }
 
     function personCardHTML(p, { expanded = false } = {}) {
@@ -2984,37 +3164,14 @@
       $("price-arr").textContent = priceDir === "asc" ? "↑" : "↓";
     }
 
-    function resetListPage() { listPage = 1; }
+    function resetListPage() { /* 无限列表，无分页 */ }
 
-    function renderPager(total, page, pages) {
-      const el = $("list-pager");
-      // 推荐人选列表有命中时始终展示页数；首页 / 我的 / 零命中不展示
-      if (mineMode || !returningFilterApplied || total <= 0) {
-        el.classList.remove("show");
-        el.innerHTML = "";
-        return;
-      }
-      const p = Math.max(1, page);
-      const ps = Math.max(1, pages);
-      el.classList.add("show");
-      el.innerHTML = `
-        <span>第 <span class="pg-num">${p}</span> / ${ps} 页 · 每页 ${PAGE_SIZE} 人</span>
-        <div class="pg-btns">
-          <button type="button" id="pg-prev" ${p <= 1 ? "disabled" : ""}>上一页</button>
-          <button type="button" id="pg-next" ${p >= ps ? "disabled" : ""}>下一页</button>
-        </div>`;
-      $("pg-prev").onclick = () => {
-        if (listPage <= 1) return;
-        listPage -= 1;
-        renderCards();
-        $("list-scroll").scrollTop = 0;
-      };
-      $("pg-next").onclick = () => {
-        if (listPage >= ps) return;
-        listPage += 1;
-        renderCards();
-        $("list-scroll").scrollTop = 0;
-      };
+    function bindCardListClicks() {
+      const box = $("card-list");
+      if (!box) return;
+      box.querySelectorAll(".card").forEach((c) => {
+        c.onclick = () => openDetail(+c.dataset.id);
+      });
     }
 
     function renderCards() {
@@ -3027,8 +3184,6 @@
       renderActiveTags();
 
       if (mineMode) {
-        $("list-pager").classList.remove("show");
-        $("list-pager").innerHTML = "";
         $("screen-list").classList.remove("is-empty-result", "has-expand");
         if (mineTab === "fav") renderShortlistPanel();
         else renderMinePanel();
@@ -3038,43 +3193,36 @@
       const data = filtered();
       renderMatchRelax(data.length);
       const showExpand = shouldShowExpand(data);
-      const expandNeed = Math.max(0, PAGE_SIZE - data.length);
-      const expandList = showExpand ? expandCandidates(data).slice(0, expandNeed) : [];
+      const expandList = showExpand ? expandCandidates(data) : [];
       const listPhone = $("screen-list");
       const isEmptyResult = !data.length && returningFilterApplied && !matchMode;
       const isCityEmptyResult = isEmptyResult && !cityHasPeople();
       if (listPhone) {
         listPhone.classList.toggle("is-empty-result", !!isEmptyResult);
-        listPhone.classList.toggle("has-expand", !!(showExpand || (isEmptyResult && !isCityEmptyResult && expandList.length)));
+        listPhone.classList.toggle("has-expand", !!(showExpand && expandList.length));
       }
       $("result-count").textContent = resultCountLabel(data.length);
 
-      // 同城无人：不展示改条件/外扩，走空城 + 上海推荐
+      // 同城无人：空态 + 上海无限列表
       if (isCityEmptyResult) {
         renderFilterSummary({ hideTop: true });
         $("card-list").innerHTML = cityEmptyHintHTML() + shanghaiRecommendBlockHTML("list");
-        document.querySelectorAll("#card-list .card").forEach((c) => {
-          c.onclick = () => openDetail(+c.dataset.id);
-        });
-        renderPager(0, 1, 1);
+        bindCardListClicks();
         return;
       }
 
-      // 零结果（同城仍有人）：修改筛选色块 + 外扩整区
+      // 零命中（同城仍有人）：修改筛选 + 外扩无限列表
       if (isEmptyResult) {
         renderFilterSummary({ hideTop: true });
         $("card-list").innerHTML = filterReviseBlockHTML({ empty: true }) + expandBlockHTML(expandList);
         const resetBtn0 = $("btn-result-filter-reset");
         if (resetBtn0) resetBtn0.onclick = () => resetAllResultFilters();
         bindFilterChips($("card-list"));
-        document.querySelectorAll("#card-list .card").forEach((c) => {
-          c.onclick = () => openDetail(+c.dataset.id);
-        });
-        renderPager(0, 1, 1);
+        bindCardListClicks();
         return;
       }
 
-      // 少量命中：命中卡片区 → 修改筛选色块 → 外扩整区
+      // 有筛选且可外扩：命中全量 → 修改筛选 → 外扩全量（与命中人数无关）
       if (showExpand) {
         renderFilterSummary({ hideTop: true });
         const matchedHTML = `<div class="matched-block">${data.map((p) => personCardHTML(p)).join("")}</div>`;
@@ -3082,39 +3230,26 @@
         const resetBtn = $("btn-result-filter-reset");
         if (resetBtn) resetBtn.onclick = () => resetAllResultFilters();
         bindFilterChips($("card-list"));
-        document.querySelectorAll("#card-list .card").forEach((c) => {
-          c.onclick = () => openDetail(+c.dataset.id);
-        });
-        renderPager(data.length, 1, 1);
+        bindCardListClicks();
         return;
       }
 
       if (listPhone) listPhone.classList.remove("has-expand");
       renderFilterSummary();
-      const pages = Math.max(1, Math.ceil(data.length / PAGE_SIZE));
-      if (listPage > pages) listPage = pages;
-      if (listPage < 1) listPage = 1;
-      const start = (listPage - 1) * PAGE_SIZE;
-      const pageData = data.slice(start, start + PAGE_SIZE);
 
       if (!data.length) {
         if (!cityHasPeople()) {
           $("card-list").innerHTML = cityEmptyHintHTML() + shanghaiRecommendBlockHTML("list");
-          document.querySelectorAll("#card-list .card").forEach((c) => {
-            c.onclick = () => openDetail(+c.dataset.id);
-          });
+          bindCardListClicks();
         } else {
           $("card-list").innerHTML = `<div class="empty-box"><h4>暂无符合条件的护理员</h4><p>试试放宽筛选条件后再查看。</p></div>`;
         }
-        renderPager(0, 1, 1);
         return;
       }
 
-      $("card-list").innerHTML = pageData.map((p) => personCardHTML(p)).join("");
-      document.querySelectorAll("#card-list .card").forEach((c) => {
-        c.onclick = () => openDetail(+c.dataset.id);
-      });
-      renderPager(data.length, listPage, pages);
+      // 无外扩：命中区无限列表
+      $("card-list").innerHTML = data.map((p) => personCardHTML(p)).join("");
+      bindCardListClicks();
     }
 
     function renderShortlistPanel() {
@@ -3356,13 +3491,12 @@
     }
 
     function confirmPayPurchase() {
-      callCredits += 3;
-      hasBoughtCallPack = true;
+      addCallPackOrder();
       updateCreditsUI();
       closePaySheets();
       pendingCallId = null;
       // 支付成功只到账，不自动拨打；留在当前页
-      toast(activeToastId(), "支付成功，已到账 3 次通话，请再次点击拨打");
+      toast(activeToastId(), `支付成功，已到账 ${CALL_PACK.times} 次通话，请再次点击拨打`);
     }
 
     function openRepurchaseSheet() {
@@ -3376,6 +3510,7 @@
         return;
       }
       currentId = id;
+      syncCallCredits();
       if (!isRevealActive(id) && callCredits <= 0) {
         pendingCallId = id;
         // 买过包且次数耗光：先提醒再买；首购直接出购买抽屉。我的页不跳详情
@@ -3385,7 +3520,12 @@
       }
       pendingCallId = null;
       if (!isRevealActive(id)) {
-        callCredits -= 1;
+        if (!consumeCallCredit()) {
+          pendingCallId = id;
+          if (hasBoughtCallPack) openRepurchaseSheet();
+          else openPaySheet();
+          return;
+        }
         revealed[id] = Date.now();
         updateCreditsUI();
       }
@@ -4007,6 +4147,9 @@
 
     /** 回到包月服务首页（原型不再经过 e护通首页截图） */
     function goMonthlyHome() {
+      callpackDetailId = null;
+      const cps = $("callpack-sheet");
+      if (cps) cps.classList.remove("show");
       returningFilterApplied = false;
       matchMode = false;
       mineMode = false;
@@ -4135,14 +4278,19 @@
     document.querySelectorAll("[data-close]").forEach((btn) => {
       btn.onclick = () => {
         if (btn.dataset.close === "adopt-sheet") dismissAdoptWithoutMark();
+        else if (btn.dataset.close === "callpack-sheet") closeCallpackSheet();
         else $(btn.dataset.close).classList.remove("show");
       };
     });
-    ["region-sheet","skill-sheet","price-sheet","more-sheet","replace-sheet","cert-sheet","verify-sheet","adopt-sheet","repurchase-sheet","pay-sheet-list","pay-sheet-detail","pay-method-sheet"].forEach((id) => {
+    ["region-sheet","skill-sheet","price-sheet","more-sheet","replace-sheet","cert-sheet","verify-sheet","adopt-sheet","repurchase-sheet","pay-sheet-list","pay-sheet-detail","pay-method-sheet","callpack-sheet"].forEach((id) => {
       const el = $(id); if (!el) return;
       el.addEventListener("click", (e) => {
         if (e.target.id !== id) return;
         if (id === "adopt-sheet") dismissAdoptWithoutMark();
+        else if (id === "callpack-sheet") {
+          callpackDetailId = null;
+          el.classList.remove("show");
+        }
         else el.classList.remove("show");
       });
     });
@@ -4322,6 +4470,8 @@
       }
       show("list");
     };
+
+    $("btn-mine-callpack").onclick = () => openCallpackSheet();
 
     $("persona-tabs").onclick = (e) => {
       const btn = e.target.closest("[data-persona]");

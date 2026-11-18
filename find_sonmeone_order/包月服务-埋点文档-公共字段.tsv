@@ -1,0 +1,12 @@
+公共字段	含义	为什么需要	来源
+anonymous_id（open_id）	未登录用户唯一标识	未登录也能逛很久，所以非常重要	现网沿用
+user_id	登录用户 ID	登录以后识别用户	现网沿用
+event_time	行为发生时间【时长】	计算时长，单位秒	现网沿用
+create_time	创建时间	记录创建时间	现网沿用
+login_status	logged_in / anonymous	区分登录/未登录	现网沿用
+city_code	当前服务城市	按城市分析	现网沿用
+source_page	从哪个页面进入【当前页面的前置页面】	判断流量来源	现网沿用
+platform	string，如 wechat_mini_program	区分哪个小程序	现网沿用
+app_version	string	小程序版本号	现网沿用
+product_id	商品 ID	做商品漏斗；非购场景可空	现网沿用
+sku_id	商品规格 ID	区分具体规格；非购场景可空	现网沿用

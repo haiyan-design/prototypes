@@ -1,0 +1,26 @@
+分区,列1,列2,列3,列4
+说明,客户端只报明细；次数/率/落层/q 由数仓计算,,,
+
+B.落层,层,判定条件,埋点判定,
+B.落层,筛选项,当次（或结果请求）勾了病症和/或预算,请求参数；或最近一次 monthly_home_skill_confirm / monthly_home_budget_confirm / monthly_list_skill_confirm / monthly_list_price_confirm 写入的筛选快照非「不限」
+B.落层,有过行为,未勾病·预算，但近窗有有效行为,存在 monthly_filter_option_click 或 monthly_filter_sheet_open 或 monthly_detail_view 或更多筛选相关 confirm；或历史关注/采用等产品约定的有效信号
+B.落层,无行为,未勾病·预算，且无上述有效行为,以上皆无
+
+C.热度,算法信号,汇总口径,来源埋点,计算公式
+C.热度,曝光人数（分母）,对 caregiver_id，统计有过卡片曝光的去重 user_id,monthly_home_recommend_expose ∪ monthly_list_card_expose ∪ monthly_expand_card_expose,曝光人数 = UV
+C.热度,曝光 UV（曝光达成）,同上,同上,"曝光达成率 = min(1, log(曝光UV) / log(2000))"
+C.热度,备选人数,对该护理员发生过加入备选的去重用户,monthly_shortlist_add；替换成功时新人计 monthly_shortlist_replace 的 new_caregiver_id,备选率 = 备选人数 ÷ 曝光人数
+C.热度,联系人数,对该护理员「已发起拨打」的去重用户,monthly_call_result 且 result=已发起拨打（不要用仅 click 或拉起购买）,被联系率 = 联系人数 ÷ 曝光人数
+C.热度,采纳人数,对该护理员标记采用的去重用户,monthly_adopt_confirm（取消采用是否从人数中剔除：建议采用态以当前有效采用为准，与合篇「采纳」对齐）,采纳率 = 采纳人数 ÷ 曝光人数
+C.热度,热度综合,四信号加权,上表,热度分按合篇：满分 8 拆为 4.0/2.0/1.6/0.4 再乘各率；小样本收缩 r′=(r×n+r₀×m)/(n+m)，m=30，r₀=近 30 天全站均值
+
+F.速查,event_code,算法用途,,
+F.速查,monthly_home_recommend_expose / monthly_list_card_expose / monthly_expand_card_expose,护理员曝光 UV/PV；热度分母
+F.速查,monthly_detail_view,详情曝光；有过行为判定；样本门槛参考
+F.速查,monthly_filter_option_click,**病症点击分布、偏好四维点击分布（核心）**
+F.速查,monthly_filter_sheet_open,辅助「点过筛选」判定
+F.速查,monthly_*_skill_confirm / *_budget_confirm / *_price_confirm / *_more_confirm,当次筛选快照；筛选项层；不可替代 option_click
+F.速查,monthly_shortlist_add / monthly_shortlist_replace,备选人数
+F.速查,monthly_call_result（已发起）,联系人数
+F.速查,monthly_adopt_confirm / monthly_adopt_cancel,采纳人数；自己采纳排除
+F.速查,其余浏览/支付等,产品分析与转化漏斗；非合篇热度主路径
