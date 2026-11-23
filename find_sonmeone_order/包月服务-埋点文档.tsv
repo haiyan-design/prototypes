@@ -2,7 +2,8 @@
 访问	home	e护通首页·金刚位	business_entry	金刚位点击	business_entry_click	点击「包月服务」入口	business_line_id；position	V5.30.0	复用全链路	与现网 `business_entry_click` 合并；用 business_line_id 区分包月。若需独立事件可另加 `monthly_entry_click`
 包月服务	monthly	包月服务首页	monthly_home	包月服务首页访问	monthly_home_view	包月服务首页加载成功	user_type；has_history_concern	V5.30.0	新增	公共字段 source_page 记前置页（如 home）；login_status 用 logged_in/anonymous
 包月服务	monthly	城市	city	城市切换	monthly_city_change	选择城市并切换成功	old_city；new_city；current_page	V5.30.0	新增	首页与列表共用；用 current_page 区分发生页；source_page 仍为公共前置页
-包月服务	monthly	同城无人	empty_city	同城无人空态曝光	monthly_empty_city_expose	当前市护理员池=0，空态+上海降级列表展示	shanghai_count；current_page	V5.30.0	新增	与「有人但命中 0」区分，勿与外扩混报；current_page 区分首页/列表
+包月服务	monthly	同城无人	empty_city	同城无人空态曝光	monthly_empty_city_expose	当前市护理员池=0，空态+上海降级列表展示	shanghai_count；current_page；empty_type	V5.30.1	更新	`empty_type=empty_city`；与「有人但命中 0」、全平台无人区分；勿与外扩混报
+包月服务	monthly	全平台无人	cold_start	全平台无人/冷启动空态曝光	monthly_cold_start_expose	全平台找人池=0，冷启动主文/辅文/「看看其他服务」展示	current_page；empty_type	V5.30.1	新增	`empty_type=cold_start`；无上海列表、无外扩；首页/列表/我的空态均可报
 包月服务	monthly	首页筛选	monthly_home_filter	首页病症入口点击	monthly_home_skill_click	点击病症筛选项	current_skills	V5.30.0	新增	
 包月服务	monthly	首页筛选	monthly_home_filter	首页病症确定	monthly_home_skill_confirm	病症抽屉点「确定」	skill_list；skill_count	V5.30.0	新增	点关闭放弃不报 confirm
 包月服务	monthly	首页筛选	monthly_home_filter	首页预算入口点击	monthly_home_budget_click	点击预算	current_budget	V5.30.0	新增	
@@ -10,7 +11,7 @@
 包月服务	monthly	首页筛选	monthly_home_filter	首页筛选重置	monthly_home_filter_reset	点击重置，清空病症和预算	—	V5.30.0	新增	
 包月服务	monthly	筛选项点击	monthly_filter_click	筛选项选项点击	monthly_filter_option_click	在病症/预算/更多等抽屉内点选或取消某个具体选项（含首页与列表；点「不限」也报）。同一秒连点去重由数仓处理	filter_dim；option_id；option_label；action；sheet_type	V5.30.0	新增	算法「筛选项点击·病症 / 偏好」原料；必接。确定按钮另报 confirm，不能替代本事件。所在页用 sheet_type，勿把 source_page 当当前页
 包月服务	monthly	筛选项点击	monthly_filter_click	筛选项抽屉打开	monthly_filter_sheet_open	打开病症/预算/价格/更多任一筛选抽屉	sheet_type	V5.30.0	新增	用于有过行为判定辅助；可与 option_click 并存；所在抽屉用 sheet_type
-包月服务	monthly	首页推荐	monthly_home_recommend	首页推荐卡曝光	monthly_home_recommend_expose	推荐卡进入可视区，同屏同 id 只记一次	caregiver_id；position；is_vip；has_health_cert；user_type；is_shanghai_fallback	V5.30.0	新增	空城上海列表同样报，`is_shanghai_fallback=1`
+包月服务	monthly	首页推荐	monthly_home_recommend	首页推荐卡曝光	monthly_home_recommend_expose	推荐卡进入可视区即报（每次进入可视计 1 次；**不按用户去重**）	caregiver_id；position；is_vip；has_health_cert；user_type；is_shanghai_fallback	V5.30.0	新增	空城上海列表同样报，`is_shanghai_fallback=1`；热度按事件条数计
 包月服务	monthly	首页推荐	monthly_home_recommend	首页推荐卡点击	monthly_home_recommend_click	点击推荐卡进详情	caregiver_id；position；is_vip；user_type；is_shanghai_fallback	V5.30.0	新增	
 包月服务	monthly	首页	monthly_home	查看人选点击	monthly_view_list_click	点击「查看人选」进入推荐人选列表	skill_list；budget_min；budget_max；user_type	V5.30.0	新增	未选病症/预算也报，属性取空或不限
 推荐人选	monthly	推荐人选列表	monthly_list	推荐人选列表访问	monthly_list_view	列表页加载成功（含从首页进入、从详情返回）	skill_list；budget_min；budget_max；sort_mode；hit_count；page_no；page_total；is_empty_city；has_expand	V5.30.0	新增	
@@ -22,44 +23,52 @@
 推荐人选	monthly	条件	monthly_list_filter	结果筛选全部重置	monthly_list_filter_reset	点重置清空全部结果筛选	—	V5.30.0	新增	含修改筛选色块上的重置
 推荐人选	monthly	排序	monthly_list_sort	排序切换	monthly_list_sort_click	点综合 / 价格排序	sort_mode；price_dir	V5.30.0	新增	已是综合再点综合可不报或报无变化，建议有切换才报
 推荐人选	monthly	分页	monthly_list_pager	翻页	monthly_list_page_change	点上一页 / 下一页	page_no；page_total；direction	V5.30.0	新增	始终有页码展示；禁用态点击不报
-推荐人选	monthly	命中列表	monthly_list_hit	人选卡曝光	monthly_list_card_expose	命中区卡片进入可视区	caregiver_id；position；page_no；is_vip；has_health_cert；is_expand	V5.30.0	新增	一条记录对应 1 人；与外扩卡用 is_expand 区分
+推荐人选	monthly	命中列表	monthly_list_hit	人选卡曝光	monthly_list_card_expose	命中区卡片进入可视区即报（每次进入可视计 1 次；**不按用户去重**）	caregiver_id；position；page_no；is_vip；has_health_cert；is_expand	V5.30.0	新增	一条事件=1 次曝光；与外扩卡用 is_expand 区分
 推荐人选	monthly	命中列表	monthly_list_hit	人选卡点击	monthly_list_card_click	点击命中区卡片进详情	caregiver_id；position；page_no；is_vip；is_expand	V5.30.0	新增	
 外扩	monthly	外扩区	monthly_expand	外扩区曝光	monthly_expand_expose	外扩整区（含标题）进入可视	hit_count；expand_count；filter_labels；sort_mode	V5.30.0	新增	无限滚动场景：区块首次露出报一次 expose；卡片另报 card_expose
-外扩	monthly	外扩列表	monthly_expand	外扩卡曝光	monthly_expand_card_expose	外扩卡进入可视	caregiver_id；position；is_vip；filter_labels	V5.30.0	新增	滚动加载更多时继续报
+外扩	monthly	外扩列表	monthly_expand	外扩卡曝光	monthly_expand_card_expose	外扩卡进入可视区即报（每次进入可视计 1 次；**不按用户去重**）	caregiver_id；position；is_vip；filter_labels	V5.30.0	新增	滚动加载更多时继续报
 外扩	monthly	外扩列表	monthly_expand	外扩卡点击	monthly_expand_card_click	点击外扩卡进详情	caregiver_id；position；is_vip	V5.30.0	新增	
 外扩	monthly	外扩加载	monthly_expand	外扩加载更多	monthly_expand_load_more	外扩无限滚动触发加载	loaded_count；request_count；result	V5.30.0	新增	若外扩为前端一次补满可不报；无限滚时必报
-人员详情	monthly	详情页	monthly_detail	人员详情访问	monthly_detail_view	详情加载成功	caregiver_id；is_vip；has_health_cert；contact_status；call_credits；is_unavailable	V5.30.0	新增	公共字段 source_page 建议前置页：monthly_home / monthly_list / monthly_mine_fav / monthly_mine_contact
-人员详情	monthly	照护技能	monthly_detail	照护技能展开/收起	monthly_detail_skill_expand	点展开全部 / 收起	caregiver_id；action；skill_count	V5.30.0	新增	
-人员详情	monthly	证书	monthly_detail	证书查看点击	monthly_detail_cert_click	点健康证或资质打开证书/说明	caregiver_id；cert_type	V5.30.0	新增	无证/过期无查看时不报
-人员详情	monthly	介绍视频	monthly_detail	介绍视频点击	monthly_detail_video_click	点播放介绍视频	caregiver_id	V5.30.0	新增	
+人员详情	monthly	人员详情	monthly_detail	人员详情访问	monthly_detail_view	详情加载成功	caregiver_id；is_vip；has_health_cert；contact_status；call_credits；is_unavailable	V5.30.2	更新	`business_page=monthly_detail` ↔ 中文「人员详情」。页内技能/证书/视频只用 event_name 区分。source_page 建议前置：monthly_home / monthly_list / monthly_mine_fav / monthly_mine_contact
+人员详情	monthly	人员详情	monthly_detail	照护技能展开/收起	monthly_detail_skill_expand	点展开全部 / 收起	caregiver_id；action；skill_count	V5.30.2	更新	页内操作
+人员详情	monthly	人员详情	monthly_detail	证书查看点击	monthly_detail_cert_click	点健康证或资质打开证书/说明	caregiver_id；cert_type	V5.30.2	更新	页内操作；无证/过期无查看时不报
+人员详情	monthly	人员详情	monthly_detail	介绍视频点击	monthly_detail_video_click	点播放介绍视频	caregiver_id	V5.30.2	更新	页内操作
 备选	monthly	备选	shortlist	加入备选	monthly_shortlist_add	加入备选成功（未满员）	caregiver_id；shortlist_count	V5.30.0	新增	
 备选	monthly	备选	shortlist	移出备选	monthly_shortlist_remove	移出备选成功	caregiver_id；shortlist_count	V5.30.0	新增	含失效卡上移出腾席
 备选	monthly	备选已满	shortlist_replace	备选已满抽屉曝光	monthly_shortlist_full_expose	第 4 人点备选弹出替换抽屉	caregiver_id；shortlist_ids	V5.30.0	新增	
 备选	monthly	备选已满	shortlist_replace	备选替换成功	monthly_shortlist_replace	点选一人完成替换	old_caregiver_id；new_caregiver_id；old_is_unavailable	V5.30.0	新增	含替换失效人选
 备选	monthly	备选已满	shortlist_replace	备选已满关闭	monthly_shortlist_replace_close	点关闭/遮罩，未替换	caregiver_id	V5.30.0	新增	
-我的	monthly	悬浮球	mine_fab	备选悬浮球点击	monthly_mine_fab_click	点悬浮球进入我的	shortlist_count；last_tab	V5.30.0	新增	拖动吸边不报 click
-我的	monthly	我的页	monthly_mine	我的页访问	monthly_mine_view	进入我的	tab；shortlist_count；contact_count	V5.30.0	新增	
-我的	monthly	页签	monthly_mine	我的页签切换	monthly_mine_tab_click	点备选 / 已联系	tab；shortlist_count；contact_count	V5.30.0	新增	
-我的	monthly	已联系筛选	monthly_mine_contact	已联系筛选	monthly_contact_filter_click	点全部 / 已拨打 / 已采用	filter	V5.30.0	新增	
-我的	monthly	已联系失效	monthly_mine_contact	删除单条失效已联系	monthly_contact_dismiss	点失效卡垃圾桶	caregiver_id	V5.30.0	新增	
-我的	monthly	已联系失效	monthly_mine_contact	清理失效	monthly_contact_clean_invalid	点「清理失效」	cleaned_count	V5.30.0	新增	
-我的	monthly	空状态	monthly_mine	空状态去选人	monthly_mine_empty_go_list	空状态点「去选人」	tab	V5.30.0	新增	
-通话	monthly	拨打	call	拨打电话点击	monthly_call_click	点拨打电话 / 再拨打	caregiver_id；call_credits；is_reveal_active；has_bought_pack	V5.30.0	新增	点击即报；是否真正拨出看 call_result
-通话	monthly	拨打	call	拨打发起结果	monthly_call_result	实际发起拨号或因无次数走购买	caregiver_id；result；fail_reason；deducted；call_credits_after	V5.30.0	新增	与 click 成对；未接通不另扣次，客户端若能感知未接通可补 `monthly_call_no_answer`（可选，本期可后置）
+我的	monthly	悬浮球	mine_fab	备选悬浮球点击	monthly_mine_fab_click	点悬浮球进入我的	shortlist_count；last_tab	V5.30.0	新增	拖动吸边不报 click；`mine_fab` 为入口控件，非独立页
+我的	monthly	我的页	monthly_mine	我的页访问	monthly_mine_view	进入我的	tab；shortlist_count；contact_count	V5.30.0	新增	进入时带当前 tab；更细页签用 fav/contact 编码
+我的	monthly	我的页	monthly_mine	我的页签切换	monthly_mine_tab_click	点备选 / 已联系	tab；shortlist_count；contact_count	V5.30.2	更新	页面/模块统一「我的页」；切换后若需按页签分析可用 tab 或后续事件的 current_page
+我的	monthly	我的·已联系	monthly_mine_contact	已联系筛选	monthly_contact_filter_click	点全部 / 已拨打 / 已采用	filter	V5.30.2	更新	`business_page` 与中文统一为「我的·已联系」
+我的	monthly	我的·已联系	monthly_mine_contact	删除单条失效已联系	monthly_contact_dismiss	点失效卡垃圾桶	caregiver_id	V5.30.2	更新	
+我的	monthly	我的·已联系	monthly_mine_contact	清理失效	monthly_contact_clean_invalid	点「清理失效」	cleaned_count	V5.30.2	更新	
+我的	monthly	我的页	monthly_mine	空状态去选人	monthly_mine_empty_go_list	空状态点「去选人」	tab	V5.30.2	更新	备选/已联系空态均报；用 tab 区分
+通话	monthly	拨打	call	拨打电话点击	monthly_call_click	点拨打电话 / 再拨打	caregiver_id；call_credits；is_reveal_active；has_bought_pack；current_page	V5.30.1	更新	点击即报；后续分支看 consume / dial / repurchase / pay / call_result
+通话	monthly	消耗确认	consume_sheet	消耗通话次数曝光	monthly_consume_expose	有次数且本次会扣次，弹出「消耗通话次数」	caregiver_id；call_credits	V5.30.1	新增	主文含姓名；展示当前剩余次数
+通话	monthly	消耗确认	consume_sheet	消耗通话次数确定	monthly_consume_confirm	点「确定」	caregiver_id；call_credits	V5.30.1	新增	此时**不扣次**；接着出系统电话弹窗
+通话	monthly	消耗确认	consume_sheet	消耗通话次数取消	monthly_consume_cancel	点「我再想想」或关闭	caregiver_id；close_type	V5.30.1	新增	不扣次、不拨打
+通话	monthly	系统电话	dial_sheet	系统电话弹窗曝光	monthly_dial_expose	号码/呼叫/取消弹窗展示	caregiver_id；is_reveal_active；call_credits	V5.30.1	新增	免扣次复拨也报；曝光时不扣次
+通话	monthly	系统电话	dial_sheet	系统电话呼叫点击	monthly_dial_call_click	点「呼叫」	caregiver_id；is_reveal_active	V5.30.1	新增	首次扣次在此之后完成；与 call_result=1 成对
+通话	monthly	系统电话	dial_sheet	系统电话取消	monthly_dial_cancel	点「取消」或关闭	caregiver_id；close_type；is_reveal_active	V5.30.1	新增	未呼叫则不扣次
+通话	monthly	拨打	call	拨打发起结果	monthly_call_result	实际发起拨号，或走到购买/再买/消耗确认/电话弹窗等分支终点	caregiver_id；result；fail_reason；deducted；call_credits_after；repurchase_reason	V5.30.1	更新	`1` 已发起（点呼叫成功）/`2` 首购抽屉/`3` 再买提醒/`4` 消耗确认/`5` 电话弹窗未呼叫就离开/`6` 失败。热度拨打次数只计 `result=1`
 通话	monthly	拨打	call	未接通（可选）	monthly_call_no_answer	客户端或话路能判定未接通时上报（本期可后置）	caregiver_id；call_credits_after	V5.30.0	新增	不另扣次；可选。有则便于客服补偿与质量分析
-通话	monthly	次数用完	repurchase	通话次数已用完曝光	monthly_repurchase_expose	曾买过且剩余 0，弹出再买提醒	caregiver_id	V5.30.0	新增	沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
-通话	monthly	次数用完	repurchase	再次购买点击	monthly_repurchase_click	点「再次购买」	caregiver_id	V5.30.0	新增	沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
-通话	monthly	次数用完	repurchase	再买取消	monthly_repurchase_cancel	点取消/关闭	caregiver_id	V5.30.0	新增	
-通话	monthly	购买	pay_sheet	购买通话抽屉曝光	monthly_pay_sheet_expose	打开购买通话（首购或再买确认后）	entry；caregiver_id	V5.30.0	新增	购买链路 ；沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
-通话	monthly	购买	pay_sheet	确认支付点击	monthly_pay_confirm_click	点「确认支付 ¥3.99」	entry；caregiver_id	V5.30.0	新增	不扣款；接着出支付方式；沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
-通话	monthly	支付方式	pay_method	支付方式页曝光	monthly_pay_method_view	选择支付方式层打开	entry；caregiver_id	V5.30.0	新增	沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
-通话	monthly	支付方式	pay_method	支付方式选择	monthly_pay_method_select	切换微信/金币	pay_method	V5.30.0	新增	只切换不支付；本期无好友代付；沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
-通话	monthly	支付	pay_method	立即支付点击	monthly_pay_click	点「立即支付」	pay_method；amount；entry；caregiver_id	V5.30.0	新增	沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
-通话	monthly	支付结果	pay_result	通话包支付结果	monthly_pay_result	后端支付结果返回	result；fail_reason；pay_method；amount；credits_added；call_credits_after；entry	V5.30.0	新增	成功只到账不自动拨打；与全链路 payment_result 区分业务线；沿用公共字段 product_id/sku_id，购买链路须赋值（非新字段）
-采用	monthly	沟通确认	adopt_sheet	沟通得如何曝光	monthly_adopt_sheet_expose	拨打完成后弹出（未采用过）	caregiver_id	V5.30.0	新增	已采用不再弹，不报
-采用	monthly	沟通确认	adopt	标记采用	monthly_adopt_confirm	点「标记采用」成功	caregiver_id	V5.30.0	新增	
-采用	monthly	沟通确认	adopt	暂不采用	monthly_adopt_skip	点暂不，或关闭抽屉未标记	caregiver_id；close_type	V5.30.0	新增	
-采用	monthly	采用	adopt	取消采用	monthly_adopt_cancel	取消采用成功并解锁	caregiver_id	V5.30.0	新增	
+通话	monthly	再买提醒	repurchase	再买提醒曝光	monthly_repurchase_expose	曾买过且剩余 0，弹出再买（用完或过期）	caregiver_id；repurchase_reason；call_credits	V5.30.1	更新	`used`→文案「已用完」；`expired`→「已过期」。沿用 product_id/sku_id
+通话	monthly	再买提醒	repurchase	再次购买点击	monthly_repurchase_click	点「再次购买」	caregiver_id；repurchase_reason	V5.30.1	更新	
+通话	monthly	再买提醒	repurchase	再买取消	monthly_repurchase_cancel	点取消/关闭	caregiver_id；repurchase_reason；close_type	V5.30.1	更新	
+通话	monthly	购买	pay_sheet	购买通话抽屉曝光	monthly_pay_sheet_expose	打开购买通话（首购或再买确认后）	entry；caregiver_id；repurchase_reason	V5.30.1	更新	再买时带 repurchase_reason；首购可空
+通话	monthly	购买	pay_sheet	确认支付点击	monthly_pay_confirm_click	点「确认支付 ¥{price}」	entry；caregiver_id；amount	V5.30.1	更新	不扣款；接着出支付方式
+通话	monthly	支付方式	pay_method	支付方式页曝光	monthly_pay_method_view	选择支付方式层打开	entry；caregiver_id	V5.30.0	新增	
+通话	monthly	支付方式	pay_method	支付方式选择	monthly_pay_method_select	切换微信/金币	pay_method	V5.30.0	新增	只切换不支付
+通话	monthly	支付	pay_method	立即支付点击	monthly_pay_click	点「立即支付」	pay_method；amount；entry；caregiver_id	V5.30.0	新增	
+通话	monthly	支付结果	pay_result	通话包支付结果	monthly_pay_result	后端支付结果返回	result；fail_reason；pay_method；amount；credits_added；purchase_times；call_credits_after；entry；order_id	V5.30.1	更新	成功只到账不自动拨打；`credits_added`/`purchase_times` 为本单购买次数
+通话	monthly	订单	call_order	通话包订单详情访问	monthly_call_order_detail_view	进入通话包订单详情（已支付等）	order_id；order_status；purchase_times；remain_times	V5.30.1	新增	字段名用购买次数/剩余次数，不用「到账次数」
+采用	monthly	沟通确认	adopt_sheet	沟通得如何曝光	monthly_adopt_sheet_expose	拨打完成后弹出（未采用过）	caregiver_id；current_page	V5.30.2	更新	点「呼叫」并发起后约 0.7s；已采用不再弹；`current_page` 为弹层下所在页（多为 `monthly_detail`）
+采用	monthly	沟通确认	adopt	标记采用	monthly_adopt_confirm	点「标记采用」成功	caregiver_id；current_page	V5.30.2	更新	必报操作页：`monthly_detail`（含拨打后弹层）/ `monthly_mine_contact` 等
+采用	monthly	沟通确认	adopt	暂不采用	monthly_adopt_skip	点暂不，或关闭抽屉未标记	caregiver_id；close_type；current_page	V5.30.2	更新	带 `current_page`
+采用	monthly	采用	adopt	取消采用	monthly_adopt_cancel	取消采用成功并解锁	caregiver_id；current_page	V5.30.2	更新	带 `current_page`（详情或我的·已联系）
 登录	monthly	登录拦截	login_intercept	未登录拦截	monthly_login_intercept	未登录点拨打/备选先走登录	login_trigger；caregiver_id	V5.30.0	新增	可与全链路 login_view 的 login_trigger 枚举合并扩展
-客服补偿	monthly	补偿到账	comp_credit	客服补偿次数到账	monthly_comp_credit_grant	客服确认后次数到账（服务端或端上收到成功）	credits_added；call_credits_after；grant_reason	V5.30.0	新增	用户不可自助加次；在端 toast+短信。端上能感知则报；否则以后台为准
+客服补偿	monthly	补偿到账	comp_credit	客服补偿次数到账	monthly_comp_credit_grant	客服确认后赠送成功（挂未过期订单）	credits_added；call_credits_after；grant_reason；order_id；remain_times	V5.30.1	更新	挂靠订单剩余 +N；购买次数不变；在端 toast+短信；并下发系统通知
+客服补偿	monthly	系统通知	comp_notice	补偿到账通知点击	monthly_comp_notice_click	系统通知列表点「包月服务/赠送通话次数到账」，跳转包月服务首页	notice_type；credits_added；order_id	V5.30.2	新增	`notice_type=comp_credit`；公共字段 `source_page` 记 `sys_notice`；落地页为 `monthly_home`
 异常	monthly	不可联系	unavailable	暂不可联系提示	monthly_unavailable_toast	对失效/锁定不可联人员操作时 toast	caregiver_id；action	V5.30.0	新增	

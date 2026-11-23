@@ -1,11 +1,12 @@
-属性,含义,枚举/取值
-user_type,用户类型：`first` 初次 / `returning` 非初次,`first` 初次 / `returning` 非初次
+﻿属性,含义,枚举/取值
+user_type,用户类型：first 初次 / returning 非初次,first 初次 / returning 非初次
 call_credits,当前剩余通话次数,—（自由值，无固定枚举）
 call_credits_after,操作后剩余通话次数,—（自由值，无固定枚举）
 business_line_id,业务线 id（包月服务）,—（自由值，无固定枚举）
 position,列表/坑位排序位置，从 1 起,—（自由值，无固定枚举）
-has_history_concern,是否有历史关注病症：1 有 / 0 无,`1` 有 / `0` 无
-current_page,事件发生时所在页面（如 `monthly_home` / `monthly_list`）；**不是**公共字段 `source_page`,`monthly_home` / `monthly_list` 等；勿与 `source_page` 混用
+has_history_concern,是否有历史关注病症：1 有 / 0 无,1 有 / 0 无
+current_page,事件发生时所在页面；**不是**公共字段 source_page,monthly_home / monthly_list / monthly_detail / monthly_mine / monthly_mine_fav / monthly_mine_contact / sys_notice 等；勿与 source_page 混用
+notice_type,系统通知/站内信类型,comp_credit 赠送通话次数到账
 old_city,切换前城市编码或名称,—（自由值，无固定枚举）
 new_city,切换后城市编码或名称,—（自由值，无固定枚举）
 shanghai_count,空城降级展示的上海护理员条数,—（自由值，无固定枚举）
@@ -15,57 +16,63 @@ skill_count,已选病症个数（详情技能展开时可为技能条数，见�
 current_budget,点击时当前预算展示值,—（自由值，无固定枚举）
 budget_min,预算下限；不限可空,—（自由值，无固定枚举）
 budget_max,预算上限；不限可空,—（自由值，无固定枚举）
-is_unlimited,预算是否不限：1 是 / 0 否,`1` 是 / `0` 否
+is_unlimited,预算是否不限：1 是 / 0 否,1 是 / 0 否
 caregiver_id,护理员 id,—（自由值，无固定枚举）
-is_vip,是否优选：1 是 / 0 否,`1` 是 / `0` 否
-has_health_cert,是否持有有效健康证：1 是 / 0 否,`1` 是 / `0` 否
-is_shanghai_fallback,是否同城无人降级上海列表：1 是 / 0 否,`0` 否 / `1` 是
-sort_mode,排序方式：`comprehensive` 综合 / `price` 价格,`comprehensive` 综合 / `price` 价格
+is_vip,是否优选：1 是 / 0 否,1 是 / 0 否
+has_health_cert,是否持有有效健康证：1 是 / 0 否,1 是 / 0 否
+is_shanghai_fallback,是否同城无人降级上海列表：1 是 / 0 否,0 否 / 1 是
+sort_mode,排序方式：comprehensive 综合 / price 价格,comprehensive 综合 / price 价格
 hit_count,当前命中人数,—（自由值，无固定枚举）
 page_no,当前页码,—（自由值，无固定枚举）
 page_total,总页数,—（自由值，无固定枚举）
-is_empty_city,是否同城无人：1 是 / 0 否,`1` 是 / `0` 否
-has_expand,当前是否展示外扩区：1 是 / 0 否,`1` 是 / `0` 否
+is_empty_city,是否同城无人：1 是 / 0 否,1 是 / 0 否
+has_expand,当前是否展示外扩区：1 是 / 0 否,1 是 / 0 否
 gender,性别筛选：不限/女/男,不限 / 女 / 男
 age_range,年龄筛选区间,—（自由值，无固定枚举）
-health_cert,健康证筛选：`unlimited` 不限 / `yes` 持有 / `no` 未持有,`unlimited` 不限 / `yes` 持有 / `no` 未持有
+health_cert,健康证筛选：unlimited 不限 / yes 持有,unlimited 不限 / yes 持有
 height_range,身高筛选区间,—（自由值，无固定枚举）
 chip_type,删除的条件类型（病症/价格/性别等）,—（自由值，无固定枚举）
 chip_value,删除的条件取值,—（自由值，无固定枚举）
-price_dir,价格排序方向：`asc` / `desc`,`asc` 从低到高 / `desc` 从高到低
-direction,翻页方向：`prev` / `next`,`prev` 上一页 / `next` 下一页
-is_expand,是否外扩卡：0 命中 / 1 外扩,`0` 命中 / `1` 外扩
+price_dir,价格排序方向：asc / desc,asc 从低到高 / desc 从高到低
+direction,翻页方向：prev / next,prev 上一页 / next 下一页
+is_expand,是否外扩卡：0 命中 / 1 外扩,0 命中 / 1 外扩
 expand_count,外扩区当前展示人数,—（自由值，无固定枚举）
 filter_labels,外扩标题中的不满足条件文案列表,—（自由值，无固定枚举）
 loaded_count,外扩已加载总条数,—（自由值，无固定枚举）
 request_count,本次请求条数,—（自由值，无固定枚举）
-result,结果码：视事件而定（见该行说明）,通用：`1` 成功 / `2` 失败；`monthly_call_result`：`1` 已发起拨打 / `2` 拉起购买 / `3` 拉起再买提醒 / `4` 失败（见该事件说明）
-contact_status,联系状态：`none` / `called` / `adopted`,`none` 未展示 / `called` 已拨打 / `adopted` 已采用
-is_unavailable,是否暂不可联系（下架等）：1 是 / 0 否,`1` 是 / `0` 否
-action,动作类型（`select`/`unselect`/`expand`/`collapse` 等）,选项：`select` / `unselect`；技能区等：`expand` / `collapse`
+result,结果码：视事件而定（见该行说明）,通用：1 成功 / 2 失败。monthly_call_result：1 已发起拨打 / 2 拉起购买（首购） / 3 拉起再买提醒 / 4 拉起消耗确认 / 5 拉起系统电话弹窗（未呼叫） / 6 失败
+contact_status,联系状态：none / called / adopted,none 未展示 / called 已拨打 / adopted 已采用
+is_unavailable,是否暂不可联系（下架等）：1 是 / 0 否,1 是 / 0 否
+action,动作类型（select/unselect/expand/collapse 等）,选项：select / unselect；技能区等：expand / collapse
 cert_type,证书类型（健康证/护理员证等）,健康证 / 护理员证等（视实际证书）
 shortlist_count,当前备选人数（0–3）,0–3
 shortlist_ids,当前备选护理员 id 列表,—（自由值，无固定枚举）
 old_caregiver_id,被替换掉的护理员 id,—（自由值，无固定枚举）
 new_caregiver_id,新加入备选的护理员 id,—（自由值，无固定枚举）
-old_is_unavailable,被替换人是否失效：1 是 / 0 否,`1` 是 / `0` 否
-last_tab,进入我的前记住的页签：`fav` / `contact`,`fav` 备选 / `contact` 已联系
-tab,我的页签：`fav` / `contact`,`fav` 备选 / `contact` 已联系
+old_is_unavailable,被替换人是否失效：1 是 / 0 否,1 是 / 0 否
+last_tab,进入我的前记住的页签：fav / contact,fav 备选 / contact 已联系
+tab,我的页签：fav / contact,fav 备选 / contact 已联系
 contact_count,已联系人数,—（自由值，无固定枚举）
-filter,已联系筛选项：`all` / `called` / `adopted`,`all` 全部 / `called` 已拨打 / `adopted` 已采用
+filter,已联系筛选项：all / called / adopted,all 全部 / called 已拨打 / adopted 已采用
 cleaned_count,本次清理的失效人数,—（自由值，无固定枚举）
-is_reveal_active,该人是否在 90 天已拨打有效期内：1 是 / 0 否,`1` 是 / `0` 否
-has_bought_pack,是否曾购买过通话包：1 是 / 0 否,`1` 是 / `0` 否
+is_reveal_active,该人是否在同人免扣次有效期内：1 是 / 0 否,1 是 / 0 否
+has_bought_pack,是否曾购买过通话包：1 是 / 0 否,1 是 / 0 否
 fail_reason,失败原因；成功为空,—（自由值，无固定枚举）
-deducted,本次是否扣次：1 是 / 0 否,`1` 是 / `0` 否
-entry,购买入口：`first_buy` / `repurchase`,`first_buy` 首购 / `repurchase` 再买
+deducted,本次是否扣次：1 是 / 0 否,1 是 / 0 否
+entry,购买入口：first_buy / repurchase,first_buy 首购 / repurchase 再买
+repurchase_reason,再买原因：used 次数用完 / expired 过期清零,used / expired
 pay_method,支付方式：微信/金币,微信 / 金币（本期无好友代付）
 amount,支付金额,—（自由值，无固定枚举）
-credits_added,本次到账增加的通话次数,—（自由值，无固定枚举）
-close_type,关闭方式：`btn` / `mask` / `x`,`btn` 暂不 / `mask` 遮罩 / `x` 关闭按钮
-login_trigger,触发登录的动作：`call` / `shortlist`,`call` 拨打 / `shortlist` 备选
+credits_added,本次增加的通话次数（购买到账或客服补偿）,—（自由值，无固定枚举）
+purchase_times,订单购买次数（下单购得，固定）,—（自由值，无固定枚举）
+remain_times,订单当前剩余次数,—（自由值，无固定枚举）
+order_id,通话包订单 id / 订单号,—（自由值，无固定枚举）
+order_status,订单状态：paid / pending / cancelled,paid 已支付 / pending 待支付 / cancelled 已取消
+close_type,关闭方式：btn / mask / x,btn 按钮（暂不/我再想想/取消） / mask 遮罩 / x 关闭按钮
+login_trigger,触发登录的动作：call / shortlist,call 拨打 / shortlist 备选
 grant_reason,客服赠送原因（如未接通补偿）,—（自由值，无固定枚举）
-filter_dim,筛选项维度：`skill` / `gender` / `age` / `height` / `health_cert` / `budget`,`skill` 病症 / `gender` 性别 / `age` 年龄 / `height` 身高 / `health_cert` 健康证 / `budget` 预算
+filter_dim,筛选项维度：skill / gender / age / height / health_cert / budget,skill 病症 / gender 性别 / age 年龄 / height 身高 / health_cert 健康证 / budget 预算
 option_id,选项取值 id 或文案键,—（自由值，无固定枚举）
 option_label,选项展示文案（可选）,—（自由值，无固定枚举）
-sheet_type,所在抽屉：`home_skill` / `home_budget` / `list_skill` / `list_price` / `list_more`,`home_skill` / `home_budget` / `list_skill` / `list_price` / `list_more`
+sheet_type,所在抽屉：home_skill / home_budget / list_skill / list_price / list_more,home_skill / home_budget / list_skill / list_price / list_more
+empty_type,空态类型：empty_city 同城无人 / cold_start 全平台无人,empty_city / cold_start

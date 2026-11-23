@@ -6,7 +6,7 @@ C.硬性口径,曝光/备选/拨打/采用/浏览详情,COUNT(*) 事件条数,�
 C0.名词,曝光,monthly_home_recommend_expose + monthly_list_card_expose + monthly_expand_card_expose,进入可视即报,1条=1次
 C0.名词,浏览详情,monthly_detail_view,详情加载成功,1条=1次
 C0.名词,备选,monthly_shortlist_add + monthly_shortlist_replace(new_caregiver_id),加入/替换成功,每次=1次；移出不减
-C0.名词,拨打,monthly_call_result 且 result=1,已发起拨打,每次=1次；click/购买不计
+C0.名词,拨打,monthly_call_result 且 result=1,点呼叫已发起拨打,每次=1次；click/消耗确认/电话弹窗未呼叫/购买不计
 C0.名词,采用,monthly_adopt_confirm,标记采用成功,每次=1次；cancel不回扣次数
 
 C1.次数,E,三路 expose 条数之和,,

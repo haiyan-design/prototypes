@@ -1,12 +1,12 @@
-公共字段,含义,为什么需要,来源,枚举/取值
+﻿公共字段,含义,为什么需要,来源,枚举/取值
 anonymous_id（open_id）,未登录用户唯一标识,未登录也能逛很久，所以非常重要,现网沿用,—（自由值）
 user_id,登录用户 ID,登录以后识别用户,现网沿用,—（自由值）
 event_time,行为发生时间【时长】,计算时长，单位秒,现网沿用,—（数值，单位秒）
 create_time,创建时间,记录创建时间,现网沿用,—（时间）
-login_status,登录状态,区分登录/未登录,现网沿用,`logged_in` 已登录 / `anonymous` 未登录
+login_status,登录状态,区分登录/未登录,现网沿用,logged_in 已登录 / anonymous 未登录
 city_code,当前服务城市,按城市分析,现网沿用,—（城市编码）
-source_page,从哪个页面进入【当前页面的前置页面】,判断流量来源,现网沿用,`home` / `monthly_home` / `monthly_list` / `monthly_detail` / `monthly_mine` / `monthly_mine_fav` / `monthly_mine_contact` / `pay_sheet` 等
-platform,端/小程序标识,区分哪个小程序,现网沿用,`wechat_mini_program` 等
+source_page,从哪个页面进入【当前页面的前置页面】,判断流量来源,现网沿用,home / monthly_home / monthly_list / monthly_detail / monthly_mine / monthly_mine_fav / monthly_mine_contact / pay_sheet / sys_notice 等
+platform,端/小程序标识,区分哪个小程序,现网沿用,wechat_mini_program 等
 app_version,小程序版本号,小程序版本号,现网沿用,—（版本字符串）
 product_id,商品 ID,做商品漏斗；非购场景可空,现网沿用,—（自由值；购买链路须赋值）
 sku_id,商品规格 ID,区分具体规格；非购场景可空,现网沿用,—（自由值；购买链路须赋值）

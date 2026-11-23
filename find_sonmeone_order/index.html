@@ -50,6 +50,8 @@
     .stage > .pay-method-sheet,
     .stage > .replace-sheet-global,
     .stage > #repurchase-sheet,
+    .stage > #consume-sheet,
+    .stage > #dial-sheet,
     .stage > #adopt-sheet {
       position: absolute; width: 375px; height: 780px;
       left: 50%; top: 0; transform: translateX(-50%);
@@ -1090,6 +1092,23 @@
       align-items: flex-end;
     }
     .sheet-mask.show { display: flex; }
+    .dial-sheet .sheet {
+      background: transparent; border-radius: 0; max-height: none;
+      padding: 0 8px 10px; gap: 8px;
+    }
+    .dial-card {
+      background: #fff; border-radius: 14px; overflow: hidden; text-align: center;
+    }
+    .dial-num {
+      padding: 18px 16px 16px; color: #8e8e93; font-size: 17px; letter-spacing: .02em;
+    }
+    .dial-call, .dial-cancel {
+      display: block; width: 100%; border: none; background: #fff; cursor: pointer;
+      font: inherit; font-size: 20px; color: #111; padding: 16px 12px;
+    }
+    .dial-call { border-top: 1px solid #e5e5ea; }
+    .dial-cancel { border-radius: 14px; font-weight: 600; }
+    .dial-call:active, .dial-cancel:active { background: #f2f2f2; }
     .sheet {
       width: 100%; background: #fff; border-radius: 16px 16px 0 0; max-height: 78%;
       display: flex; flex-direction: column;
@@ -1601,6 +1620,20 @@
 
     .modal-box { padding: 8px 4px 4px; }
     .modal-box p { font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 12px; }
+    .consume-q {
+      font-size: 15px !important; color: var(--text) !important; font-weight: 600;
+      margin-bottom: 10px !important;
+    }
+    .consume-remain {
+      font-size: 13px; color: var(--text-2); line-height: 1.6; margin: 0 0 8px;
+    }
+    .consume-remain em {
+      font-style: normal; color: var(--brand-dark); font-weight: 700;
+    }
+    .consume-tip {
+      font-size: 12px !important; color: var(--muted) !important; line-height: 1.55 !important;
+      margin: 0 !important;
+    }
     .modal-box .warn {
       background: #fff8e8; border-radius: 8px; padding: 10px 12px; font-size: 12px;
       color: #c48a1a; line-height: 1.55; margin-bottom: 8px;
@@ -1945,7 +1978,6 @@
             <h2>包月价格</h2>
             <button type="button" class="close" data-close="price-sheet">×</button>
           </div>
-          <p class="sub">拖动两端设定可接受的参考价区间</p>
           <div class="sheet-body">
             <div class="range-labels">
               <span>最低 <strong id="price-lo-label">¥4000</strong></span>
@@ -1970,7 +2002,7 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l9.5-9.5a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="M13.5 6.5l3 3"/><path d="M16 3l5 5"/></svg>
               重置
             </button>
-            <button type="button" class="btn primary" id="price-apply">查看结果</button>
+            <button type="button" class="btn primary" id="price-apply">确定</button>
           </div>
         </div>
       </div>
@@ -2007,7 +2039,6 @@
               <div class="opts" id="opt-level">
                 <button type="button" class="opt on" data-v="不限">不限</button>
                 <button type="button" class="opt" data-v="持有">持有</button>
-                <button type="button" class="opt" data-v="未持有">未持有</button>
               </div>
             </div>
             <div class="field">
@@ -2125,7 +2156,7 @@
 
         <div class="boundary">
           <div class="t">服务与责任说明</div>
-          平台提供信息展示与电话沟通，不介入包月签约与履约结算。标记采用后，该护理员不再出现在其他用户的找人列表；护理员会收到通知，24 小时后可自行解锁，未操作则最长锁定 30 天。采用不代表平台签约。
+          平台仅提供护理员信息展示与电话沟通，不参与包月签约、收款与履约。用户标记「采用」不代表与平台签约，亦不代表平台对后续服务结果负责。
         </div>
       </div>
 
@@ -2197,9 +2228,9 @@
         <div class="handle"></div>
         <div class="sheet-hd"><h2>沟通得如何？</h2><button type="button" class="close" data-close="adopt-sheet">×</button></div>
         <div class="sheet-body modal-box">
-          <p>是否将「<strong id="adopt-name">—</strong>」标记为采用？</p>
+          <p>如果沟通合适，可将「<strong id="adopt-name">—</strong>」标记为采用。</p>
           <div class="warn">
-            标记后该护理员不再出现在其他用户的找人列表；护理员会收到通知，24 小时后可自行解锁，未操作则最长锁定 30 天。可同时标记多位，之后也可补标记。
+            采用后，该护理员将不对其他用户展示，并会收到通知。可同时标记多位，之后也可补标记。
           </div>
         </div>
         <div class="sheet-actions">
@@ -2222,18 +2253,45 @@
       </div>
     </div>
 
-    <!-- 次数耗光再买：确认层（全局，列表/详情/我的都可见） -->
+    <!-- 次数用完 / 过期清零：再买确认（全局，列表/详情/我的都可见） -->
     <div class="sheet-mask" id="repurchase-sheet">
       <div class="sheet">
         <div class="handle"></div>
-        <div class="sheet-hd"><h2>通话次数已用完</h2><button type="button" class="close" data-close="repurchase-sheet">×</button></div>
+        <div class="sheet-hd"><h2 id="repurchase-title">通话次数已用完</h2><button type="button" class="close" data-close="repurchase-sheet">×</button></div>
         <div class="sheet-body modal-box">
-          <p>当前通话次数已用完，是否再次购买通话包？</p>
+          <p id="repurchase-desc">当前通话次数已用完，是否再次购买通话包？</p>
         </div>
         <div class="sheet-actions">
           <button type="button" class="btn ghost" id="btn-repurchase-no">取消</button>
           <button type="button" class="btn primary" id="btn-repurchase-yes">再次购买</button>
         </div>
+      </div>
+    </div>
+
+    <!-- 扣次确认：竞品结构（标题 + 问句 + 剩余）+ 扣次含义 -->
+    <div class="sheet-mask" id="consume-sheet">
+      <div class="sheet">
+        <div class="handle"></div>
+        <div class="sheet-hd"><h2>消耗通话次数</h2><button type="button" class="close" data-close="consume-sheet">×</button></div>
+        <div class="sheet-body modal-box">
+          <p class="consume-q">是否确定消耗 1 次通话，拨打「<strong id="consume-name">—</strong>」？</p>
+          <p class="consume-remain">通话次数当前剩余：<em id="consume-left">0</em>次</p>
+        </div>
+        <div class="sheet-actions">
+          <button type="button" class="btn ghost" id="btn-consume-no">我再想想</button>
+          <button type="button" class="btn primary" id="btn-consume-yes">确定</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 系统电话弹窗：号码 / 呼叫 / 取消 -->
+    <div class="sheet-mask dial-sheet" id="dial-sheet">
+      <div class="sheet">
+        <div class="dial-card">
+          <div class="dial-num" id="dial-number">—</div>
+          <button type="button" class="dial-call" id="btn-dial-yes">呼叫</button>
+        </div>
+        <button type="button" class="dial-cancel" id="btn-dial-no">取消</button>
       </div>
     </div>
 
@@ -2750,7 +2808,9 @@
     let wizStep = 0;
     let matchFilters = null;
     let callCredits = 0;
-    let hasBoughtCallPack = false; // 是否买过通话包（区分首购 / 次数耗光再买）
+    let hasBoughtCallPack = false; // 是否买过通话包（区分首购 / 再买）
+    let lastCreditClearReason = "used"; // used 用完 | expired 过期清零
+    let pendingDialFree = false;
     /**
      * 演示：后台可售通话套餐
      * 展示：名称、价格、权益全量、规则跟卡
@@ -2857,7 +2917,7 @@
     let revealed = {}; // id -> timestamp(ms); 90 天内视为已拨打有效
     let shortlist = [1]; // 演示：张敏在备选且失效，可看置灰
     let pendingReplaceId = null;
-    let adoptedIds = { 1: true }; // 演示：已采纳过张敏
+    let adoptedIds = {}; // 默认无人已采用，便于演示拨打后「沟通得如何？」；已采用过的人再拨不弹（见 startCall）
     let unavailableIds = { 1: true }; // 演示：张敏下架/失效，已联系里可见置灰+垃圾桶
     let dismissedContactIds = {}; // 已联系里手动清掉的失效记录（不取消采用）
     let pendingCallId = null;
@@ -3021,6 +3081,8 @@
         }
         if (o.status === "completed" && o.remain > 0 && o.expireAt && o.expireAt <= now) {
           o.remain = 0;
+          o.clearedBy = "expired";
+          lastCreditClearReason = "expired";
         }
       });
     }
@@ -3075,6 +3137,10 @@
         .sort((a, b) => a.expireAt - b.expireAt)[0];
       if (!lot) return false;
       lot.remain -= 1;
+      if (lot.remain <= 0) {
+        lot.clearedBy = "used";
+        lastCreditClearReason = "used";
+      }
       syncCallCredits();
       return true;
     }
@@ -3148,6 +3214,31 @@
     }
     function clearCallPackOrdersDemo() {
       callPackOrders = [];
+      lastCreditClearReason = "used";
+      syncCallCredits();
+    }
+    /** 初次用户演示：曾买过，但剩余次数已过期清零 → 点拨打出「通话次数已过期」 */
+    function seedFirstExpiredCallPackOrders() {
+      const now = Date.now();
+      callPackOrders = [
+        {
+          id: "cp_demo_expired",
+          orderNo: "TH" + String(now - 100 * 86400000).slice(-12),
+          packageId: "pk_std",
+          name: "电话沟通包",
+          times: 3,
+          remain: 0,
+          price: 3.99,
+          payMethod: "微信支付",
+          boughtAt: now - 100 * 86400000,
+          paidAt: now - 100 * 86400000,
+          expireAt: now - 10 * 86400000,
+          status: "completed",
+          clearedBy: "expired",
+        },
+      ];
+      lastCreditClearReason = "expired";
+      revealed = {};
       syncCallCredits();
     }
     function stopCallpackCountdown() {
@@ -3232,7 +3323,7 @@
         <div class="meta">订单状态　已支付</div>
         <div class="meta">下单时间　${formatDateTime(o.boughtAt)}</div>
         <div class="meta">支付方式　${o.payMethod || "—"}</div>
-        <div class="meta">到账次数　${o.times} 次</div>
+        <div class="meta">购买次数　${o.times} 次</div>
         <div class="meta">剩余次数　${o.remain} 次</div>
         <div class="meta">次数有效期至　${formatDateYMD(o.expireAt)}</div>`;
     }
@@ -3475,7 +3566,7 @@
       if (o.status === "completed") {
         infoRows += `
           <div class="row"><span class="k">支付方式</span><span class="v">${o.payMethod || "—"}</span></div>
-          <div class="row"><span class="k">到账次数</span><span class="v">${o.times} 次</span></div>
+          <div class="row"><span class="k">购买次数</span><span class="v">${o.times} 次</span></div>
           <div class="row"><span class="k">剩余次数</span><span class="v">${o.remain} 次</span></div>
           <div class="row"><span class="k">次数有效期至</span><span class="v">${formatDateYMD(o.expireAt)}</span></div>`;
       }
@@ -3644,7 +3735,6 @@
           if (quick.gender !== "不限" && p.gender !== quick.gender) return false;
         }
         if (quick.cert === "持有" && !hasHealthCert(p)) return false;
-        if (quick.cert === "未持有" && hasHealthCert(p)) return false;
         if (more.age === "55以上") {
           if (p.age < 55) return false;
         } else if (more.age !== "不限") {
@@ -3772,11 +3862,8 @@
           label: more.age === "55以上" ? "55岁以上" : more.age.replace("-", "–") + "岁"
         });
       }
-      if (quick.cert !== "不限") {
-        const certLab = quick.cert === "持有" ? "持有健康证"
-          : quick.cert === "未持有" ? "未持有健康证"
-          : quick.cert;
-        items.push({ key: "cert", value: "", label: certLab });
+      if (quick.cert === "持有") {
+        items.push({ key: "cert", value: "", label: "持有健康证" });
       }
       if (more.height !== "不限") {
         // 身高：直接展示所选档位文案
@@ -4492,8 +4579,35 @@
       if ($("screen-orders") && $("screen-orders").classList.contains("active")) renderOrdersScreen();
     }
 
+    function formatDialPhone(phone) {
+      const d = String(phone || "").replace(/\D/g, "");
+      if (d.length === 11) return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}`;
+      return phone || "";
+    }
+
     function openRepurchaseSheet() {
+      const expired = lastCreditClearReason === "expired";
+      $("repurchase-title").textContent = expired ? "通话次数已过期" : "通话次数已用完";
+      $("repurchase-desc").textContent = expired
+        ? "剩余通话次数已到期清零，是否再次购买通话包？"
+        : "当前通话次数已用完，是否再次购买通话包？";
       $("repurchase-sheet").classList.add("show");
+    }
+
+    function openConsumeSheet(p) {
+      $("consume-name").textContent = displayName(p);
+      $("consume-left").textContent = String(callCredits);
+      $("consume-sheet").classList.add("show");
+    }
+
+    function openDialSheet(p, freeRedial) {
+      pendingDialFree = !!freeRedial;
+      $("dial-number").textContent = formatDialPhone(p.phone);
+      $("dial-sheet").classList.add("show");
+    }
+
+    function needPurchase(id) {
+      return !isRevealActive(id) && callCredits <= 0;
     }
 
     function startCall(id) {
@@ -4504,15 +4618,40 @@
       }
       currentId = id;
       syncCallCredits();
-      if (!isRevealActive(id) && callCredits <= 0) {
+      if (needPurchase(id)) {
         pendingCallId = id;
-        // 买过包且次数耗光：先提醒再买；首购直接出购买抽屉。我的页不跳详情
         if (hasBoughtCallPack) openRepurchaseSheet();
         else openPaySheet();
         return;
       }
       pendingCallId = null;
-      if (!isRevealActive(id)) {
+      if (isRevealActive(id)) {
+        openDialSheet(p, true);
+        return;
+      }
+      openConsumeSheet(p);
+    }
+
+    function confirmConsumeAndDial() {
+      const p = person(currentId);
+      $("consume-sheet").classList.remove("show");
+      if (!p) return;
+      syncCallCredits();
+      if (callCredits <= 0) {
+        pendingCallId = currentId;
+        if (hasBoughtCallPack) openRepurchaseSheet();
+        else openPaySheet();
+        return;
+      }
+      openDialSheet(p, false);
+    }
+
+    function placeCall() {
+      const id = currentId;
+      const p = person(id);
+      $("dial-sheet").classList.remove("show");
+      if (!p) return;
+      if (!pendingDialFree) {
         if (!consumeCallCredit()) {
           pendingCallId = id;
           if (hasBoughtCallPack) openRepurchaseSheet();
@@ -4520,16 +4659,17 @@
           return;
         }
         revealed[id] = Date.now();
-        updateCreditsUI();
       }
       if ($("screen-detail").classList.contains("active")) fillDetail();
       refreshActionPanels();
       updateCreditsUI();
-      toast(activeToastId(), `正在拨打 ${p.phone}。未接通可稍后再拨或联系客服。`);
+      const tip = pendingDialFree
+        ? `正在拨打 ${formatDialPhone(p.phone)}。本次不扣次，未接通可稍后再拨或联系客服。`
+        : `正在拨打 ${formatDialPhone(p.phone)}。未接通可稍后再拨或联系客服。`;
+      toast(activeToastId(), tip);
       setTimeout(() => {
         if (isAdopted(id)) return;
         $("adopt-name").textContent = displayName(p);
-        // 在哪里点的拨打，沟通确认就在哪一页出，不跳详情
         $("adopt-sheet").classList.add("show");
       }, 700);
     }
@@ -5278,7 +5418,7 @@
         }
       };
     });
-    ["region-sheet","skill-sheet","price-sheet","more-sheet","replace-sheet","cert-sheet","verify-sheet","adopt-sheet","repurchase-sheet","pay-sheet-list","pay-sheet-detail","pay-method-sheet","pack-rule-sheet"].forEach((id) => {
+    ["region-sheet","skill-sheet","price-sheet","more-sheet","replace-sheet","cert-sheet","verify-sheet","adopt-sheet","repurchase-sheet","consume-sheet","dial-sheet","pay-sheet-list","pay-sheet-detail","pay-method-sheet","pack-rule-sheet"].forEach((id) => {
       const el = $(id); if (!el) return;
       el.addEventListener("click", (e) => {
         if (e.target.id !== id) return;
@@ -5435,6 +5575,10 @@
       $("repurchase-sheet").classList.remove("show");
       openPaySheet();
     };
+    $("btn-consume-no").onclick = () => $("consume-sheet").classList.remove("show");
+    $("btn-consume-yes").onclick = () => confirmConsumeAndDial();
+    $("btn-dial-no").onclick = () => $("dial-sheet").classList.remove("show");
+    $("btn-dial-yes").onclick = () => placeCall();
     document.querySelectorAll(".btn-buy-pay").forEach((btn) => {
       btn.onclick = () => {
         const sheet = btn.closest(".pay-sheet");
@@ -5534,6 +5678,11 @@
         returningFilterApplied = false;
         clearCallPackOrdersDemo();
         updateCreditsUI();
+      } else if (persona === "first") {
+        // 初次用户：首页无历史关注；通话演示为「曾买过但次数过期清零」
+        clearHomeFilters();
+        returningFilterApplied = false;
+        seedFirstExpiredCallPackOrders();
       } else {
         clearHomeFilters();
         returningFilterApplied = false;
