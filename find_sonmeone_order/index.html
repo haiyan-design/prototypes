@@ -1560,7 +1560,7 @@
     .replace-pick.is-unavailable.is-vip::before,
     .replace-pick.is-unavailable.is-vip::after { opacity: .2; }
     .tag.st-unavailable { background: #ebebeb; color: #888; }
-    .short-item.is-unavailable .acts .btn:not([data-remove]) {
+    .short-item.is-unavailable .acts .btn {
       pointer-events: none; opacity: .4;
     }
     .short-item.is-unavailable .contact-trash {
@@ -4249,6 +4249,7 @@
         const stHtml = st ? `<span class="tag ${st.cls}">${st.text}</span>` : "";
         return `
           <div class="short-item${isVip(p) ? " is-vip" : ""}${bad ? " is-unavailable" : ""}">
+            ${bad ? `<button type="button" class="contact-trash" data-remove-unavailable="${p.id}" aria-label="移出失效备选">${TRASH_ICON}</button>` : ""}
             <div class="row">
               ${avatarHTML(p, "sm")}
               <div style="flex:1;min-width:0">
@@ -4261,14 +4262,21 @@
               ${priceColHTML(p)}
             </div>
             <div class="acts">
-              <button type="button" class="btn ghost" data-remove="${p.id}">移出备选</button>
-              <button type="button" class="btn soft" data-open="${p.id}">详情</button>
-              <button type="button" class="btn primary" data-dial="${p.id}">拨打电话</button>
+              <button type="button" class="btn ghost" data-remove="${p.id}" ${bad ? "disabled" : ""}>移出备选</button>
+              <button type="button" class="btn soft" data-open="${p.id}" ${bad ? "disabled" : ""}>详情</button>
+              <button type="button" class="btn primary" data-dial="${p.id}" ${bad ? "disabled" : ""}>拨打电话</button>
             </div>
           </div>`;
       }).join("");
+      document.querySelectorAll("#shortlist-panel [data-remove-unavailable]").forEach((b) => {
+        b.onclick = (e) => {
+          e.stopPropagation();
+          removeFromShortlist(+b.dataset.removeUnavailable);
+        };
+      });
       document.querySelectorAll("#shortlist-panel [data-remove]").forEach((b) => {
         b.onclick = () => {
+          if (b.disabled || isUnavailable(+b.dataset.remove)) return;
           removeFromShortlist(+b.dataset.remove);
         };
       });
