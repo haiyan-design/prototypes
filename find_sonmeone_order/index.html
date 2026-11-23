@@ -1898,7 +1898,7 @@
       <div class="filter-normal">
         <div class="filter-bar">
           <button type="button" class="more-btn" id="btn-skill">病症</button>
-          <button type="button" class="more-btn" id="btn-price">价格</button>
+          <button type="button" class="more-btn" id="btn-price">预算</button>
           <button type="button" class="more-btn" id="btn-more">更多</button>
         </div>
         <div class="filter-summary" id="filter-summary"></div>
@@ -1975,7 +1975,7 @@
         <div class="sheet">
           <div class="handle"></div>
           <div class="sheet-hd">
-            <h2>包月价格</h2>
+            <h2>包月预算</h2>
             <button type="button" class="close" data-close="price-sheet">×</button>
           </div>
           <div class="sheet-body">
@@ -2926,7 +2926,7 @@
     const specs = {
       list: { title: "人员列表", id: "P01",
         html: `<dt>首页</dt><dd>重筛选仅病症/预算；未下单下方地图，已下单下方推荐。</dd>
-          <dt>结果</dt><dd>点「查看人选」后改为轻量吸顶筛选（病症/价格/更多）+ 列表，筛选占比收小。</dd>` },
+          <dt>结果</dt><dd>点「查看人选」后改为轻量吸顶筛选（病症/预算/更多）+ 列表，筛选占比收小。</dd>` },
       help: { title: "帮我找护理员", id: "P01b",
         html: `<dt>入口</dt><dd>列表「帮我找护理员」；病症、预算必填，可再选更看重哪一点。定位仅到市。</dd>` },
       match: { title: "推荐结果", id: "P01c",
@@ -2980,7 +2980,7 @@
       return quick.priceMin > PRICE_LO || quick.priceMax < PRICE_HI;
     }
     function priceLabel() {
-      if (!hasPriceFilter()) return "价格";
+      if (!hasPriceFilter()) return "预算";
       return `¥${quick.priceMin}–${quick.priceMax}`;
     }
     function isAdopted(id) { return !!adoptedIds[id]; }
@@ -4473,9 +4473,9 @@
       };
       const benefitChips = (p) => packBenefitsList(p).map((b) => benefitRow(b, "ppo-feat")).join("");
       const benefitFeats = (p) => packBenefitsList(p).map((b) => benefitRow(b, "feat")).join("");
-      // 方案 B：仅选中卡展开规则全文
-      const ruleBlock = (p, selected) => {
-        if (!selected || !p.rule) return "";
+      // 每张套餐卡都展开规则全文（不依赖选中）
+      const ruleBlock = (p) => {
+        if (!p.rule) return "";
         return `<div class="ppo-rule">${p.rule}</div>`;
       };
 
@@ -4514,7 +4514,7 @@
                 <div class="ppo-price"><em>¥</em>${formatPackPrice(p.price)}</div>
               </div>
               <div class="ppo-feats">${benefitChips(p)}</div>
-              ${ruleBlock(p, selected)}
+              ${ruleBlock(p)}
             </div>`;
           }).join("");
           listEl.querySelectorAll(".pay-pack-opt").forEach((card) => {
@@ -4994,8 +4994,7 @@
       list.classList.toggle("filter-results", results);
       syncHeavyFilterUI();
       renderHomeBelow();
-      if (results) $("list-title").textContent = "推荐人选";
-      else if (!mineMode && !matchMode) $("list-title").textContent = "包月服务";
+      if (!mineMode && !matchMode) $("list-title").textContent = "包月服务";
     }
 
     function renderHomeBelow() {
