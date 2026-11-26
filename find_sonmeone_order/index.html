@@ -1149,11 +1149,10 @@
       border: 1px solid #e5e5e5; background: #fff; cursor: pointer; color: var(--text);
     }
     .opt.on { border-color: var(--brand); background: var(--brand-soft); color: var(--brand-dark); font-weight: 600; }
-    .range-labels {
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 11px; color: var(--muted); margin-bottom: 10px;
+    .price-range-text {
+      text-align: center; font-size: 16px; font-weight: 600;
+      color: var(--text); margin: 2px 0 12px; letter-spacing: .02em;
     }
-    .range-labels strong { color: var(--text); font-size: 13px; font-weight: 600; }
     .dual-range { position: relative; height: 28px; margin: 4px 4px 8px; }
     .dual-range .rail {
       position: absolute; left: 0; right: 0; top: 12px; height: 4px;
@@ -1979,22 +1978,20 @@
             <button type="button" class="close" data-close="price-sheet">×</button>
           </div>
           <div class="sheet-body">
-            <div class="range-labels">
-              <span>最低 <strong id="price-lo-label">¥4000</strong></span>
-              <span>最高 <strong id="price-hi-label">¥12000</strong></span>
-            </div>
+            <div class="price-range-text" id="price-range-text">不限</div>
             <div class="dual-range" id="price-dual">
               <div class="rail"></div>
               <div class="fill" id="price-fill"></div>
-              <input type="range" id="price-min" min="4000" max="12000" step="500" value="4000" />
-              <input type="range" id="price-max" min="4000" max="12000" step="500" value="12000" />
+              <input type="range" id="price-min" min="0" max="20000" step="500" value="0" />
+              <input type="range" id="price-max" min="0" max="20000" step="500" value="20000" />
             </div>
             <div class="opts" id="price-presets" style="margin-top:12px">
-              <button type="button" class="opt" data-lo="4000" data-hi="6000">6000以下</button>
+              <button type="button" class="opt" data-lo="0" data-hi="6000">6000以下</button>
               <button type="button" class="opt" data-lo="6000" data-hi="8000">6000–8000</button>
               <button type="button" class="opt" data-lo="8000" data-hi="10000">8000–10000</button>
-              <button type="button" class="opt" data-lo="10000" data-hi="12000">10000以上</button>
-              <button type="button" class="opt" data-lo="4000" data-hi="12000">不限</button>
+              <button type="button" class="opt" data-lo="10000" data-hi="12000">10000–12000</button>
+              <button type="button" class="opt" data-lo="10000" data-hi="20000">10000以上</button>
+              <button type="button" class="opt" data-lo="0" data-hi="20000">不限</button>
             </div>
           </div>
           <div class="sheet-actions lj-ft">
@@ -2735,7 +2732,8 @@
     let matchMode = false, mineMode = false;
     let mineTab = "fav"; // fav | contact
     let mineFilter = "all"; // all | called | adopted
-    const PRICE_LO = 4000, PRICE_HI = 12000, PRICE_STEP = 500;
+    // 右端 20000 表示「不限」：区间从 0 覆盖到任意更高报价
+    const PRICE_LO = 0, PRICE_HI = 20000, PRICE_STEP = 500;
     const SHORTLIST_MAX = 3;
     let quick = {
       cert: "不限", gender: "不限", skill: [],
@@ -2979,8 +2977,24 @@
     function hasPriceFilter() {
       return quick.priceMin > PRICE_LO || quick.priceMax < PRICE_HI;
     }
+    function priceHits(monthly, min, max) {
+      if (monthly < min) return false;
+      if (max >= PRICE_HI) return true;
+      return monthly <= max;
+    }
+    function priceRangeText(min, max) {
+      const open = max >= PRICE_HI;
+      const floor = min <= PRICE_LO;
+      if (floor && open) return "不限";
+      if (floor) return `${max}元以下`;
+      if (open) return `${min}元以上`;
+      return `${min}-${max}元`;
+    }
     function priceLabel() {
       if (!hasPriceFilter()) return "预算";
+      const open = quick.priceMax >= PRICE_HI;
+      if (quick.priceMin <= PRICE_LO && !open) return `¥${quick.priceMax}以下`;
+      if (open) return `¥${quick.priceMin}以上`;
       return `¥${quick.priceMin}–${quick.priceMax}`;
     }
     function isAdopted(id) { return !!adoptedIds[id]; }
@@ -3027,6 +3041,7 @@
       if (label === "6000以下") return [PRICE_LO, 6000];
       if (label === "6000–8000") return [6000, 8000];
       if (label === "8000–10000") return [8000, 10000];
+      if (label === "10000–12000") return [10000, 12000];
       if (label === "10000以上") return [10000, PRICE_HI];
       return [PRICE_LO, PRICE_HI];
     }
@@ -3722,7 +3737,7 @@
           if (!matchRegion(p, matchFilters.city)) return false;
           if (matchFilters.skill && !skillHit(p, matchFilters.skill)) return false;
           if (hasPriceFilter()) {
-            if (p.monthly < quick.priceMin || p.monthly > quick.priceMax) return false;
+            if (!priceHits(p.monthly, quick.priceMin, quick.priceMax)) return false;
           } else if (matchFilters.budgetMax && p.monthly > matchFilters.budgetMax) {
             return false;
           }
@@ -3731,7 +3746,7 @@
           if (!matchRegion(p, quick.city)) return false;
           const picked = skillList();
           if (picked.length && !picked.some((s) => skillHit(p, s))) return false;
-          if (p.monthly < quick.priceMin || p.monthly > quick.priceMax) return false;
+          if (!priceHits(p.monthly, quick.priceMin, quick.priceMax)) return false;
           if (quick.gender !== "不限" && p.gender !== quick.gender) return false;
         }
         if (quick.cert === "持有" && !hasHealthCert(p)) return false;
@@ -3767,7 +3782,8 @@
       if (f.budgetLabel === "6000以下") return 5500;
       if (f.budgetLabel === "6000–8000") return 7000;
       if (f.budgetLabel === "8000–10000") return 9000;
-      if (f.budgetLabel === "10000以上") return 11000;
+      if (f.budgetLabel === "10000–12000") return 11000;
+      if (f.budgetLabel === "10000以上") return 15000;
       return Math.min(f.budgetMax || 10000, 10000) - 1000;
     }
 
@@ -3852,7 +3868,7 @@
       skillList().forEach((s) => items.push({ key: "skill", value: s, label: skillShort(s) }));
       if (hasPriceFilter()) {
         // 预算：直接展示所选区间
-        items.push({ key: "price", value: "", label: `¥${quick.priceMin}–${quick.priceMax}` });
+        items.push({ key: "price", value: "", label: priceLabel() });
       }
       if (quick.gender !== "不限") items.push({ key: "gender", value: "", label: quick.gender });
       if (more.age !== "不限") {
@@ -4099,8 +4115,7 @@
       if (!minEl || !maxEl) return;
       minEl.value = draftPrice.min;
       maxEl.value = draftPrice.max;
-      $("price-lo-label").textContent = `¥${draftPrice.min}`;
-      $("price-hi-label").textContent = `¥${draftPrice.max}`;
+      $("price-range-text").textContent = priceRangeText(draftPrice.min, draftPrice.max);
       const span = PRICE_HI - PRICE_LO;
       const left = ((draftPrice.min - PRICE_LO) / span) * 100;
       const right = ((draftPrice.max - PRICE_LO) / span) * 100;
@@ -4958,6 +4973,7 @@
       { v: "6000以下" },
       { v: "6000–8000" },
       { v: "8000–10000" },
+      { v: "10000–12000" },
       { v: "10000以上" }
     ];
     const WIZ_PRIORITY = [
@@ -5198,6 +5214,7 @@
       if (wiz.budget === "6000以下") budgetMax = 6000;
       else if (wiz.budget === "6000–8000") budgetMax = 8000;
       else if (wiz.budget === "8000–10000") budgetMax = 10000;
+      else if (wiz.budget === "10000–12000") budgetMax = 12000;
       const [pMin, pMax] = budgetRange(wiz.budget);
       const district = "不限";
       matchFilters = {
@@ -5391,9 +5408,7 @@
       quick.priceMax = draftPrice.max;
       if (matchMode && matchFilters) {
         matchFilters.budgetMax = draftPrice.max;
-        matchFilters.budgetLabel = hasPriceFilter()
-          ? `¥${draftPrice.min}–${draftPrice.max}`
-          : "";
+        matchFilters.budgetLabel = hasPriceFilter() ? priceLabel() : "";
         refreshMatchTags();
       }
       if (!isFirstPersona()) snapshotReturningFilter();
