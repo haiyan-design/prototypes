@@ -282,24 +282,9 @@
       position: relative; z-index: 1; display: flex; flex-direction: column;
       flex: 1; min-height: 0; width: 100%;
     }
-    .scope-tabs {
-      display: flex; justify-content: center; gap: 0; margin: 2px 48px 10px;
-      background: rgba(255,255,255,.2); border-radius: 22px; padding: 3px; flex-shrink: 0;
-      backdrop-filter: blur(6px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
-    }
-    .scope-tab {
-      flex: 1; border: none; background: transparent; color: rgba(255,255,255,.88);
-      font-size: 14px; font-weight: 600; padding: 8px 0; border-radius: 19px; cursor: pointer;
-      transition: background .2s, color .2s;
-    }
-    .scope-tab.on {
-      background: #fff; color: var(--brand-deep);
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
-    }
-    .rank-head { padding: 2px 16px 0; flex-shrink: 0; }
+    .rank-head { padding: 6px 16px 0; flex-shrink: 0; }
     .loc-row { display: flex; align-items: center; justify-content: flex-end; margin-bottom: 4px; gap: 8px; }
     .loc-actions { display: inline-flex; align-items: center; gap: 6px; min-width: 0; margin-right: auto; }
-    .loc-actions.is-hidden { display: none; }
     .loc-pill {
       display: inline-flex; align-items: center; gap: 4px;
       background: rgba(255,255,255,.28); border: 1px solid rgba(255,255,255,.4);
@@ -901,7 +886,7 @@
               <div class="ico purple" style="width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;background:linear-gradient(145deg,#a78bfa,#7c5cfc);box-shadow:0 4px 10px rgba(124,92,252,.3);flex-shrink:0">榜</div>
               <div class="entry-copy">
                 <div class="name">合伙人排行榜</div>
-                <div class="sub">全国 / 城市 · 邀请达人 · 金币奖励</div>
+                <div class="sub">城市榜 · 邀请达人 · 金币奖励</div>
               </div>
               <span class="entry-go">去看看 ›</span>
             </div>
@@ -930,13 +915,8 @@
           <div class="status-bar" style="color:#fff"><span>10:22</span><span class="icons">●●● ▌▌ 81</span></div>
           <div class="nav-bar">
             <button class="back" type="button" id="rank-back">‹</button>
-            <div class="title" id="rank-nav-title">推广赚排行榜</div>
+            <div class="title" id="rank-nav-title">达人排行榜</div>
             <div class="capsule">··· ○</div>
-          </div>
-
-          <div class="scope-tabs" role="tablist">
-            <button class="scope-tab" type="button" data-scope="nation">全国</button>
-            <button class="scope-tab on" type="button" data-scope="city">城市</button>
           </div>
 
           <div class="rank-head">
@@ -1214,14 +1194,6 @@
         { name: "沈*心", orders: 5, coins: 980.5 },
         { name: "韩*好", orders: 4, coins: 760.0 }
       ];
-      const NATION_LIST = CITY_LIST.concat([
-        { name: "北*京达", orders: 55, coins: 8200.0 },
-        { name: "广*深王", orders: 48, coins: 7100.5 },
-        { name: "成*都鱼", orders: 44, coins: 6800.0 },
-        { name: "武*汉强", orders: 39, coins: 6100.0 },
-        { name: "西*安丽", orders: 35, coins: 5600.0 }
-      ]).sort((a, b) => b.coins - a.coins).slice(0, 30);
-
       const PARTNER_CITY = [
         { name: "周*", team: 186, coins: 12880.5 },
         { name: "李*", team: 152, coins: 11200.0 },
@@ -1244,12 +1216,6 @@
         { name: "罗*", team: 12, coins: 980.0 },
         { name: "郑*", team: 8, coins: 720.0 }
       ];
-      const PARTNER_NATION = PARTNER_CITY.concat([
-        { name: "北*合伙", team: 220, coins: 15600.0 },
-        { name: "深*团长", team: 198, coins: 14200.0 },
-        { name: "杭*合伙", team: 175, coins: 13100.0 }
-      ]).sort((a, b) => b.coins - a.coins).slice(0, 30);
-
       const COLORS = ["#7eb8da","#f0a07a","#8fd1a5","#c9a0dc","#f2c14e","#8aa0c8","#e88b8b","#6fc3b2"];
       const HOT_CITIES = ["北京市","上海市","广州市","深圳市","杭州市","成都市","重庆市","武汉市","西安市","南京市"];
       const CITY_DATA = [
@@ -1284,7 +1250,6 @@
         changedToday: false,
         needRelocate: false,
         locateFail: false,
-        scope: "city",
         proto: "veteran",
         rankKind: "daren",
         rankFrom: "mine"
@@ -1408,7 +1373,7 @@
 
       function updateMyBar() {
         const partner = isPartnerRank();
-        const browsing = state.scope === "city" && state.viewCity && state.rankCity && state.viewCity !== state.rankCity;
+        const browsing = state.viewCity && state.rankCity && state.viewCity !== state.rankCity;
         $("my-rank").textContent = browsing ? "未在该城市榜单" : "未上榜";
         $("my-rank").classList.toggle("long", browsing);
         $("my-stats").classList.toggle("browsing", browsing);
@@ -1420,7 +1385,6 @@
       }
 
       function updateLocPill() {
-        const actions = document.querySelector(".loc-actions");
         const caret = $("loc-caret");
         const rf = $("loc-refresh");
         const note = $("view-note");
@@ -1428,11 +1392,6 @@
         rf.hidden = true;
         note.classList.remove("show");
         note.textContent = "";
-        if (state.scope === "nation") {
-          if (actions) actions.classList.add("is-hidden");
-          return;
-        }
-        if (actions) actions.classList.remove("is-hidden");
         if (locationOpen() && state.viewCity && state.rankCity) {
           $("loc-label").textContent = state.viewCity;
           caret.hidden = false;
@@ -1498,14 +1457,13 @@
       }
 
       function renderRankContent() {
-        const isCity = state.scope === "city";
         const partner = isPartnerRank();
         const city = state.viewCity || state.rankCity || GPS_CITY;
-        let list;
-        if (partner) list = isCity ? varyList(PARTNER_CITY, city).slice(0, 20) : PARTNER_NATION;
-        else list = isCity ? varyList(CITY_LIST, city).slice(0, 20) : NATION_LIST;
-        $("rank-nav-title").textContent = partner ? "合伙人排行榜" : "推广赚排行榜";
-        $("rank-title").textContent = isCity ? city.replace("市", "") + " · 前 20 名" : "排行榜前 100 名";
+        const list = partner
+          ? varyList(PARTNER_CITY, city).slice(0, 20)
+          : varyList(CITY_LIST, city).slice(0, 20);
+        $("rank-nav-title").textContent = partner ? "合伙人排行榜" : "达人排行榜";
+        $("rank-title").textContent = city.replace("市", "") + " · 前 20 名";
         $("btn-perf").textContent = partner ? "团队业绩 >" : "业绩中心 >";
         renderPodium(list);
         renderList(list);
@@ -1514,7 +1472,7 @@
       }
 
       function showDeniedPanel() {
-        if (state.proto === "empty" || state.scope !== "city") return false;
+        if (state.proto === "empty") return false;
         if (state.mpPerm === "deny") return true;
         if (state.mpPerm === "allow" && !state.systemOn) return true;
         if (state.locateFail && !state.rankCity) return true;
@@ -1522,25 +1480,22 @@
       }
 
       function applyScopeUI() {
-        document.querySelectorAll(".scope-tab").forEach((btn) => {
-          btn.classList.toggle("on", btn.dataset.scope === state.scope);
-        });
         updateLocPill();
         updateAuthCopy();
         updateSimStatus();
 
         const denied = showDeniedPanel();
-        const waiting = state.proto !== "empty" && state.scope === "city" && state.mpPerm === "unknown";
-        const cityEmpty = state.proto === "empty" && state.scope === "city";
+        const waiting = state.proto !== "empty" && state.mpPerm === "unknown";
+        const cityEmpty = state.proto === "empty";
         $("page-rank").classList.toggle("is-denied", denied);
         $("page-rank").classList.toggle("is-empty", cityEmpty);
         $("rank-denied").classList.toggle("show", denied);
         $("rank-denied").classList.toggle("hidden", !denied);
         $("rank-board").classList.toggle("hidden", denied || waiting);
 
-        $("rank-nav-title").textContent = isPartnerRank() ? "合伙人排行榜" : "推广赚排行榜";
-        if (state.scope !== "city" || !state.viewCity) {
-          $("rank-title").textContent = state.scope === "city" ? "排行榜前 20 名" : "排行榜前 100 名";
+        $("rank-nav-title").textContent = isPartnerRank() ? "合伙人排行榜" : "达人排行榜";
+        if (!state.viewCity) {
+          $("rank-title").textContent = "排行榜前 20 名";
         }
 
         if (cityEmpty) {
@@ -1549,7 +1504,7 @@
           $("rank-board").classList.remove("hidden");
           $("podium").innerHTML = "";
           $("rank-list").innerHTML = "";
-          $("rank-nav-title").textContent = partner ? "合伙人排行榜" : "推广赚排行榜";
+          $("rank-nav-title").textContent = partner ? "合伙人排行榜" : "达人排行榜";
           $("rank-title").textContent = "拉萨 · 前 20 名";
           $("loc-label").textContent = city;
           $("loc-caret").hidden = false;
@@ -1637,7 +1592,6 @@
       function enterRank(from, kind) {
         state.rankFrom = from;
         state.rankKind = kind || "daren";
-        state.scope = "city";
         state.viewCity = state.rankCity;
         showPage("rank");
         openCityTab();
@@ -1658,7 +1612,6 @@
         else if (name === "empty") {
           const kindBtn = document.querySelector(".empty-kinds button.on");
           state.rankKind = kindBtn ? kindBtn.dataset.kind : "daren";
-          state.scope = "city";
           state.rankFrom = "mine";
           showPage("rank");
           applyScopeUI();
@@ -1674,18 +1627,6 @@
           document.querySelectorAll(".empty-kinds button").forEach((b) => b.classList.toggle("on", b === btn));
           state.rankKind = btn.dataset.kind;
           if (state.proto === "empty") applyScopeUI();
-        });
-      });
-
-      document.querySelectorAll(".scope-tab").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          state.scope = btn.dataset.scope;
-          if (state.scope === "nation") {
-            showAuth(false);
-            applyScopeUI();
-            return;
-          }
-          openCityTab();
         });
       });
 
@@ -1758,7 +1699,7 @@
       });
       $("setting-back").addEventListener("click", () => {
         showPage("rank");
-        if (state.scope === "city" && state.needRelocate && state.mpPerm === "allow") takeLocation(false);
+        if (state.needRelocate && state.mpPerm === "allow") takeLocation(false);
         else applyScopeUI();
       });
       $("btn-loc-info").addEventListener("click", () => {
@@ -1770,7 +1711,7 @@
       $("perm-allow").addEventListener("click", () => markLocationChoice(true));
 
       $("loc-pill").addEventListener("click", () => {
-        if (state.scope !== "city" || !locationOpen() || !state.rankCity || state.proto === "empty") return;
+        if (!locationOpen() || !state.rankCity || state.proto === "empty") return;
         $("city-search").value = "";
         renderCityList("");
         $("city-mask").classList.add("show");
@@ -1779,7 +1720,7 @@
 
       $("loc-refresh").addEventListener("click", (e) => {
         e.stopPropagation();
-        if (state.scope !== "city" || !locationOpen() || !state.rankCity) return;
+        if (!locationOpen() || !state.rankCity) return;
         takeLocation(true);
       });
 
@@ -1843,7 +1784,7 @@
           state.gpsCity = btn.dataset.gps;
           updateSimStatus();
           if (btn.dataset.gps !== "fail" || state.proto === "empty") return;
-          const onCity = pages.rank.classList.contains("active") && state.scope === "city";
+          const onCity = pages.rank.classList.contains("active");
           if (!onCity || !locationOpen() || $("auth-mask").classList.contains("show")) return;
           takeLocation(true);
         });
@@ -1856,7 +1797,7 @@
           if (was && !on) state.needRelocate = true;
           updateSimStatus();
           if (state.proto === "empty") return;
-          const onCity = pages.rank.classList.contains("active") && state.scope === "city";
+          const onCity = pages.rank.classList.contains("active");
           if (!on && onCity) applyScopeUI();
           if (on && !was && state.mpPerm === "allow" && onCity) takeLocation(false);
         });
@@ -1879,7 +1820,7 @@
         showAuth(false);
         $("refresh-mask").classList.remove("show");
         updateSimStatus();
-        if (state.proto !== "empty" && pages.rank.classList.contains("active") && state.scope === "city") {
+        if (state.proto !== "empty" && pages.rank.classList.contains("active")) {
           applyScopeUI();
           showAuth(true);
         } else if (state.proto !== "empty") {
