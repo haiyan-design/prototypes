@@ -1374,7 +1374,7 @@
       function updateMyBar() {
         const partner = isPartnerRank();
         const browsing = state.viewCity && state.rankCity && state.viewCity !== state.rankCity;
-        $("my-rank").textContent = browsing ? "未在该城市榜单" : "未上榜";
+        $("my-rank").textContent = browsing ? "未在此榜" : "未上榜";
         $("my-rank").classList.toggle("long", browsing);
         $("my-stats").classList.toggle("browsing", browsing);
         $("my-orders").textContent = partner ? "0人" : "0单";
